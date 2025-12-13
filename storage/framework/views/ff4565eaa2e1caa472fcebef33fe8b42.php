@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Dashboard Kepala Gudang'); ?>
 
-@section('title', 'Dashboard Kepala Gudang')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .dashboard-title {
         font-size: 28px;
@@ -207,9 +205,9 @@
         .alert-item { padding: 12px; border-radius: 10px; }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <h1 class="dashboard-title">Dashboard Kepala Gudang</h1>
 <p class="dashboard-subtitle">Monitoring stok dan inventori produk</p>
 
@@ -221,7 +219,7 @@
             <i class="fas fa-coins"></i>
         </div>
         <div class="stat-card-title">Total Penjualan Hari Ini</div>
-        <div class="stat-card-value">Rp. {{ number_format($totalPenjualanHariIni ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value">Rp. <?php echo e(number_format($totalPenjualanHariIni ?? 0, 0, ',', '.')); ?></div>
     </div>
 
     <div class="stat-card" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);">
@@ -229,13 +227,13 @@
             <i class="fas fa-cubes"></i>
         </div>
         <div class="stat-card-title">Stok Tersedia (Produk)</div>
-        <div class="stat-card-value">{{ $stokPercentProduk }}%</div>
+        <div class="stat-card-value"><?php echo e($stokPercentProduk); ?>%</div>
     </div>
 </div>
 
 <!-- Quick Actions -->
 <div class="quick-actions">
-    <a href="{{ route('produk.create') }}" class="btn-action btn-action-primary">
+    <a href="<?php echo e(route('produk.create')); ?>" class="btn-action btn-action-primary">
         <i class="fas fa-plus"></i>
         Tambah Produk
     </a>
@@ -247,24 +245,26 @@
         <div class="branch-header">
             <div class="branch-title">
                 Produk Terjual Hari Ini
-                @if(!empty($selectedCabangId))
-                    @php
+                <?php if(!empty($selectedCabangId)): ?>
+                    <?php
                         $namaCabang = optional($cabangList->firstWhere('id', $selectedCabangId))->nama_cabang;
-                    @endphp
-                    - Cabang: {{ $namaCabang ?? 'Semua' }}
-                @else
+                    ?>
+                    - Cabang: <?php echo e($namaCabang ?? 'Semua'); ?>
+
+                <?php else: ?>
                     - Semua Cabang
-                @endif
+                <?php endif; ?>
             </div>
-            <form action="{{ route('dashboard') }}" method="GET" style="display:flex; align-items:center; gap:10px;">
+            <form action="<?php echo e(route('dashboard')); ?>" method="GET" style="display:flex; align-items:center; gap:10px;">
                 <label for="cabang_id" style="font-size:13px; color: var(--muted);">Pilih Cabang</label>
                 <select name="cabang_id" id="cabang_id" onchange="this.form.submit()" style="min-width: 200px;">
                     <option value="">Semua Cabang</option>
-                    @foreach($cabangList as $cb)
-                        <option value="{{ $cb->id }}" {{ (string)$selectedCabangId === (string)$cb->id ? 'selected' : '' }}>
-                            {{ $cb->nama_cabang }}
+                    <?php $__currentLoopData = $cabangList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($cb->id); ?>" <?php echo e((string)$selectedCabangId === (string)$cb->id ? 'selected' : ''); ?>>
+                            <?php echo e($cb->nama_cabang); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </form>
         </div>
@@ -273,14 +273,14 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('stokChart').getContext('2d');
-    const labels = @json($chartLabels ?? []);
-    const data = @json($chartData ?? []);
+    const labels = <?php echo json_encode($chartLabels ?? [], 15, 512) ?>;
+    const data = <?php echo json_encode($chartData ?? [], 15, 512) ?>;
     const isDark = document.documentElement.classList.contains('dark');
     const grid = isDark ? 'rgba(230,231,235,0.12)' : 'rgba(0,0,0,0.05)';
     const tick = getComputedStyle(document.documentElement).getPropertyValue('--primary') || '#ff6b35';
@@ -315,4 +315,6 @@
         }
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views/dashboard/kepala-gudang.blade.php ENDPATH**/ ?>

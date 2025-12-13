@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Dashboard Owner'); ?>
 
-@section('title', 'Dashboard Owner')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .dashboard-title {
         font-size: 28px;
@@ -83,9 +81,9 @@
         height: 350px;
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <h1 class="dashboard-title">Dashboard Owner</h1>
 <p class="dashboard-subtitle">Monitoring seluruh aktivitas sistem Sidewalk.Go</p>
 
@@ -96,7 +94,7 @@
             <i class="fas fa-money-bill-wave"></i>
         </div>
         <div class="stat-card-title">Total Penjualan</div>
-        <div class="stat-card-value">Rp. {{ number_format($totalPenjualan ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value">Rp. <?php echo e(number_format($totalPenjualan ?? 0, 0, ',', '.')); ?></div>
     </div>
 
     
@@ -106,7 +104,7 @@
             <i class="fas fa-receipt"></i>
         </div>
         <div class="stat-card-title">Transaksi Harian</div>
-        <div class="stat-card-value">{{ number_format($transaksiHarian ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value"><?php echo e(number_format($transaksiHarian ?? 0, 0, ',', '.')); ?></div>
     </div>
 
     <div class="stat-card">
@@ -114,7 +112,7 @@
             <i class="fas fa-store"></i>
         </div>
         <div class="stat-card-title">Total Cabang</div>
-        <div class="stat-card-value">{{ number_format($totalCabang ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value"><?php echo e(number_format($totalCabang ?? 0, 0, ',', '.')); ?></div>
     </div>
 
     <div class="stat-card">
@@ -122,7 +120,7 @@
             <i class="fas fa-users"></i>
         </div>
         <div class="stat-card-title">Total Pengguna</div>
-        <div class="stat-card-value">{{ number_format($totalPengguna ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value"><?php echo e(number_format($totalPengguna ?? 0, 0, ',', '.')); ?></div>
     </div>
 </div>
 
@@ -140,14 +138,14 @@
         <canvas id="salesTrendChart"></canvas>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('salesChart').getContext('2d');
-    const labels = @json($chartLabels ?? []);
-    const data = @json($chartData ?? []);
+    const labels = <?php echo json_encode($chartLabels ?? [], 15, 512) ?>;
+    const data = <?php echo json_encode($chartData ?? [], 15, 512) ?>;
     const isDark = document.documentElement.classList.contains('dark');
     const grid = isDark ? 'rgba(230,231,235,0.12)' : 'rgba(0,0,0,0.05)';
     const tick = getComputedStyle(document.documentElement).getPropertyValue('--primary') || '#ff6b35';
@@ -183,8 +181,8 @@
     });
 
     const ctx2 = document.getElementById('salesTrendChart').getContext('2d');
-    const lineLabels = @json($lineLabels ?? []);
-    const lineData = @json($lineData ?? []);
+    const lineLabels = <?php echo json_encode($lineLabels ?? [], 15, 512) ?>;
+    const lineData = <?php echo json_encode($lineData ?? [], 15, 512) ?>;
 
     new Chart(ctx2, {
         type: 'line',
@@ -236,4 +234,6 @@
         }
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views/dashboard/owner.blade.php ENDPATH**/ ?>

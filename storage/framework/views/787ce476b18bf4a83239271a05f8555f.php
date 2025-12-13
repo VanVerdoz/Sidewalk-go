@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Dashboard Admin'); ?>
 
-@section('title', 'Dashboard Owner')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .dashboard-title {
         font-size: 28px;
@@ -19,7 +17,7 @@
 
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 20px;
         margin-bottom: 30px;
     }
@@ -69,6 +67,7 @@
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border);
         color: var(--text);
+        overflow: hidden;
     }
 
     .chart-title {
@@ -80,14 +79,48 @@
     .dark .chart-title { color: var(--text); }
 
     .chart-canvas {
-        height: 350px;
+        height: 420px;
     }
-</style>
-@endpush
 
-@section('content')
-<h1 class="dashboard-title">Dashboard Owner</h1>
-<p class="dashboard-subtitle">Monitoring seluruh aktivitas sistem Sidewalk.Go</p>
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+    }
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        border-radius: 18px;
+        color: #fff;
+        text-decoration: none;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+        border: none;
+    }
+    .action-card.primary { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); }
+    .action-card.secondary { background: linear-gradient(135deg, #374151 0%, #1f2937 100%); }
+    .action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+    .action-content { display: flex; flex-direction: column; }
+    .action-title { font-size: 16px; font-weight: 700; }
+    .action-desc { font-size: 12px; opacity: 0.9; }
+    @media (max-width: 640px) { .chart-canvas { height: 320px; } }
+</style>
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startSection('content'); ?>
+<h1 class="dashboard-title">Dashboard Admin</h1>
+<p class="dashboard-subtitle">Monitoring laporan keuangan dan transaksi</p>
 
 <!-- Statistics Cards -->
 <div class="stats-grid">
@@ -96,58 +129,59 @@
             <i class="fas fa-money-bill-wave"></i>
         </div>
         <div class="stat-card-title">Total Penjualan</div>
-        <div class="stat-card-value">Rp. {{ number_format($totalPenjualan ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value">Rp. <?php echo e(number_format($totalPenjualan ?? 0, 0, ',', '.')); ?></div>
     </div>
-
-    
 
     <div class="stat-card">
         <div class="stat-card-icon">
             <i class="fas fa-receipt"></i>
         </div>
         <div class="stat-card-title">Transaksi Harian</div>
-        <div class="stat-card-value">{{ number_format($transaksiHarian ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-value"><?php echo e(number_format($transaksiHarian ?? 0, 0, ',', '.')); ?></div>
     </div>
 
     <div class="stat-card">
         <div class="stat-card-icon">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-chart-line"></i>
         </div>
-        <div class="stat-card-title">Total Cabang</div>
-        <div class="stat-card-value">{{ number_format($totalCabang ?? 0, 0, ',', '.') }}</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-card-icon">
-            <i class="fas fa-users"></i>
-        </div>
-        <div class="stat-card-title">Total Pengguna</div>
-        <div class="stat-card-value">{{ number_format($totalPengguna ?? 0, 0, ',', '.') }}</div>
+        <div class="stat-card-title">Total Laporan</div>
+        <div class="stat-card-value"><?php echo e(number_format($totalLaporan ?? 0, 0, ',', '.')); ?></div>
     </div>
 </div>
 
 <!-- Sales Chart -->
 <div class="chart-container">
-    <h3 class="chart-title">Top Produk Terlaris</h3>
+    <h3 class="chart-title">Penjualan Per Bulan (6 Bulan Terakhir)</h3>
     <div class="chart-canvas">
         <canvas id="salesChart"></canvas>
     </div>
 </div>
 
-<div class="chart-container" style="margin-top:20px;">
-    <h3 class="chart-title">Penjualan 7 Hari Terakhir</h3>
-    <div class="chart-canvas">
-        <canvas id="salesTrendChart"></canvas>
-    </div>
+<!-- Quick Create -->
+<div class="action-grid">
+    <a href="<?php echo e(route('laporan-keuangan.create')); ?>" class="action-card primary">
+        <div class="action-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="action-content">
+            <div class="action-title">Tambah Laporan Keuangan</div>
+            <div class="action-desc">Buat laporan periode terbaru</div>
+        </div>
+    </a>
+    <a href="<?php echo e(route('pengguna.create')); ?>" class="action-card secondary">
+        <div class="action-icon"><i class="fas fa-user-plus"></i></div>
+        <div class="action-content">
+            <div class="action-title">Tambah Pengguna</div>
+            <div class="action-desc">Tambahkan akun admin atau staf</div>
+        </div>
+    </a>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('salesChart').getContext('2d');
-    const labels = @json($chartLabels ?? []);
-    const data = @json($chartData ?? []);
+    const labels = <?php echo json_encode($chartLabels ?? [], 15, 512) ?>;
+    const data = <?php echo json_encode($chartData ?? [], 15, 512) ?>;
     const isDark = document.documentElement.classList.contains('dark');
     const grid = isDark ? 'rgba(230,231,235,0.12)' : 'rgba(0,0,0,0.05)';
     const tick = getComputedStyle(document.documentElement).getPropertyValue('--primary') || '#ff6b35';
@@ -157,51 +191,12 @@
         data: {
             labels: labels,
             datasets: [{
-                label: 'Jumlah Terjual',
+                label: 'Penjualan (Rp)',
                 data: data,
                 backgroundColor: 'rgba(255, 107, 53, 0.8)',
                 borderColor: 'rgba(255, 107, 53, 1)',
                 borderWidth: 2,
                 borderRadius: 10,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: grid, drawBorder: false },
-                    ticks: { color: tick }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: tick }
-                }
-            }
-        }
-    });
-
-    const ctx2 = document.getElementById('salesTrendChart').getContext('2d');
-    const lineLabels = @json($lineLabels ?? []);
-    const lineData = @json($lineData ?? []);
-
-    new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: lineLabels,
-            datasets: [{
-                label: 'Penjualan (Rp)',
-                data: lineData,
-                backgroundColor: 'rgba(255, 107, 53, 0.2)',
-                borderColor: 'rgba(255, 107, 53, 1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: 'rgba(255, 107, 53, 1)',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
             }]
         },
         options: {
@@ -236,4 +231,6 @@
         }
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views/dashboard/admin.blade.php ENDPATH**/ ?>

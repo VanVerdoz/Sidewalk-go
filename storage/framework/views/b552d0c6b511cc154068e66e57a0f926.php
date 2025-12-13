@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Transaksi Penjualan'); ?>
 
-@section('title', 'Transaksi Penjualan')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .page-header {
         display: flex;
@@ -285,56 +283,59 @@
         .btn { padding: 10px 16px; font-size: 13px; }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="page-header">
     <h2 class="page-title">Transaksi Penjualan</h2>
     <div class="header-actions">
-        @if(session('user.role') === 'admin')
-        <form action="{{ route('penjualan.index') }}" method="GET" style="display:flex; align-items:center; gap:10px;">
+        <?php if(session('user.role') === 'admin'): ?>
+        <form action="<?php echo e(route('penjualan.index')); ?>" method="GET" style="display:flex; align-items:center; gap:10px;">
             <label for="cabang_id" style="font-size:13px; color: var(--muted);">Pilih Cabang</label>
             <select name="cabang_id" id="cabang_id" onchange="this.form.submit()" style="min-width: 220px;">
                 <option value="">Semua Cabang</option>
-                @foreach(($cabangList ?? collect()) as $cb)
-                    <option value="{{ $cb->id }}" {{ (string)($selectedCabangId ?? '') === (string)$cb->id ? 'selected' : '' }}>
-                        {{ $cb->nama_cabang }}
+                <?php $__currentLoopData = ($cabangList ?? collect()); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($cb->id); ?>" <?php echo e((string)($selectedCabangId ?? '') === (string)$cb->id ? 'selected' : ''); ?>>
+                        <?php echo e($cb->nama_cabang); ?>
+
                     </option>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </form>
-        @endif
-        @if(in_array(session('user.role'), ['raider']))
-        <a href="{{ route('penjualan.create') }}" class="btn btn-primary">
+        <?php endif; ?>
+        <?php if(in_array(session('user.role'), ['raider'])): ?>
+        <a href="<?php echo e(route('penjualan.create')); ?>" class="btn btn-primary">
             <i class="fas fa-plus"></i>
             Tambah Transaksi
         </a>
-        @if(isset($totalPendapatanHariIni) && isset($totalProdukHariIni))
+        <?php if(isset($totalPendapatanHariIni) && isset($totalProdukHariIni)): ?>
         <button type="button" class="btn btn-secondary" onclick="toggleRekap()">
             <i class="fas fa-chart-line"></i>
             Rekap Laporan Penjualan / Hari Ini
         </button>
-        @endif
-        @endif
+        <?php endif; ?>
+        <?php endif; ?>
     </div>
 </div>
 
 <div class="table-container">
-    @if(session('user.role') === 'admin')
+    <?php if(session('user.role') === 'admin'): ?>
     <div class="rekap-container" style="margin-bottom: 20px;">
-        @if(empty($selectedCabangId))
+        <?php if(empty($selectedCabangId)): ?>
             <div class="rekap-title">
-                Rekap Transaksi Harian (Semua Cabang) - {{ now()->format('d/m/Y') }}
+                Rekap Transaksi Harian (Semua Cabang) - <?php echo e(now()->format('d/m/Y')); ?>
+
             </div>
             <div class="rekap-grid">
                 <div>
                     <div class="rekap-item-label">Total Pendapatan</div>
-                    <div class="rekap-item-value">Rp. {{ number_format($grandTotalHariIni ?? 0, 0, ',', '.') }}</div>
+                    <div class="rekap-item-value">Rp. <?php echo e(number_format($grandTotalHariIni ?? 0, 0, ',', '.')); ?></div>
                 </div>
             </div>
-        @else
+        <?php else: ?>
             <div class="rekap-title">
-                Rekap Transaksi Harian - {{ now()->format('d/m/Y') }} | Cabang: {{ optional(($cabangList ?? collect())->firstWhere('id', $selectedCabangId))->nama_cabang ?? '-' }}
+                Rekap Transaksi Harian - <?php echo e(now()->format('d/m/Y')); ?> | Cabang: <?php echo e(optional(($cabangList ?? collect())->firstWhere('id', $selectedCabangId))->nama_cabang ?? '-'); ?>
+
             </div>
             <table class="table">
                 <thead>
@@ -346,48 +347,48 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse(($rekapCabangHariIni ?? collect()) as $i => $row)
+                    <?php $__empty_1 = true; $__currentLoopData = ($rekapCabangHariIni ?? collect()); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
-                            <td>{{ $i + 1 }}</td>
-                            <td>{{ optional($row->cabang)->nama_cabang ?? '-' }}</td>
-                            <td>{{ number_format((int)($row->transaksi ?? 0), 0, ',', '.') }}</td>
-                            <td>Rp. {{ number_format((int)($row->total ?? 0), 0, ',', '.') }}</td>
+                            <td><?php echo e($i + 1); ?></td>
+                            <td><?php echo e(optional($row->cabang)->nama_cabang ?? '-'); ?></td>
+                            <td><?php echo e(number_format((int)($row->transaksi ?? 0), 0, ',', '.')); ?></td>
+                            <td>Rp. <?php echo e(number_format((int)($row->total ?? 0), 0, ',', '.')); ?></td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="4" style="text-align:center; color: var(--muted);">Belum ada data</td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?>
                 </tbody>
             </table>
-        @endif
+        <?php endif; ?>
     </div>
-    @endif
-    @if(session('user.role') === 'raider' && isset($totalPendapatanHariIni) && isset($totalProdukHariIni))
+    <?php endif; ?>
+    <?php if(session('user.role') === 'raider' && isset($totalPendapatanHariIni) && isset($totalProdukHariIni)): ?>
     <div id="rekap-panel" class="rekap-container" style="display: none;">
-        <div class="rekap-title">Rekap Penjualan Hari Ini ({{ now()->format('d/m/Y') }})</div>
+        <div class="rekap-title">Rekap Penjualan Hari Ini (<?php echo e(now()->format('d/m/Y')); ?>)</div>
         <div class="rekap-grid">
             <div>
                 <div class="rekap-item-label">Nama Cabang</div>
-                <div class="rekap-item-value">{{ optional($penjualan->first()->cabang ?? null)->nama_cabang ?? '-' }}</div>
+                <div class="rekap-item-value"><?php echo e(optional($penjualan->first()->cabang ?? null)->nama_cabang ?? '-'); ?></div>
             </div>
             <div>
                 <div class="rekap-item-label">Alamat Cabang</div>
-                <div class="rekap-item-value">{{ optional($penjualan->first()->cabang ?? null)->alamat ?? '-' }}</div>
+                <div class="rekap-item-value"><?php echo e(optional($penjualan->first()->cabang ?? null)->alamat ?? '-'); ?></div>
             </div>
             <div>
                 <div class="rekap-item-label">Total Produk Terjual</div>
-                <div class="rekap-item-value">{{ number_format($totalProdukHariIni ?? 0, 0, ',', '.') }} pcs</div>
+                <div class="rekap-item-value"><?php echo e(number_format($totalProdukHariIni ?? 0, 0, ',', '.')); ?> pcs</div>
             </div>
             <div>
                 <div class="rekap-item-label">Total Pendapatan Raider Hari Ini</div>
-                <div class="rekap-item-value">Rp. {{ number_format($totalPendapatanHariIni ?? 0, 0, ',', '.') }}</div>
+                <div class="rekap-item-value">Rp. <?php echo e(number_format($totalPendapatanHariIni ?? 0, 0, ',', '.')); ?></div>
             </div>
         </div>
     </div>
-    @endif
+    <?php endif; ?>
 
-    @if($penjualan->count() > 0)
+    <?php if($penjualan->count() > 0): ?>
     <table class="table">
         <thead>
             <tr>
@@ -403,59 +404,60 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($penjualan as $index => $item)
-            @php
+            <?php $__currentLoopData = $penjualan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php
                 $namaList = $item->detail_penjualan->map(function($detail) {
                     return $detail->produk->nama_produk ?? null;
                 })->filter()->unique();
-            @endphp
+            ?>
             <tr>
-                <td data-label="No">{{ $index + 1 }}</td>
-                <td data-label="Tanggal">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                <td data-label="Cabang">{{ $item->cabang->nama_cabang ?? '-' }}</td>
-                <td data-label="Raider">{{ $item->pengguna->username ?? '-' }}</td>
-                <td data-label="Metode Pembayaran">{{ ucfirst($item->metode_pembayaran ?? '-') }}</td>
+                <td data-label="No"><?php echo e($index + 1); ?></td>
+                <td data-label="Tanggal"><?php echo e(\Carbon\Carbon::parse($item->tanggal)->format('d/m/Y')); ?></td>
+                <td data-label="Cabang"><?php echo e($item->cabang->nama_cabang ?? '-'); ?></td>
+                <td data-label="Raider"><?php echo e($item->pengguna->username ?? '-'); ?></td>
+                <td data-label="Metode Pembayaran"><?php echo e(ucfirst($item->metode_pembayaran ?? '-')); ?></td>
                 <td data-label="Nama Produk">
-                    @if($namaList->count() === 0)
+                    <?php if($namaList->count() === 0): ?>
                         -
-                    @elseif($namaList->count() === 1)
-                        {{ $namaList->first() }}
-                    @else
+                    <?php elseif($namaList->count() === 1): ?>
+                        <?php echo e($namaList->first()); ?>
+
+                    <?php else: ?>
                         Multi Produk
-                    @endif
+                    <?php endif; ?>
                 </td>
-                <td data-label="Deskripsi">{{ $item->keterangan ?? '-' }}</td>
-                <td data-label="Total Harga">Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                <td data-label="Deskripsi"><?php echo e($item->keterangan ?? '-'); ?></td>
+                <td data-label="Total Harga">Rp. <?php echo e(number_format($item->total, 0, ',', '.')); ?></td>
                 <td data-label="Aksi">
                     <div class="action-buttons">
-                        <a href="{{ route('penjualan.show', $item->id) }}" class="btn btn-icon btn-primary" title="Lihat Detail">
+                        <a href="<?php echo e(route('penjualan.show', $item->id)); ?>" class="btn btn-icon btn-primary" title="Lihat Detail">
                             <i class="fas fa-eye"></i>
                         </a>
-                        @if(in_array(session('user.role'), ['raider']))
-                        <a href="{{ route('penjualan.edit', $item->id) }}" class="btn btn-icon btn-edit" title="Edit">
+                        <?php if(in_array(session('user.role'), ['raider'])): ?>
+                        <a href="<?php echo e(route('penjualan.edit', $item->id)); ?>" class="btn btn-icon btn-edit" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form id="delete-form-{{ $item->id }}" action="{{ route('penjualan.destroy', $item->id) }}" method="POST" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" class="btn btn-icon btn-delete" onclick="confirmDelete({{ $item->id }}, '{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}')" title="Hapus">
+                        <form id="delete-form-<?php echo e($item->id); ?>" action="<?php echo e(route('penjualan.destroy', $item->id)); ?>" method="POST" style="display: inline;">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('DELETE'); ?>
+                            <button type="button" class="btn btn-icon btn-delete" onclick="confirmDelete(<?php echo e($item->id); ?>, '<?php echo e(\Carbon\Carbon::parse($item->tanggal)->format('d/m/Y')); ?>')" title="Hapus">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </td>
             </tr>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </tbody>
     </table>
-    @else
+    <?php else: ?>
     <div class="empty-state">
         <i class="fas fa-shopping-cart"></i>
         <h3>Belum Ada Transaksi</h3>
         <p>Silakan tambahkan transaksi baru untuk memulai</p>
     </div>
-    @endif
+    <?php endif; ?>
 </div>
 
 <!-- Custom Delete Confirmation Modal -->
@@ -479,7 +481,7 @@
     </div>
 </div>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     let deleteFormId = null;
 
@@ -517,5 +519,7 @@
         }
     });
 </script>
-@endpush
-@endsection
+<?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views/penjualan/index.blade.php ENDPATH**/ ?>

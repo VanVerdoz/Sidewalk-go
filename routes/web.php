@@ -56,6 +56,9 @@ Route::middleware(['web'])->group(function () {
         Route::get('/kepala-gudang/permintaan-stok/cabang/{cabangId}/rider/{raiderId}', [RequestStokController::class, 'riderView'])->name('kepala.permintaan-stok.rider');
         Route::get('/kepala-gudang/permintaan-stok/{permintaanId}', [RequestStokController::class, 'detailView'])->name('kepala.permintaan-stok.detail');
 
+        // Kepala Gudang: Produk Terjual (halaman terpisah)
+        Route::get('/kepala-gudang/produk-terjual', [DashboardController::class, 'kepalaGudangProdukTerjual'])->name('kepala.produk-terjual');
+
         // Aksi Kepala Gudang terhadap permintaan stok raider
         Route::post('/kepala-gudang/permintaan-stok/{id}/approve', [RequestStokController::class, 'approve'])->name('kepala.permintaan-stok.approve');
         Route::post('/kepala-gudang/permintaan-stok/{id}/pending', [RequestStokController::class, 'pending'])->name('kepala.permintaan-stok.pending');

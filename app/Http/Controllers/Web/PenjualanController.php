@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Penjualan;
 use App\Models\DetailPenjualan;
 use App\Models\Produk;
@@ -15,17 +16,24 @@ class PenjualanController extends Controller
     {
             $userId = session('user.id');
             $role = session('user.role');
+            $selectedCabangId = request('cabang_id');
+            $cabangList = Cabang::orderBy('id', 'asc')->get();
 
             $query = Penjualan::with(['cabang', 'pengguna', 'detail_penjualan.produk'])
                 ->orderBy('tanggal', 'desc')
+                ->orderBy('id', 'desc')
                 ->where(function ($q) {
                     $q->whereNull('metode_pembayaran')
                       ->orWhere('metode_pembayaran', '!=', 'request_stok');
+                })
+                ->when(!empty($selectedCabangId) && $role === 'admin', function ($q) use ($selectedCabangId) {
+                    $q->where('cabang_id', $selectedCabangId);
                 });
 
-            // Raider hanya melihat transaksi miliknya sendiri
+            // Raider hanya melihat transaksi miliknya sendiri dan hanya hari ini
             if ($role === 'raider' && $userId) {
-                $query->where('pengguna_id', $userId);
+                $query->where('pengguna_id', $userId)
+                      ->whereDate('tanggal', today());
             }
 
             $penjualan = $query->get();
@@ -53,7 +61,40 @@ class PenjualanController extends Controller
                 })->sum('jumlah');
             }
 
-            return view('penjualan.index', compact('penjualan', 'totalPendapatanHariIni', 'totalProdukHariIni'));
+            // Rekap harian per cabang (admin)
+            $rekapCabangHariIni = collect();
+            $grandTotalHariIni = null;
+            if ($role === 'admin') {
+                if (empty($selectedCabangId)) {
+                    $grandTotalHariIni = Penjualan::whereDate('tanggal', today())
+                        ->where(function ($q) {
+                            $q->whereNull('metode_pembayaran')
+                              ->orWhere('metode_pembayaran', '!=', 'request_stok');
+                        })
+                        ->sum('total');
+                } else {
+                    $rekapCabangHariIni = Penjualan::whereDate('tanggal', today())
+                        ->where(function ($q) {
+                            $q->whereNull('metode_pembayaran')
+                              ->orWhere('metode_pembayaran', '!=', 'request_stok');
+                        })
+                        ->where('cabang_id', $selectedCabangId)
+                        ->select('cabang_id', DB::raw('COUNT(*) as transaksi'), DB::raw('SUM(total) as total'))
+                        ->groupBy('cabang_id')
+                        ->with('cabang')
+                        ->get();
+                }
+            }
+
+            return view('penjualan.index', compact(
+                'penjualan',
+                'totalPendapatanHariIni',
+                'totalProdukHariIni',
+                'cabangList',
+                'selectedCabangId',
+                'rekapCabangHariIni',
+                'grandTotalHariIni'
+            ));
     }
 
     public function create()

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') - Sidewalk.Go</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> - Sidewalk.Go</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -542,7 +542,7 @@
             .header-right { gap: 8px; }
         }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
     <script>
         (function(){
             try {
@@ -570,85 +570,85 @@
 
             <ul class="sidebar-menu">
                 <li>
-                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('dashboard')); ?>" class="<?php echo e(request()->routeIs('dashboard') ? 'active' : ''); ?>">
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
-                @php
+                <?php
                     $user = session('user');
                     $role = $user['role'] ?? '';
-                @endphp
+                ?>
 
-                @if(in_array($role, ['owner', 'admin', 'kepala_gudang']))
+                <?php if(in_array($role, ['owner', 'admin', 'kepala_gudang'])): ?>
                 <li>
-                    <a href="{{ route('produk.index') }}" class="{{ request()->routeIs('produk.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('produk.index')); ?>" class="<?php echo e(request()->routeIs('produk.*') ? 'active' : ''); ?>">
                         <i class="fas fa-box"></i>
                         <span>Stok Produk</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
-                @if(in_array($role, ['owner', 'raider', 'admin']))
+                <?php if(in_array($role, ['owner', 'raider', 'admin'])): ?>
                 <li>
-                    <a href="{{ route('penjualan.index') }}" class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('penjualan.index')); ?>" class="<?php echo e(request()->routeIs('penjualan.*') ? 'active' : ''); ?>">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Transaksi</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
-                @if(in_array($role, ['owner', 'admin']))
+                <?php if(in_array($role, ['owner', 'admin'])): ?>
                 <li>
-                    <a href="{{ route('laporan-keuangan.index') }}" class="{{ request()->routeIs('laporan-keuangan.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('laporan-keuangan.index')); ?>" class="<?php echo e(request()->routeIs('laporan-keuangan.*') ? 'active' : ''); ?>">
                         <i class="fas fa-chart-line"></i>
                         <span>Laporan Keuangan</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
-                @if(in_array($role, ['owner', 'admin', 'kepala_gudang']))
+                <?php if(in_array($role, ['owner', 'admin', 'kepala_gudang'])): ?>
                 <li>
-                    <a href="{{ route('cabang.index') }}" class="{{ request()->routeIs('cabang.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('cabang.index')); ?>" class="<?php echo e(request()->routeIs('cabang.*') ? 'active' : ''); ?>">
                         <i class="fas fa-store"></i>
                         <span>Cabang</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
-                @if($role === 'raider')
+                <?php if($role === 'raider'): ?>
                 <li>
-                    <a href="{{ route('raider.permintaan-stok.create') }}" class="{{ request()->routeIs('raider.permintaan-stok.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('raider.permintaan-stok.create')); ?>" class="<?php echo e(request()->routeIs('raider.permintaan-stok.*') ? 'active' : ''); ?>">
                         <i class="fas fa-box-open"></i>
                         <span>Request Stok</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
-                @if($role === 'kepala_gudang')
+                <?php if($role === 'kepala_gudang'): ?>
                 <li>
-                    <a href="{{ route('kepala.permintaan-stok.index') }}" class="{{ request()->routeIs('kepala.permintaan-stok.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('kepala.permintaan-stok.index')); ?>" class="<?php echo e(request()->routeIs('kepala.permintaan-stok.*') ? 'active' : ''); ?>">
                         <i class="fas fa-clipboard-list"></i>
                         <span>Permintaan Stok Raider</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('kepala.produk-terjual') }}" class="{{ request()->routeIs('kepala.produk-terjual') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('kepala.produk-terjual')); ?>" class="<?php echo e(request()->routeIs('kepala.produk-terjual') ? 'active' : ''); ?>">
                         <i class="fas fa-chart-bar"></i>
                         <span>Produk Terjual</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
-                @if(in_array($role, ['owner', 'admin']))
+                <?php if(in_array($role, ['owner', 'admin'])): ?>
                 <li>
-                    <a href="{{ route('pengguna.index') }}" class="{{ request()->routeIs('pengguna.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('pengguna.index')); ?>" class="<?php echo e(request()->routeIs('pengguna.*') ? 'active' : ''); ?>">
                         <i class="fas fa-users"></i>
                         <span>Pengguna</span>
                     </a>
                 </li>
-                @endif
+                <?php endif; ?>
 
                 
             </ul>
@@ -659,12 +659,12 @@
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="sidebar-user-details">
-                        <h4>{{ $user['nama_lengkap'] ?? $user['username'] ?? 'Admin' }}</h4>
-                        <p>{{ ucfirst(str_replace('_', ' ', $role)) }}</p>
+                        <h4><?php echo e($user['nama_lengkap'] ?? $user['username'] ?? 'Admin'); ?></h4>
+                        <p><?php echo e(ucfirst(str_replace('_', ' ', $role))); ?></p>
                     </div>
                 </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
+                <form action="<?php echo e(route('logout')); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -679,14 +679,14 @@
             <header class="header">
                 <div class="header-left">
                     <button type="button" class="btn btn-toggle btn-small btn-menu" id="menuToggle" aria-label="Buka menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
-                    <h3>Selamat Datang, {{ $user['nama_lengkap'] ?? $user['username'] ?? 'Pengguna' }}</h3>
+                    <h3>Selamat Datang, <?php echo e($user['nama_lengkap'] ?? $user['username'] ?? 'Pengguna'); ?></h3>
                     <div class="subtitle">Sidewalk.Go — Kelola stok dan transaksi harian dengan mudah</div>
-                    <div class="meta">{{ now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }} · Peran: {{ ucfirst(str_replace('_', ' ', $role)) }}</div>
+                    <div class="meta"><?php echo e(now()->locale('id')->isoFormat('dddd, D MMMM YYYY')); ?> · Peran: <?php echo e(ucfirst(str_replace('_', ' ', $role))); ?></div>
                 </div>
                 <div class="header-right">
                     <button type="button" class="btn btn-toggle btn-small" id="themeToggle" title="Mode tampilan (Gelap/Terang)" aria-label="Toggle mode"><i class="fas fa-moon"></i></button>
                     <span id="themeLabel" class="theme-label">Gelap</span>
-                    <a href="{{ route('profile.show') }}" class="btn btn-profile">
+                    <a href="<?php echo e(route('profile.show')); ?>" class="btn btn-profile">
                         <i class="fas fa-user-cog"></i>
                         <span class="btn-profile-text">Profil</span>
                     </a>
@@ -695,8 +695,8 @@
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="header-user-info">
-                            <h4>{{ $user['nama_lengkap'] ?? $user['username'] ?? 'Admin' }}</h4>
-                            <p>{{ ucfirst(str_replace('_', ' ', $role)) }}</p>
+                            <h4><?php echo e($user['nama_lengkap'] ?? $user['username'] ?? 'Admin'); ?></h4>
+                            <p><?php echo e(ucfirst(str_replace('_', ' ', $role))); ?></p>
                         </div>
                     </div>
                 </div>
@@ -705,39 +705,39 @@
             <!-- Content -->
             <div class="content">
                 <div id="toastContainer" class="toast-container">
-                    @if(session('success'))
+                    <?php if(session('success')): ?>
                         <div class="toast toast-success" role="alert">
                             <div class="toast-icon success"><i class="fas fa-check"></i></div>
                             <div class="toast-content">
                                 <div class="toast-title">Berhasil</div>
-                                <div class="toast-message">{{ session('success') }}</div>
+                                <div class="toast-message"><?php echo e(session('success')); ?></div>
                             </div>
                             <button class="toast-close" onclick="this.closest('.toast').classList.add('toast-hide'); setTimeout(()=>this.closest('.toast').remove(),300)"><i class="fas fa-times"></i></button>
                         </div>
-                    @endif
-                    @if(session('error'))
+                    <?php endif; ?>
+                    <?php if(session('error')): ?>
                         <div class="toast toast-error" role="alert">
                             <div class="toast-icon error"><i class="fas fa-exclamation-circle"></i></div>
                             <div class="toast-content">
                                 <div class="toast-title">Gagal</div>
-                                <div class="toast-message">{{ session('error') }}</div>
+                                <div class="toast-message"><?php echo e(session('error')); ?></div>
                             </div>
                             <button class="toast-close" onclick="this.closest('.toast').classList.add('toast-hide'); setTimeout(()=>this.closest('.toast').remove(),300)"><i class="fas fa-times"></i></button>
                         </div>
-                    @endif
-                    @if(isset($errors) && $errors->any())
+                    <?php endif; ?>
+                    <?php if(isset($errors) && $errors->any()): ?>
                         <div class="toast toast-error" role="alert">
                             <div class="toast-icon error"><i class="fas fa-exclamation-triangle"></i></div>
                             <div class="toast-content">
                                 <div class="toast-title">Validasi</div>
-                                <div class="toast-message">{{ $errors->first() }}</div>
+                                <div class="toast-message"><?php echo e($errors->first()); ?></div>
                             </div>
                             <button class="toast-close" onclick="this.closest('.toast').classList.add('toast-hide'); setTimeout(()=>this.closest('.toast').remove(),300)"><i class="fas fa-times"></i></button>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
 
-                @yield('content')
+                <?php echo $__env->yieldContent('content'); ?>
             </div>
         </main>
     </div>
@@ -795,6 +795,7 @@
             window.addEventListener('resize', function(){ if(window.innerWidth > 768){ closeSidebar(); } });
         })();
     </script>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views/layouts/app.blade.php ENDPATH**/ ?>
