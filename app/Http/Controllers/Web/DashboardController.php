@@ -46,6 +46,10 @@ class DashboardController extends Controller
                     return $this->defaultDashboard();
             }
         } catch (\Exception $e) {
+            // DEBUG: Force show error on screen
+            die("<h1>Error Dashboard:</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>");
+            
+            /*
             Log::error('Dashboard error: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
@@ -58,6 +62,7 @@ class DashboardController extends Controller
                 'chartData' => [0],
                 'role' => session('user.role') ?? 'guest'
             ]);
+            */
         }
     }
 
