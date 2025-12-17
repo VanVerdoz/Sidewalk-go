@@ -7,35 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 class RequestStok extends Model
 {
     protected $table = 'request_stok';
-    protected $primaryKey = 'id_permintaan';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    protected $primaryKey = 'id';
+    public $incrementing = true;
+    protected $keyType = 'int';
     public $timestamps = false;
 
     protected $fillable = [
-        'id_permintaan',
-        'id_raider',
-        'id_cabang',
-        'status_permintaan',
-        'keterangan',
-        'disetujui_oleh',
-        'waktu_disetujui',
-        'dibuat_pada',
-        'diperbarui_pada',
+        'cabang_id',
+        'raider_id',
+        'status',
+        'catatan',
+        'tanggal'
     ];
 
     public function cabang()
     {
-        return $this->belongsTo(Cabang::class, 'id_cabang');
+        return $this->belongsTo(Cabang::class, 'cabang_id');
     }
 
     public function raider()
     {
-        return $this->belongsTo(Pengguna::class, 'id_raider');
+        return $this->belongsTo(Pengguna::class, 'raider_id');
     }
 
     public function details()
     {
-        return $this->hasMany(RequestStokDetail::class, 'id_permintaan', 'id_permintaan');
+        return $this->hasMany(RequestStokDetail::class, 'request_id', 'id');
     }
 }

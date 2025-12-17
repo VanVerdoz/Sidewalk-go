@@ -160,16 +160,12 @@ class RequestStokController extends Controller
             ])->withInput();
         }
 
-        $idPermintaan = 'RS-' . now('Asia/Jakarta')->format('YmdHis') . '-' . $penggunaId;
-
         $req = RequestStok::create([
-            'id_permintaan'     => $idPermintaan,
-            'id_cabang'         => (int) $request->cabang_id,
-            'id_raider'         => $penggunaId,
-            'status_permintaan' => 'pending',
-            'keterangan'        => $note,
-            'dibuat_pada'       => now('Asia/Jakarta'),
-            'diperbarui_pada'   => now('Asia/Jakarta'),
+            'cabang_id'         => (int) $request->cabang_id,
+            'raider_id'         => $penggunaId,
+            'status'            => 'pending',
+            'catatan'           => $note,
+            'tanggal'           => now('Asia/Jakarta'),
         ]);
 
         foreach ($request->produk_id as $index => $produkId) {
@@ -178,12 +174,9 @@ class RequestStokController extends Controller
                 continue;
             }
 
-            $idDetail = 'RSD-' . now('Asia/Jakarta')->format('YmdHis') . '-' . $index;
-
             RequestStokDetail::create([
-                'id_detail'     => $idDetail,
-                'id_permintaan' => $req->id_permintaan,
-                'id_produk'     => (int) $produkId,
+                'request_id'    => $req->id,
+                'produk_id'     => (int) $produkId,
                 'jumlah'        => (int) $jumlah,
             ]);
         }

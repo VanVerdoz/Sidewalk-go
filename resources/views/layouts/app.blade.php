@@ -1049,7 +1049,7 @@
                             <div class="aside-card aside-pink">
                                 <div>
                                     <div class="label">Total Request Disetujui (Hari Ini)</div>
-                                    <div class="value">{{ \App\Models\RequestStok::where('status_permintaan','disetujui')->whereDate('dibuat_pada', \Carbon\Carbon::today())->count() }}</div>
+                                    <div class="value">{{ \App\Models\RequestStok::where('status','disetujui')->whereDate('tanggal', \Carbon\Carbon::today())->count() }}</div>
                                 </div>
                                 <div class="icon"><i class="fas fa-check-circle"></i></div>
                             </div>
