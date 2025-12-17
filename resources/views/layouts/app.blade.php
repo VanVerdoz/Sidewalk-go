@@ -67,10 +67,10 @@
             width: 250px;
             background: linear-gradient(180deg, var(--primary) 0%, var(--primary-700) 100%);
             color: white;
-            padding: 20px 0;
+            padding: 0; /* Remove padding to let children handle it */
             position: fixed;
             height: 100vh;
-            overflow-y: auto;
+            overflow: hidden; /* Prevent body scroll, handle in menu */
             box-shadow: 4px 0 16px rgba(0, 0, 0, 0.08);
             z-index: 1000;
             display: flex;
@@ -86,22 +86,35 @@
             pointer-events: none;
             z-index: -1;
         }
-        .sidebar::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none; }
-        .sidebar { scrollbar-width: none; }
+        /* Custom Scrollbar for Sidebar Menu */
+        .sidebar-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
         .dark .sidebar { background: #0c1118; }
 
         .sidebar-logo {
             text-align: center;
             padding: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+            flex-shrink: 0; /* Don't shrink */
         }
 
         .sidebar-logo-circle {
-            width: 100px;
-            height: 100px;
+            width: 80px; /* Slightly smaller for better fit */
+            height: 80px;
             background: rgba(255, 255, 255, 0.18);
             border-radius: 50%;
-            margin: 0 auto 15px;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,12 +124,12 @@
         }
 
         .sidebar-logo-circle i {
-            font-size: 40px;
+            font-size: 32px;
             color: white;
         }
 
         .sidebar-logo h2 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: white;
             letter-spacing: 0.4px;
@@ -124,8 +137,11 @@
 
         .sidebar-menu {
             list-style: none;
-            padding: 0 10px;
-            flex: 1 1 auto;
+            padding: 0 12px;
+            flex: 1; /* Take remaining space */
+            overflow-y: auto; /* Scrollable */
+            overflow-x: hidden;
+            margin-bottom: 10px;
         }
 
         .sidebar-menu li {
@@ -191,6 +207,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.18);
             background: rgba(255,255,255,0.06);
             backdrop-filter: blur(4px);
+            flex-shrink: 0; /* Keep user section fixed height */
         }
         .dark .sidebar-user { border-top: 1px solid rgba(255,255,255,0.08); }
 
