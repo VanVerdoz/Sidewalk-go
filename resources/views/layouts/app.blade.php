@@ -67,10 +67,13 @@
             width: 250px;
             background: linear-gradient(180deg, var(--primary) 0%, var(--primary-700) 100%);
             color: white;
-            padding: 0; /* Remove padding to let children handle it */
+            padding: 0;
             position: fixed;
-            height: 100vh;
-            overflow: hidden; /* Prevent body scroll, handle in menu */
+            top: 0;
+            bottom: 0;
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Mobile viewport height fix */
+            overflow: hidden;
             box-shadow: 4px 0 16px rgba(0, 0, 0, 0.08);
             z-index: 1000;
             display: flex;
@@ -139,7 +142,8 @@
             list-style: none;
             padding: 0 12px;
             flex: 1; /* Take remaining space */
-            overflow-y: auto; /* Scrollable */
+            min-height: 0; /* Important for flex child scrolling */
+            overflow-y: auto;
             overflow-x: hidden;
             margin-bottom: 10px;
         }
