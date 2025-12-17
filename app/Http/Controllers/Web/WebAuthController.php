@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\Pengguna;
 
@@ -29,6 +30,20 @@ class WebAuthController extends Controller
 
         try {
             $credentials = $request->only('username', 'password');
+            
+            // Debugging log
+            Log::info('Login Attempt', ['username' => $credentials['username']]);
+            $user = Pengguna::where('username', $credentials['username'])->first();
+            if ($user) {
+                Log::info('User found', ['id' => $user->id, 'role' => $user->role]);
+                if (Hash::check($credentials['password'], $user->password)) {
+                    Log::info('Password check passed manually');
+                } else {
+                    Log::error('Password check failed manually');
+                }
+            } else {
+                Log::error('User not found by username');
+            }
 
             // Attempt login menggunakan web guard (session-based)
             if (Auth::guard('web')->attempt($credentials)) {

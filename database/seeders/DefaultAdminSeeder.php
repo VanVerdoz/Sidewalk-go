@@ -11,10 +11,10 @@ class DefaultAdminSeeder extends Seeder
     public function run(): void
     {
         // Cek apakah admin sudah ada
-        if (!Pengguna::where('role', 'admin')->exists()) {
+        if (!Pengguna::where('username', 'admin')->exists()) {
             Pengguna::create([
                 'username' => 'admin',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('123456'),
                 'nama_lengkap' => 'Administrator',
                 'role' => 'admin',
                 'status' => 'aktif'
