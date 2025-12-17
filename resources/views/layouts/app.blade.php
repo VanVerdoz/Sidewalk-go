@@ -117,8 +117,8 @@
         }
 
         .sidebar-logo-circle {
-            width: 42px;
-            height: 42px;
+            width: 48px;
+            height: 48px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             margin: 0;
@@ -132,7 +132,7 @@
         }
 
         .sidebar-logo-circle img {
-            width: 24px;
+            width: 28px;
             height: auto;
             object-fit: contain;
         }
@@ -143,7 +143,7 @@
         }
 
         .sidebar-logo h2 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: white;
             letter-spacing: 0.5px;
