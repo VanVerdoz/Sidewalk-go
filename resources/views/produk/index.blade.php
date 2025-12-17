@@ -110,6 +110,8 @@
         border-radius: 20px;
         font-size: 12px;
         font-weight: 500;
+        white-space: nowrap;
+        display: inline-block;
     }
 
     .badge-success {
@@ -162,6 +164,12 @@
         .btn { padding: 8px 12px; font-size: 13px; border-radius: 10px; }
         .btn-sm { padding: 6px 10px; font-size: 12px; }
         .action-buttons { gap: 6px; }
+
+        /* Fix table layout for mobile */
+        table td:nth-child(5) {
+            width: auto !important;
+            min-width: 100px;
+        }
     }
 </style>
 @endpush
