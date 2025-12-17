@@ -107,43 +107,45 @@
 
         .sidebar-logo {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            padding: 24px 20px;
+            padding: 30px 20px;
             margin-bottom: 0;
             flex-shrink: 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
         }
 
         .sidebar-logo-circle {
-            width: 48px;
-            height: 48px;
+            width: 90px;
+            height: 90px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
             backdrop-filter: blur(4px);
             flex-shrink: 0;
         }
 
         .sidebar-logo-circle img {
-            width: 28px;
+            width: 55px;
             height: auto;
             object-fit: contain;
         }
 
         .sidebar-logo-circle i {
-            font-size: 18px;
+            font-size: 32px;
             color: white;
         }
 
         .sidebar-logo h2 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             color: white;
             letter-spacing: 0.5px;
