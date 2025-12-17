@@ -106,46 +106,59 @@
         .dark .sidebar { background: #0c1118; }
 
         .sidebar-logo {
-            text-align: center;
-            padding: 20px;
-            margin-bottom: 10px;
-            flex-shrink: 0; /* Don't shrink */
-        }
-
-        .sidebar-logo-circle {
-            width: 80px; /* Slightly smaller for better fit */
-            height: 80px;
-            background: rgba(255, 255, 255, 0.18);
-            border-radius: 50%;
-            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid rgba(255, 255, 255, 0.28);
-            box-shadow: inset 0 0 18px rgba(255,255,255,0.25), 0 8px 24px rgba(0,0,0,0.12);
-            backdrop-filter: blur(6px);
+            gap: 12px;
+            padding: 24px 20px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo-circle {
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(4px);
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-circle img {
+            width: 24px;
+            height: auto;
+            object-fit: contain;
         }
 
         .sidebar-logo-circle i {
-            font-size: 32px;
+            font-size: 18px;
             color: white;
         }
 
         .sidebar-logo h2 {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 700;
             color: white;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .sidebar-menu {
             list-style: none;
-            padding: 0 12px;
-            flex: 1; /* Take remaining space */
-            min-height: 0; /* Important for flex child scrolling */
+            padding: 15px 12px; /* Add top padding back */
+            flex: 1; 
+            min-height: 0;
             overflow-y: auto;
             overflow-x: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 0;
         }
 
         .sidebar-menu li {
