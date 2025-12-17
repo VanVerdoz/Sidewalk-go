@@ -31,19 +31,26 @@ class WebAuthController extends Controller
         try {
             $credentials = $request->only('username', 'password');
             
-            // Debugging log
-            Log::info('Login Attempt', ['username' => $credentials['username']]);
+            // Debugging to custom file
+            $logMsg = date('Y-m-d H:i:s') . " - Login Attempt\n";
+            $logMsg .= "Input Username: " . $credentials['username'] . "\n";
+            $logMsg .= "Input Password Length: " . strlen($credentials['password']) . "\n";
+            
             $user = Pengguna::where('username', $credentials['username'])->first();
             if ($user) {
-                Log::info('User found', ['id' => $user->id, 'role' => $user->role]);
+                $logMsg .= "User Found: " . $user->id . " | " . $user->role . "\n";
+                $logMsg .= "Stored Hash: " . $user->password . "\n";
                 if (Hash::check($credentials['password'], $user->password)) {
-                    Log::info('Password check passed manually');
+                     $logMsg .= "Hash Check: PASS\n";
                 } else {
-                    Log::error('Password check failed manually');
+                     $logMsg .= "Hash Check: FAIL\n";
+                     $logMsg .= "Hash Make Input: " . Hash::make($credentials['password']) . "\n";
                 }
             } else {
-                Log::error('User not found by username');
+                $logMsg .= "User Not Found\n";
             }
+            
+            file_put_contents(storage_path('logs/debug_auth_custom.log'), $logMsg, FILE_APPEND);
 
             // Attempt login menggunakan web guard (session-based)
             if (Auth::guard('web')->attempt($credentials)) {
