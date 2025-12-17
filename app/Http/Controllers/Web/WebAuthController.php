@@ -31,25 +31,12 @@ class WebAuthController extends Controller
         try {
             $credentials = $request->only('username', 'password');
             
-            // DEBUG LOGGING
-            $logContent = "Time: " . date('Y-m-d H:i:s') . "\n";
-            $logContent .= "Input: " . json_encode($credentials) . "\n";
-
             // Trim whitespace
             $credentials['username'] = trim($credentials['username']);
             $credentials['password'] = trim($credentials['password']);
 
             $user = Pengguna::where('username', $credentials['username'])->first();
             
-            $logContent .= "User Query Result: " . ($user ? "FOUND (ID: {$user->id})" : "NOT FOUND") . "\n";
-            if ($user) {
-                $check = Hash::check($credentials['password'], $user->password);
-                $logContent .= "Hash Check: " . ($check ? "PASS" : "FAIL") . "\n";
-                $logContent .= "Stored Hash: " . $user->password . "\n";
-            }
-            
-            file_put_contents(public_path('login_debug.txt'), $logContent, FILE_APPEND);
-
             $loginSuccess = false;
 
             // 1. Coba login manual (bypass Auth::attempt issues)
