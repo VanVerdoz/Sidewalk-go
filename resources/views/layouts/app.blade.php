@@ -752,7 +752,7 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header { flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+            .header { flex-wrap: wrap; gap: 12px; justify-content: flex-start; padding: 15px 20px; }
             .header-left { display: flex; flex-direction: column; align-items: stretch; gap: 10px; flex: 1 1 100%; }
             .header-left h3 { font-size: 18px; }
             .header-left .subtitle, .header-left .meta { display: none; }
@@ -763,17 +763,76 @@
             .btn-profile-text { display: none; }
             .btn-profile i { font-size: 16px; }
             .btn-menu { display: inline-flex; }
-            .header-title-pill { width: auto; min-width: 0; justify-self: start; }
-            .header-topbar { grid-template-columns: 1fr auto; align-items: center; }
-            .header-actions-right { justify-self: end; flex-wrap: wrap; }
-            .header-hero-row { display: block; }
-            .header-hero { min-height: auto; padding: 10px 12px; margin-bottom: 14px; }
-            .hero-title { font-size: 16px; }
-            .hero-desc { font-size: 11.5px; }
-            .hero-meta { font-size: 10.5px; padding: 4px 8px; }
-            .header-aside-cards { grid-template-rows: none; grid-template-columns: 1fr; height: auto; gap: 14px; margin-top: 4px; }
-            .aside-card { min-height: 80px; padding: 10px 12px; }
-            .aside-card + .aside-card { margin-top: 2px; }
+            
+            /* Header Topbar Optimization */
+            .header-topbar { 
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 10px;
+            }
+            .header-title-pill { 
+                width: auto; 
+                min-width: 0; 
+                flex: 1;
+                padding: 8px 14px;
+                font-size: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .header-actions-right { 
+                justify-self: end; 
+                flex-wrap: nowrap; 
+                gap: 8px !important;
+            }
+            
+            /* Hero Card Optimization */
+            .header-hero-row { display: flex; flex-direction: column; gap: 12px; }
+            .header-hero { 
+                min-height: auto; 
+                padding: 16px; 
+                margin-bottom: 0; 
+                display: block; /* Stack content */
+            }
+            .hero-illustration { 
+                display: none; /* Hide illustration on mobile */
+            }
+            .hero-title { font-size: 16px; margin-bottom: 4px; }
+            .hero-desc { font-size: 12px; margin-bottom: 8px; }
+            .hero-meta { font-size: 11px; padding: 0; margin-top: 0; }
+            
+            /* Aside Cards Side-by-Side */
+            .header-aside-cards { 
+                grid-template-rows: none; 
+                grid-template-columns: 1fr 1fr; /* Side by side */
+                height: auto; 
+                gap: 10px; 
+                margin-top: 0; 
+            }
+            .aside-card { 
+                min-height: 80px; 
+                padding: 12px; 
+                display: flex;
+                flex-direction: column-reverse; /* Value on top of Label? Or Icon separate? */
+                align-items: flex-start;
+                justify-content: space-between;
+                grid-template-columns: 1fr; /* Stack icon and text */
+            }
+            /* Revert grid for internal card layout if needed, but flex is easier */
+            .aside-card {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+            }
+            .aside-card .icon {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            .aside-card .value { font-size: 18px; }
+            .aside-card .label { font-size: 11px; line-height: 1.2; }
+
             .sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.3s;
@@ -793,13 +852,9 @@
             .sidebar-user { position: static; bottom: auto; padding-top: 12px; }
             .sidebar-menu a { padding: 12px 16px; border-radius: 12px; }
 
-            .header {
-                padding: 15px 20px;
-            }
-
             .content {
-                padding: 0;
-                padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+                padding: 20px; /* Reduced padding */
+                padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
             }
 
             .form-row { grid-template-columns: repeat(1, 1fr); }

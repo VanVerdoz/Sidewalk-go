@@ -77,6 +77,28 @@
         overflow: hidden;
     }
 
+    @media (max-width: 768px) {
+        .chart-container {
+            padding: 15px;
+        }
+        .chart-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .stats-grid {
+            gap: 12px;
+            grid-template-columns: 1fr; /* Force 1 column on mobile for full width cards */
+        }
+        .stat-card {
+            padding: 20px;
+        }
+        .stat-card-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+        }
+    }
+
     .chart-title {
         font-size: 18px;
         font-weight: 600;
