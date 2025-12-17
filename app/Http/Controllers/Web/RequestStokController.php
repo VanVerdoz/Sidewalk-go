@@ -105,8 +105,10 @@ class RequestStokController extends Controller
 
         $riwayat = collect();
         if (!is_null($penggunaId)) {
+            $today = now('Asia/Jakarta')->toDateString();
             $riwayat = RequestStok::with(['details.produk', 'cabang'])
                 ->where('id_raider', $penggunaId)
+                ->whereDate('dibuat_pada', $today)
                 ->orderBy('dibuat_pada', 'desc')
                 ->paginate(10);
         }

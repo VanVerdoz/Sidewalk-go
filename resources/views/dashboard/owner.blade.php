@@ -25,24 +25,30 @@
     }
 
     .stat-card {
-        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-        padding: 25px;
-        border-radius: 20px;
+        background: #ff7a2a;
+        padding: 25px 72px 25px 25px;
+        border-radius: 22px;
         color: #ffffff;
-        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.30);
         border: none;
+        position: relative;
+        overflow: hidden;
     }
 
     .stat-card-icon {
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.28);
+        border-radius: 9999px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 15px;
+        margin-bottom: 0;
         color: #ffffff;
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     .stat-card-icon i {
@@ -140,6 +146,7 @@
         <canvas id="salesTrendChart"></canvas>
     </div>
 </div>
+
 @endsection
 
 @push('scripts')

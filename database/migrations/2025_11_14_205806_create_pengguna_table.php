@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('username', 50)->unique('pengguna_username_key');
             $table->string('password');
             $table->string('nama_lengkap', 100);
+            $table->string('role');
+            $table->string('status')->default('aktif');
             $table->timestamp('created_at')->nullable()->useCurrent();
         });
-        DB::statement("alter table \"pengguna\" add column \"role\" role_enum not null");
-        DB::statement("alter table \"pengguna\" add column \"status\" status_enum null default 'aktif'");
     }
 
     /**

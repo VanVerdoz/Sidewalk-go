@@ -37,13 +37,15 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-        color: white;
+        background: #ffffff;
+        color: var(--text);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        box-shadow: var(--shadow-md);
     }
 
     .btn-sm {
@@ -254,29 +256,55 @@
         .header-actions { justify-content: flex-start; }
         .table-container { padding: 16px; border-radius: 16px; }
         .rekap-grid { grid-template-columns: 1fr; }
-        .action-buttons { flex-direction: column; }
-        .action-buttons .btn { width: 100%; justify-content: center; }
+        .action-buttons { flex-direction: row; }
+        .action-buttons .btn { width: auto; justify-content: center; }
     }
     @media (max-width: 640px) {
-        .table thead { display: none; }
-        .table { border: 0; }
-        .table, .table tbody { display: block; width: 100%; }
-        .table tr { display: block; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-sm); padding: 8px; }
-        .table td { display: inline-block; margin: 0 4px 8px; white-space: normal; padding: 8px 10px; border-bottom: 0; font-size: 13px; vertical-align: top; }
-        .table td[data-label="Nama Produk"],
-        .table td[data-label="Deskripsi"],
-        .table td[data-label="Metode Pembayaran"],
-        .table td[data-label="Raider"] { display: none; }
-        .table td[data-label="No"],
-        .table td[data-label="Tanggal"],
-        .table td[data-label="Cabang"] { width: calc(33.33% - 8px); }
-        .table td[data-label="Total Harga"],
-        .table td[data-label="Aksi"] { width: calc(50% - 8px); }
-        .action-buttons { gap: 6px; flex-wrap: nowrap; flex-direction: row; }
-        .action-buttons .btn { width: auto; }
-        .btn-icon { width: 40px; height: 40px; }
-        .table td::before { content: attr(data-label); display: block; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-        .btn-sm { padding: 6px 10px; font-size: 12px; }
+        .table-container { margin: 0; width: 100%; border-radius: 0; padding: 12px; }
+        .rekap-container { margin: 0; width: 100%; border-radius: 0; padding-left: 12px; padding-right: 12px; }
+        .table-container { overflow-x: hidden; }
+        .transaksi-table thead { display: none; }
+        .transaksi-table { border: 0; border-radius: 0; box-shadow: none; background: transparent; overflow: visible !important; }
+        .transaksi-table, .transaksi-table tbody { display: block; width: 100%; }
+        .transaksi-table tr {
+            display: block;
+            gap: 0;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+            padding: 10px 12px;
+            overflow: visible;
+            max-width: 100%;
+        }
+        .transaksi-table td {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            column-gap: 8px;
+            align-items: start;
+            margin: 0 0 8px 0;
+            white-space: normal;
+            word-break: normal;
+            overflow-wrap: break-word;
+            padding: 0;
+            border-bottom: 0;
+            font-size: 12px;
+            line-height: 1.4;
+            vertical-align: top;
+            width: 100%;
+        }
+        .transaksi-table td[data-label="Aksi"] {
+            white-space: nowrap;
+        }
+        .transaksi-table td::before {
+            content: attr(data-label) ": ";
+            font-weight: 600;
+            color: var(--muted);
+        }
+        .action-buttons { display:flex; gap: 8px; flex-wrap: nowrap; align-items: center; }
+        .btn-icon { width: 36px; height: 36px; }
+        .btn-sm { padding: 5px 8px; font-size: 11px; }
     }
     @media (max-width: 480px) {
         .page-title { font-size: 20px; }
@@ -289,7 +317,7 @@
 <div class="page-header">
     <h2 class="page-title">Transaksi Penjualan</h2>
     <div class="header-actions">
-        <?php if(session('user.role') === 'admin'): ?>
+        <?php if(in_array(session('user.role'), ['admin','owner'])): ?>
         <form action="<?php echo e(route('penjualan.index')); ?>" method="GET" style="display:flex; align-items:center; gap:10px;">
             <label for="cabang_id" style="font-size:13px; color: var(--muted);">Pilih Cabang</label>
             <select name="cabang_id" id="cabang_id" onchange="this.form.submit()" style="min-width: 220px;">
@@ -319,7 +347,7 @@
 </div>
 
 <div class="table-container">
-    <?php if(session('user.role') === 'admin'): ?>
+    <?php if(in_array(session('user.role'), ['admin','owner'])): ?>
     <div class="rekap-container" style="margin-bottom: 20px;">
         <?php if(empty($selectedCabangId)): ?>
             <div class="rekap-title">
@@ -389,16 +417,14 @@
     <?php endif; ?>
 
     <?php if($penjualan->count() > 0): ?>
-    <table class="table">
+    <table class="table transaksi-table">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal</th>
                 <th>Cabang</th>
-                <th>Raider</th>
+                <th>Nama Lengkap</th>
                 <th>Metode Pembayaran</th>
                 <th>Nama Produk</th>
-                <th>Deskripsi</th>
                 <th>Total Harga</th>
                 <th>Aksi</th>
             </tr>
@@ -406,27 +432,25 @@
         <tbody>
             <?php $__currentLoopData = $penjualan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php
-                $namaList = $item->detail_penjualan->map(function($detail) {
-                    return $detail->produk->nama_produk ?? null;
-                })->filter()->unique();
+                $produkHargaList = $item->detail_penjualan->map(function($detail) {
+                    $nama = $detail->produk->nama_produk ?? null;
+                    if (!$nama) return null;
+                    return $nama.' (Rp. '.number_format($detail->harga ?? 0, 0, ',', '.').')';
+                })->filter()->values();
             ?>
             <tr>
                 <td data-label="No"><?php echo e($index + 1); ?></td>
-                <td data-label="Tanggal"><?php echo e(\Carbon\Carbon::parse($item->tanggal)->format('d/m/Y')); ?></td>
                 <td data-label="Cabang"><?php echo e($item->cabang->nama_cabang ?? '-'); ?></td>
-                <td data-label="Raider"><?php echo e($item->pengguna->username ?? '-'); ?></td>
+                <td data-label="Nama Lengkap"><?php echo e($item->pengguna->nama_lengkap ?? ($item->pengguna->username ?? '-')); ?></td>
                 <td data-label="Metode Pembayaran"><?php echo e(ucfirst($item->metode_pembayaran ?? '-')); ?></td>
                 <td data-label="Nama Produk">
-                    <?php if($namaList->count() === 0): ?>
+                    <?php if($produkHargaList->count() === 0): ?>
                         -
-                    <?php elseif($namaList->count() === 1): ?>
-                        <?php echo e($namaList->first()); ?>
-
                     <?php else: ?>
-                        Multi Produk
+                        <?php echo e(implode(', ', $produkHargaList->toArray())); ?>
+
                     <?php endif; ?>
                 </td>
-                <td data-label="Deskripsi"><?php echo e($item->keterangan ?? '-'); ?></td>
                 <td data-label="Total Harga">Rp. <?php echo e(number_format($item->total, 0, ',', '.')); ?></td>
                 <td data-label="Aksi">
                     <div class="action-buttons">

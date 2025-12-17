@@ -157,11 +157,11 @@
 	        <label class="form-label">Cabang</label>
 	        <select name="cabang_id" class="form-select" required>
 	            <option value="">-- Pilih Cabang --</option>
-	            <?php $__currentLoopData = $cabang; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-	                <option value="<?php echo e($cb->id); ?>" <?php echo e(old('cabang_id') == $cb->id ? 'selected' : ''); ?>>
-	                    <?php echo e($cb->nama_cabang); ?> (ID: <?php echo e($cb->id); ?>)
-	                </option>
-	            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php $__currentLoopData = $cabang; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($cb->id); ?>" <?php echo e(old('cabang_id') == $cb->id ? 'selected' : ''); ?>>
+                    <?php echo e($cb->nama_cabang); ?> (Alamat: <?php echo e($cb->alamat ?? '-'); ?>)
+                </option>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 	        </select>
 	        <?php $__errorArgs = ['cabang_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');

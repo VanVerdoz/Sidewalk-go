@@ -159,11 +159,11 @@
 	        <label class="form-label">Cabang</label>
 	        <select name="cabang_id" class="form-select" required>
 	            <option value="">-- Pilih Cabang --</option>
-	            @foreach($cabang as $cb)
-	                <option value="{{ $cb->id }}" {{ old('cabang_id') == $cb->id ? 'selected' : '' }}>
-	                    {{ $cb->nama_cabang }} (ID: {{ $cb->id }})
-	                </option>
-	            @endforeach
+                @foreach($cabang as $cb)
+                <option value="{{ $cb->id }}" {{ old('cabang_id') == $cb->id ? 'selected' : '' }}>
+                    {{ $cb->nama_cabang }} (Alamat: {{ $cb->alamat ?? '-' }})
+                </option>
+                @endforeach
 	        </select>
 	        @error('cabang_id')
 	            <div class="form-text" style="color:red;">{{ $message }}</div>

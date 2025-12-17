@@ -25,22 +25,31 @@
     }
 
     .stat-card {
-        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-        padding: 25px;
-        border-radius: 20px;
-        color: white;
-        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        background: #ff7a2a;
+        padding: 25px 72px 25px 25px;
+        border-radius: 22px;
+        color: #ffffff;
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.30);
+        border: none;
+        position: relative;
+        overflow: hidden;
     }
 
     .stat-card-icon {
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.28);
+        border-radius: 9999px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 15px;
+        margin-bottom: 0;
+        color: #ffffff;
+        box-shadow: none;
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     .stat-card-icon i {
@@ -74,24 +83,39 @@
     border: 1px solid var(--border);
 }
 
-.branch-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-}
+    .branch-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 14px;
+        box-shadow: var(--shadow-sm);
+    }
 
-.branch-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-}
+    .branch-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .branch-title span.badge{
+        display:inline-block;
+        padding:6px 10px;
+        border-radius:10px;
+        font-size:12px;
+        background: var(--accent-bg);
+        color: var(--text);
+        border:1px solid var(--border);
+    }
 
-.req-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+    .req-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
 .req-table th, .req-table td {
     padding: 12px 16px;
@@ -117,6 +141,34 @@
         border-radius: 20px;
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border);
+        
+    }
+    .chart-container .form-control {
+        display:flex;
+        align-items:center;
+        gap:10px;
+    }
+    .chart-container select{
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border:1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        min-width: 220px;
+        box-shadow: var(--shadow-sm);
+        transition: all .2s ease;
+    }
+    .chart-container select:focus{
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(255,107,53,0.12);
+    }
+    .chart-container label{
+        font-size:13px;
+        color: var(--muted);
     }
 
     .chart-title {
@@ -138,19 +190,24 @@
         gap: 10px;
     }
     .btn-action {
-        padding: 10px 18px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
+        padding: 12px 18px;
+        border-radius: 999px;
+        border: none;
         cursor: pointer;
         font-size: 14px;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         text-decoration: none;
         background: var(--surface);
         color: var(--text);
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+        transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
     }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
+    .btn-action:active { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,0.11); }
+    .btn-action:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(255,107,53,0.16); }
+    .btn-action i { font-size: 16px; }
     .btn-action-primary { background: linear-gradient(135deg,#ff6b35,#f7931e); color: #fff; }
 
     .alert-item {
@@ -210,8 +267,6 @@
 @endpush
 
 @section('content')
-<h1 class="dashboard-title">Dashboard Kepala Gudang</h1>
-<p class="dashboard-subtitle">Monitoring stok dan inventori produk</p>
 
 <!-- Statistics Cards -->
 <div class="stats-grid">

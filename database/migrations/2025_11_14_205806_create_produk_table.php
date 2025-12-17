@@ -18,9 +18,9 @@ return new class extends Migration
             $table->decimal('harga', 12);
             $table->string('kategori', 50)->nullable();
             $table->text('deskripsi')->nullable(); 
+            $table->string('status')->default('aktif');
             $table->timestamp('created_at')->nullable()->useCurrent();
         });
-        DB::statement("alter table \"produk\" add column \"status\" status_enum null default 'aktif'");
     }
 
     /**

@@ -1,0 +1,290 @@
+<?php $__env->startSection('title', 'Edit Pengguna'); ?>
+
+<?php $__env->startPush('styles'); ?>
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    .form-container {
+        background: var(--surface);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        color: var(--text);
+        max-width: 100%;
+        width: 100%;
+        min-height: calc(100vh - 160px);
+        padding-bottom: 160px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+
+    .form-label .required {
+        color: #ff6b35;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s;
+        background: var(--surface);
+        color: var(--text);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+    }
+
+    .form-control.error {
+        border-color: #f44336;
+    }
+
+    .error-message {
+        color: #f44336;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    select.form-control { cursor: pointer; }
+
+    @media (max-width: 768px) {
+        .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .form-actions { flex-direction: column; gap: 8px; }
+        .form-actions .btn { display: block; width: 100%; }
+        .form-container { padding: 20px; border-radius: 16px; min-height: auto; padding-bottom: 80px; }
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
+</style>
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="page-header">
+    <h2 class="page-title">Edit Pengguna</h2>
+    <a href="<?php echo e(route('pengguna.index')); ?>" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        Kembali
+    </a>
+</div>
+
+<div class="form-container">
+    <form action="<?php echo e(route('pengguna.update', $pengguna->id)); ?>" method="POST">
+        <?php echo csrf_field(); ?>
+        <?php echo method_field('PUT'); ?>
+
+        <div class="form-group">
+            <label class="form-label">
+                Nama Lengkap <span class="required">*</span>
+            </label>
+            <input type="text" name="nama_lengkap" class="form-control <?php $__errorArgs = ['nama_lengkap'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                   value="<?php echo e(old('nama_lengkap', $pengguna->nama_lengkap)); ?>" required>
+            <?php $__errorArgs = ['nama_lengkap'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="error-message"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                Username <span class="required">*</span>
+            </label>
+            <input type="text" name="username" class="form-control <?php $__errorArgs = ['username'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                   value="<?php echo e(old('username', $pengguna->username)); ?>" required>
+            <?php $__errorArgs = ['username'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="error-message"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                Password
+            </label>
+            <input type="password" name="password" class="form-control <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>">
+            <div class="form-hint">Kosongkan jika tidak ingin mengubah password</div>
+            <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="error-message"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                Role <span class="required">*</span>
+            </label>
+            <select name="role" class="form-control <?php $__errorArgs = ['role'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" required>
+                <option value="">Pilih Role</option>
+                <option value="owner" <?php echo e(old('role', $pengguna->role) == 'owner' ? 'selected' : ''); ?>>Owner</option>
+                <option value="admin" <?php echo e(old('role', $pengguna->role) == 'admin' ? 'selected' : ''); ?>>Admin</option>
+                <option value="kepala_gudang" <?php echo e(old('role', $pengguna->role) == 'kepala_gudang' ? 'selected' : ''); ?>>Kepala Gudang</option>
+                <option value="raider" <?php echo e(old('role', $pengguna->role) == 'raider' ? 'selected' : ''); ?>>Raider</option>
+            </select>
+            <?php $__errorArgs = ['role'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="error-message"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                Status <span class="required">*</span>
+            </label>
+            <select name="status" class="form-control <?php $__errorArgs = ['status'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> error <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" required>
+                <option value="active" <?php echo e(old('status', $pengguna->status) == 'active' ? 'selected' : ''); ?>>Aktif</option>
+                <option value="inactive" <?php echo e(old('status', $pengguna->status) == 'inactive' ? 'selected' : ''); ?>>Tidak Aktif</option>
+            </select>
+            <?php $__errorArgs = ['status'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="error-message"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Update
+            </button>
+            <a href="<?php echo e(route('pengguna.index')); ?>" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Batal
+            </a>
+        </div>
+    </form>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views\pengguna\edit.blade.php ENDPATH**/ ?>

@@ -30,29 +30,45 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-        color: white;
+        background: linear-gradient(135deg, #ff7a2a, #f7931e);
+        color: #fff;
+        border: none;
+        border-radius: 999px;
+        box-shadow: 0 10px 24px rgba(255, 107, 53, 0.25);
+        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
     }
 
     .btn-primary:hover {
+        filter: brightness(1.04);
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        box-shadow: 0 12px 28px rgba(255, 107, 53, 0.28);
     }
 
     .btn-sm {
-        padding: 8px 15px;
+        padding: 10px 12px;
         font-size: 13px;
+        border-radius: 999px;
+        border: none;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
     }
+    .btn-sm:hover { transform: translateY(-1.5px); box-shadow: 0 10px 24px rgba(0,0,0,0.10); }
+    .btn-sm i { font-size: 15px; }
 
     .btn-edit {
-        background: #4CAF50;
-        color: white;
+        background: #10b981;
+        color: #fff;
     }
 
     .btn-delete {
-        background: #f44336;
-        color: white;
+        background: #ef4444;
+        color: #fff;
     }
+    .btn-view {
+        background: #1e80ff;
+        color: #fff;
+    }
+    .action-buttons .btn { border: none; }
 
     .table-container {
         background: var(--surface);

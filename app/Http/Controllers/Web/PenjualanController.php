@@ -26,7 +26,7 @@ class PenjualanController extends Controller
                     $q->whereNull('metode_pembayaran')
                       ->orWhere('metode_pembayaran', '!=', 'request_stok');
                 })
-                ->when(!empty($selectedCabangId) && $role === 'admin', function ($q) use ($selectedCabangId) {
+                ->when(!empty($selectedCabangId) && in_array($role, ['admin','owner']), function ($q) use ($selectedCabangId) {
                     $q->where('cabang_id', $selectedCabangId);
                 });
 
@@ -61,10 +61,10 @@ class PenjualanController extends Controller
                 })->sum('jumlah');
             }
 
-            // Rekap harian per cabang (admin)
+            // Rekap harian per cabang (admin & owner)
             $rekapCabangHariIni = collect();
             $grandTotalHariIni = null;
-            if ($role === 'admin') {
+            if (in_array($role, ['admin','owner'])) {
                 if (empty($selectedCabangId)) {
                     $grandTotalHariIni = Penjualan::whereDate('tanggal', today())
                         ->where(function ($q) {

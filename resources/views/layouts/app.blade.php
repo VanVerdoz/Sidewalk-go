@@ -74,6 +74,16 @@
             z-index: 1000;
             display: flex;
             flex-direction: column;
+            isolation: isolate;
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(120px 120px at 50px 80px, rgba(255,255,255,0.18), transparent 60%), radial-gradient(140px 140px at 200px 220px, rgba(255,255,255,0.12), transparent 60%);
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: -1;
         }
         .sidebar::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none; }
         .sidebar { scrollbar-width: none; }
@@ -88,13 +98,15 @@
         .sidebar-logo-circle {
             width: 100px;
             height: 100px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.18);
             border-radius: 50%;
             margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.28);
+            box-shadow: inset 0 0 18px rgba(255,255,255,0.25), 0 8px 24px rgba(0,0,0,0.12);
+            backdrop-filter: blur(6px);
         }
 
         .sidebar-logo-circle i {
@@ -106,6 +118,7 @@
             font-size: 20px;
             font-weight: bold;
             color: white;
+            letter-spacing: 0.4px;
         }
 
         .sidebar-menu {
@@ -115,7 +128,7 @@
         }
 
         .sidebar-menu li {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         .sidebar-menu a {
@@ -124,34 +137,59 @@
             padding: 12px 16px;
             color: white;
             text-decoration: none;
-            border-radius: 15px;
+            border-radius: 16px;
             transition: all 0.3s;
             font-size: 15px;
+            position: relative;
+            will-change: transform, background;
+        }
+        .glass-white {
+            background: rgba(255,255,255,0.20);
+            border: 1px solid rgba(255,255,255,0.28);
+            backdrop-filter: blur(6px);
+            color: var(--text);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+        .dark .glass-white {
+            background: transparent;
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.18);
         }
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(255, 255, 255, 0.18);
-            transform: translateX(4px);
-            box-shadow: var(--shadow-sm);
+            background: rgba(255, 255, 255, 0.20);
+            transform: translateX(3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            backdrop-filter: blur(6px);
         }
-        .sidebar-menu a.active { border-left: 3px solid var(--primary); }
+        .sidebar-menu a.active { border-left: 0; }
         .dark .sidebar-menu a { color: #e5e7eb; }
         .dark .sidebar-menu a:hover,
         .dark .sidebar-menu a.active { background: rgba(255,255,255,0.12); }
-        .dark .sidebar-menu a.active { border-left: 3px solid var(--primary); }
+        .dark .sidebar-menu a.active { border-left: 0; }
 
         .sidebar-menu a i {
             margin-right: 12px;
-            width: 20px;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
             text-align: center;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.18);
+        }
+        .sidebar-menu a.active i,
+        .sidebar-menu a:hover i {
+            background: rgba(255,255,255,0.28);
         }
 
         .sidebar-user {
             position: static;
             margin-top: auto;
             padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(4px);
         }
         .dark .sidebar-user { border-top: 1px solid rgba(255,255,255,0.08); }
 
@@ -165,7 +203,7 @@
         .sidebar-user-avatar {
             width: 45px;
             height: 45px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -229,6 +267,50 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .header-orange {
+            background: #ff7a2a;
+        }
+        .header-orange .theme-group {
+            background: rgba(255,245,235,0.88);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            color: #1b1b18;
+            backdrop-filter: blur(6px);
+        }
+        .header-orange .theme-group .btn {
+            background: transparent;
+            border-color: rgba(0,0,0,0.08);
+            color: #1b1b18;
+        }
+        .header-orange .theme-label {
+            background: transparent;
+            border: none;
+            color: #1b1b18;
+        }
+        .header-orange .btn-profile {
+            background: rgba(255,245,235,0.88);
+            border: 1px solid rgba(0,0,0,0.08);
+            color: #1b1b18;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            backdrop-filter: blur(6px);
+        }
+        .header-orange .header-user {
+            background: rgba(255,245,235,0.88);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            color: #1b1b18;
+            backdrop-filter: blur(6px);
+        }
+        .header-orange .header-user-info h4,
+        .header-orange .header-user-info p {
+            color: #1b1b18;
+        }
+        .header::before {
+            content: none;
         }
 
         .header-left h3 {
@@ -236,6 +318,8 @@
             font-size: 22px;
             font-weight: 700;
             letter-spacing: 0.2px;
+            position: relative;
+            display: inline-block;
         }
         .dark .header-left h3 { color: #ffffff; }
 
@@ -259,19 +343,213 @@
             align-items: center;
             gap: 20px;
         }
+        .header-topbar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .header-title-pill {
+            justify-self: start;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 1px solid rgba(255,255,255,0.28);
+            background: rgba(255,255,255,0.20);
+            backdrop-filter: blur(6px);
+            border-radius: 22px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+            min-width: 260px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .header-title-pill i { color: var(--primary); }
+        .dark .header-title-pill { background: transparent; border-color: rgba(255,255,255,0.18); color: #ffffff; }
+        .theme-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.20);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+        }
+        .theme-group .btn { margin: 0; }
+        .dark .theme-group { background: transparent; border-color: rgba(255,255,255,0.18); }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .header-hero {
+            margin-top: 14px;
+            background: #e05a1a;
+            border-radius: 18px;
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 14px;
+            align-items: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+            border: 1px solid rgba(0,0,0,0.10);
+            color: #fff;
+            width: 100%;
+            margin-right: 0;
+            position: relative;
+            min-height: calc((80px * 2) + 10px);
+        }
+        .header-hero::before {
+            content: none;
+        }
+        .header-hero::after {
+            content: none;
+        }
+        .header-hero-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 14px;
+            align-items: start;
+            width: 100%;
+        }
+        .header-aside-cards {
+            display: grid;
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            height: calc((80px * 2) + 10px);
+        }
+        .aside-card {
+            border-radius: 22px;
+            padding: 12px 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            min-height: 90px;
+            overflow: hidden;
+            position: relative;
+        }
+        .aside-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(120px 120px at 18% 30%, rgba(255,255,255,0.14), transparent 60%),
+                radial-gradient(140px 140px at 76% 28%, rgba(255,255,255,0.10), transparent 60%);
+            pointer-events: none;
+        }
+        .aside-card .label {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+        }
+        .aside-card .value {
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+        }
+        .aside-card .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            box-shadow: inset 0 0 12px rgba(255,255,255,0.22);
+        }
+        .aside-yellow {
+            background: #ff7a2a;
+            color: #ffffff;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .aside-yellow .icon { background: rgba(255,255,255,0.28); }
+        .aside-pink {
+            background: #ff7a2a;
+            color: #ffffff;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .aside-pink .icon { background: rgba(255,255,255,0.28); }
+        .hero-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            margin-bottom: 6px;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        }
+        .hero-header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.95);
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .hero-desc {
+            font-size: 12px;
+            line-height: 1.5;
+            opacity: 0.95;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.22);
+        }
+        .hero-meta {
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            color: #fff;
+            border: none;
+            font-size: 11px;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        }
+        .hero-illustration { display: block; justify-self: end; }
+        
+        @keyframes heroFloat { 0% { transform: translateY(0); } 50% { transform: translateY(6px); } 100% { transform: translateY(0); } }
+        @keyframes steamRise { 0% { opacity: 0; transform: translateY(6px); } 50% { opacity: .9; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-6px); } }
+        .hero-svg { width: 280px; height: 110px; }
+        .hero-svg .float { animation: heroFloat 3.6s ease-in-out infinite; }
+        .hero-svg .steam { animation: steamRise 2.2s ease-in-out infinite; }
+        .hero-person-img { width: 100%; max-width: 320px; height: auto; object-fit: contain; filter: drop-shadow(0 8px 18px rgba(0,0,0,0.25)); animation: personFloat 4.2s ease-in-out infinite; }
+        @keyframes personFloat { 0% { transform: translateY(0); } 50% { transform: translateY(8px); } 100% { transform: translateY(0); } }
+        @keyframes heroBokehMove {
+            0% { background-position: 22% 26%, 62% 24%, 78% 70%; opacity: 1; }
+            50% { background-position: 30% 32%, 56% 30%, 70% 64%; opacity: 0.9; }
+            100% { background-position: 22% 26%, 62% 24%, 78% 70%; opacity: 1; }
+        }
+        @keyframes heroShine {
+            0% { transform: translateX(-120%); }
+            50% { transform: translateX(120%); }
+            100% { transform: translateX(120%); }
+        }
         .btn-profile-text { margin-left: 2px; }
         .theme-label { font-size: 12px; color: var(--muted); padding: 4px 8px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); }
         .dark .theme-label { color: #ffffff; background: transparent; }
         .btn-profile {
             padding: 8px 14px;
             border-radius: 20px;
-            background: var(--accent-bg);
-            color: var(--primary);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(244,91,37,0.15);
+            background: rgba(255,255,255,0.20);
+            color: var(--text);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+            border: 1px solid rgba(255,255,255,0.28);
+            backdrop-filter: blur(6px);
             font-size: 13px;
         }
-        .dark .btn-profile { color: #ffffff; border-color: var(--border); }
+        .dark .btn-profile { background: transparent; color: #ffffff; border-color: rgba(255,255,255,0.18); }
 
         .header-notification {
             position: relative;
@@ -305,9 +583,11 @@
             align-items: center;
             gap: 10px;
             padding: 8px 15px;
-            background: var(--accent-bg);
+            background: rgba(255,255,255,0.20);
             border-radius: 20px;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+            border: 1px solid rgba(255,255,255,0.28);
+            backdrop-filter: blur(6px);
         }
 
         .header-user-avatar {
@@ -471,17 +751,28 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header { flex-wrap: wrap; gap: 12px; }
-            .header-left { display: flex; align-items: center; gap: 10px; }
+            .header { flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+            .header-left { display: flex; flex-direction: column; align-items: stretch; gap: 10px; flex: 1 1 100%; }
             .header-left h3 { font-size: 18px; }
             .header-left .subtitle, .header-left .meta { display: none; }
-            .header-right { gap: 10px; flex-wrap: wrap; }
+            .header-right { display: none; }
             .theme-label { display: none; }
             .header-user-info { display: none; }
             .btn-profile { padding: 8px; }
             .btn-profile-text { display: none; }
             .btn-profile i { font-size: 16px; }
             .btn-menu { display: inline-flex; }
+            .header-title-pill { width: auto; min-width: 0; justify-self: start; }
+            .header-topbar { grid-template-columns: 1fr auto; align-items: center; }
+            .header-actions-right { justify-self: end; flex-wrap: wrap; }
+            .header-hero-row { display: block; }
+            .header-hero { min-height: auto; padding: 10px 12px; margin-bottom: 14px; }
+            .hero-title { font-size: 16px; }
+            .hero-desc { font-size: 11.5px; }
+            .hero-meta { font-size: 10.5px; padding: 4px 8px; }
+            .header-aside-cards { grid-template-rows: none; grid-template-columns: 1fr; height: auto; gap: 14px; margin-top: 4px; }
+            .aside-card { min-height: 80px; padding: 10px 12px; }
+            .aside-card + .aside-card { margin-top: 2px; }
             .sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.3s;
@@ -506,8 +797,8 @@
             }
 
             .content {
-                padding: 20px;
-                padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+                padding: 0;
+                padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             }
 
             .form-row { grid-template-columns: repeat(1, 1fr); }
@@ -534,12 +825,19 @@
             table td:last-child { width: calc(33.33% - 8px); }
             .table-actions, .action-buttons, .req-actions { flex-wrap: nowrap; }
             .table-actions .btn, .action-buttons .btn, .req-actions .btn { width: auto; }
+            .hero-title { font-size: 15px; }
+            .hero-desc { font-size: 11px; }
+            .hero-meta { font-size: 10px; }
+            .aside-card { min-height: 72px; }
         }
         @media (max-width: 480px) {
             .header { padding: 10px 14px; }
             .header-left h3 { font-size: 16px; }
             .btn-small { padding: 6px 8px; font-size: 12px; }
             .header-right { gap: 8px; }
+            .header-aside-cards { gap: 14px; margin-top: 6px; }
+            .aside-card .label { font-size: 12px; }
+            .aside-card .value { font-size: 16px; }
         }
     </style>
     @stack('styles')
@@ -563,7 +861,7 @@
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <div class="sidebar-logo-circle">
-                    <i class="fas fa-coffee"></i>
+                   <img src="{{ asset('images/sw3.png') }}" alt="Logo Sidewalk.Go">
                 </div>
                 <h2>Sidewalk.Go</h2>
             </div>
@@ -592,7 +890,7 @@
 
                 @if(in_array($role, ['owner', 'raider', 'admin']))
                 <li>
-                    <a href="{{ route('penjualan.index') }}" class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }}">
+                    <a href="{{ route('penjualan.index') }}" class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }} {{ (request()->routeIs('dashboard') && ($role ?? '') === 'raider') ? 'glass-white' : '' }}">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Transaksi</span>
                     </a>
@@ -619,7 +917,7 @@
 
                 @if($role === 'raider')
                 <li>
-                    <a href="{{ route('raider.permintaan-stok.create') }}" class="{{ request()->routeIs('raider.permintaan-stok.*') ? 'active' : '' }}">
+                    <a href="{{ route('raider.permintaan-stok.create') }}" class="{{ request()->routeIs('raider.permintaan-stok.*') ? 'active' : '' }} {{ (request()->routeIs('dashboard') && ($role ?? '') === 'raider') ? 'glass-white' : '' }}">
                         <i class="fas fa-box-open"></i>
                         <span>Request Stok</span>
                     </a>
@@ -676,30 +974,90 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
-            <header class="header">
+            <header class="header {{ request()->routeIs('dashboard') ? 'header-orange' : '' }}">
                 <div class="header-left">
                     <button type="button" class="btn btn-toggle btn-small btn-menu" id="menuToggle" aria-label="Buka menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
-                    <h3>Selamat Datang, {{ $user['nama_lengkap'] ?? $user['username'] ?? 'Pengguna' }}</h3>
-                    <div class="subtitle">Sidewalk.Go — Kelola stok dan transaksi harian dengan mudah</div>
-                    <div class="meta">{{ now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }} · Peran: {{ ucfirst(str_replace('_', ' ', $role)) }}</div>
-                </div>
-                <div class="header-right">
-                    <button type="button" class="btn btn-toggle btn-small" id="themeToggle" title="Mode tampilan (Gelap/Terang)" aria-label="Toggle mode"><i class="fas fa-moon"></i></button>
-                    <span id="themeLabel" class="theme-label">Gelap</span>
-                    <a href="{{ route('profile.show') }}" class="btn btn-profile">
-                        <i class="fas fa-user-cog"></i>
-                        <span class="btn-profile-text">Profil</span>
-                    </a>
-                    <div class="header-user">
-                        <div class="header-user-avatar">
-                            <i class="fas fa-user"></i>
+                    <div class="header-topbar">
+                        <div class="header-title-pill">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard {{ ucfirst(str_replace('_', ' ', $role)) }}</span>
                         </div>
-                        <div class="header-user-info">
-                            <h4>{{ $user['nama_lengkap'] ?? $user['username'] ?? 'Admin' }}</h4>
-                            <p>{{ ucfirst(str_replace('_', ' ', $role)) }}</p>
+                        <div class="header-actions-right" style="display:flex; align-items:center; gap:10px; justify-self:end;">
+                            <div class="theme-group">
+                                <button type="button" class="btn btn-toggle btn-small" id="themeToggle" title="Mode tampilan (Gelap/Terang)" aria-label="Toggle mode"><i class="fas fa-moon"></i></button>
+                                <span id="themeLabel" class="theme-label">Gelap</span>
+                            </div>
+                            <a href="{{ route('profile.show') }}" class="btn btn-profile">
+                                <i class="fas fa-user-cog"></i>
+                                <span class="btn-profile-text">Profil</span>
+                            </a>
+                            <div class="header-user">
+                                <div class="header-user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="header-user-info">
+                                    <h4>{{ $user['nama_lengkap'] ?? $user['username'] ?? 'Admin' }}</h4>
+                                    <p>{{ ucfirst(str_replace('_', ' ', $role)) }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    @if(request()->routeIs('dashboard'))
+                    <div class="header-hero-row">
+                        <div class="header-hero">
+                        <div class="hero-left">
+                            <div class="hero-title">Hi {{ $user['nama_lengkap'] ?? $user['username'] ?? 'Pengguna' }}, Selamat Datang Kembali!</div>
+                            <div class="hero-desc">Pantau transaksi harian, stok produk, dan produk terlaris. Kendalikan performa cabang dengan insight yang ringkas dan cepat.</div>
+                            <div class="hero-meta">
+                                <span>{{ now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
+                                <span>Peran: {{ ucfirst(str_replace('_', ' ', $role)) }}</span>
+                            </div>
+                        </div>
+                        <div class="hero-illustration">
+                            <img src="{{ asset('images/Hero.png') }}" alt="Ilustrasi pekerja" class="hero-person-img">
+                        </div>
+                        </div>
+                            <div class="header-aside-cards">
+                            <div class="aside-card aside-yellow">
+                                <div>
+                                    @if(($role ?? '') === 'kepala_gudang')
+                                        <div class="label">Total Permintaan Stok Rider</div>
+                                        <div class="value">{{ \App\Models\RequestStok::count() }}</div>
+                                    @elseif(($role ?? '') === 'raider')
+                                        <div class="label">Total Request Stok Pending</div>
+                                        <div class="value">{{ \App\Models\RequestStok::where('status_permintaan','pending')->where('id_raider', session('user.id'))->count() }}</div>
+                                    @elseif(($role ?? '') === 'admin')
+                                        <div class="label">Total Laporan Keuangan</div>
+                                        <div class="value">{{ \App\Models\LaporanKeuangan::count() }}</div>
+                                    @else
+                                        <div class="label">Total Pengguna</div>
+                                        <div class="value">{{ \App\Models\Pengguna::count() }}</div>
+                                    @endif
+                                </div>
+                                <div class="icon">
+                                    @if(($role ?? '') === 'kepala_gudang')
+                                        <i class="fas fa-box-open"></i>
+                                    @elseif(($role ?? '') === 'raider')
+                                        <i class="fas fa-hourglass-half"></i>
+                                    @elseif(($role ?? '') === 'admin')
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    @else
+                                        <i class="fas fa-users"></i>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="aside-card aside-pink">
+                                <div>
+                                    <div class="label">Total Request Disetujui (Hari Ini)</div>
+                                    <div class="value">{{ \App\Models\RequestStok::where('status_permintaan','disetujui')->whereDate('dibuat_pada', \Carbon\Carbon::today())->count() }}</div>
+                                </div>
+                                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                <div class="header-right"></div>
             </header>
 
             <!-- Content -->
@@ -771,6 +1129,7 @@
                 syncIcon();
             });
         })();
+        
         (function(){
             var menuBtn = document.getElementById('menuToggle');
             var sidebar = document.querySelector('.sidebar');

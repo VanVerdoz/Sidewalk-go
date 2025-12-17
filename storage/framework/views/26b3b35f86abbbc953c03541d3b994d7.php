@@ -138,6 +138,7 @@
         <canvas id="salesTrendChart"></canvas>
     </div>
 </div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
