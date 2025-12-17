@@ -31,26 +31,29 @@ class WebAuthController extends Controller
         try {
             $credentials = $request->only('username', 'password');
             
-            // Debugging to custom file
-            $logMsg = date('Y-m-d H:i:s') . " - Login Attempt\n";
-            $logMsg .= "Input Username: " . $credentials['username'] . "\n";
-            $logMsg .= "Input Password Length: " . strlen($credentials['password']) . "\n";
+            // Debugging log (standard)
+            Log::info('Login Attempt', ['username' => $credentials['username']]);
             
             $user = Pengguna::where('username', $credentials['username'])->first();
             if ($user) {
-                $logMsg .= "User Found: " . $user->id . " | " . $user->role . "\n";
-                $logMsg .= "Stored Hash: " . $user->password . "\n";
+                // Log user details for debugging
+                Log::info('User found in DB', [
+                    'id' => $user->id, 
+                    'role' => $user->role,
+                    'stored_hash' => $user->password
+                ]);
+                
                 if (Hash::check($credentials['password'], $user->password)) {
-                     $logMsg .= "Hash Check: PASS\n";
+                    Log::info('Hash check PASSED manually');
                 } else {
-                     $logMsg .= "Hash Check: FAIL\n";
-                     $logMsg .= "Hash Make Input: " . Hash::make($credentials['password']) . "\n";
+                    Log::error('Hash check FAILED manually', [
+                        'input_password' => $credentials['password'],
+                        'new_hash_would_be' => Hash::make($credentials['password'])
+                    ]);
                 }
             } else {
-                $logMsg .= "User Not Found\n";
+                Log::error('User NOT found in DB', ['username' => $credentials['username']]);
             }
-            
-            file_put_contents(storage_path('logs/debug_auth_custom.log'), $logMsg, FILE_APPEND);
 
             // Attempt login menggunakan web guard (session-based)
             if (Auth::guard('web')->attempt($credentials)) {
