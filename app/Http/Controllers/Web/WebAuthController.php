@@ -31,22 +31,20 @@ class WebAuthController extends Controller
         try {
             $credentials = $request->only('username', 'password');
             
-            // Debugging log
-            Log::info('Login Attempt', ['username' => $credentials['username']]);
             $user = Pengguna::where('username', $credentials['username'])->first();
-            if ($user) {
-                Log::info('User found', ['id' => $user->id, 'role' => $user->role]);
-                if (Hash::check($credentials['password'], $user->password)) {
-                    Log::info('Password check passed manually');
-                } else {
-                    Log::error('Password check failed manually');
-                }
-            } else {
-                Log::error('User not found by username');
+            $loginSuccess = false;
+
+            // 1. Coba login manual (bypass Auth::attempt issues)
+            if ($user && Hash::check($credentials['password'], $user->password)) {
+                Auth::guard('web')->login($user);
+                $loginSuccess = true;
+            } 
+            // 2. Fallback ke standard Auth::attempt
+            elseif (Auth::guard('web')->attempt($credentials)) {
+                $loginSuccess = true;
             }
 
-            // Attempt login menggunakan web guard (session-based)
-            if (Auth::guard('web')->attempt($credentials)) {
+            if ($loginSuccess) {
                 $pengguna = Auth::guard('web')->user();
 
                 // Cek status user
