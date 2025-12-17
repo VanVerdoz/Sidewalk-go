@@ -4,7 +4,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
     'env' => env('APP_ENV', 'local'),
-    'debug' => (bool) env('APP_DEBUG', true),
+    'debug' => true,
     'url' => env('APP_URL', 'http://localhost'),
     'timezone' => 'Asia/Jakarta',
     'locale' => 'en',
