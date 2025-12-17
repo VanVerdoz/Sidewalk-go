@@ -27,42 +27,40 @@ class DashboardController extends Controller
             $normalized = strtolower(str_replace(['-', ' '], '_', (string) $role));
 
             // Route ke dashboard sesuai role (lebih toleran terhadap variasi penamaan)
+            $view = null;
             switch ($normalized) {
                 case 'owner':
-                    return $this->ownerDashboard();
+                    $view = $this->ownerDashboard();
+                    break;
                 case 'kepala_gudang':
                 case 'kepalagudang':
                 case 'gudang':
-                    return $this->kepalaGudangDashboard();
+                    $view = $this->kepalaGudangDashboard();
+                    break;
                 case 'raider':
-                    return $this->raiderDashboard();
+                    $view = $this->raiderDashboard();
+                    break;
                 case 'admin':
-                    return $this->adminDashboard();
+                    $view = $this->adminDashboard();
+                    break;
                 default:
                     // Heuristik: jika string mengandung 'gudang', arahkan ke dashboard kepala gudang
                     if (strpos($normalized, 'gudang') !== false) {
-                        return $this->kepalaGudangDashboard();
+                        $view = $this->kepalaGudangDashboard();
+                    } else {
+                        $view = $this->defaultDashboard();
                     }
-                    return $this->defaultDashboard();
             }
-        } catch (\Exception $e) {
-            // DEBUG: Force show error on screen
-            die("<h1>Error Dashboard:</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>");
-            
-            /*
-            Log::error('Dashboard error: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
 
-            // Return view with empty data
-            return view('dashboard.index', [
-                'totalPenjualan' => 0,
-                'stokTersedia' => 0,
-                'transaksiHarian' => 0,
-                'chartLabels' => ['Error loading data'],
-                'chartData' => [0],
-                'role' => session('user.role') ?? 'guest'
-            ]);
-            */
+            // Force render to catch view errors
+            if ($view instanceof \Illuminate\View\View) {
+                return $view->render();
+            }
+            return $view;
+
+        } catch (\Throwable $e) {
+            // DEBUG: Force show error on screen
+            die("<h1>Error Dashboard (Caught):</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>");
         }
     }
 
