@@ -111,7 +111,7 @@ class DashboardController extends Controller
                   ->orWhere('metode_pembayaran', '!=', 'request_stok');
             })
             ->selectRaw('DATE(tanggal) as tanggal, SUM(total) as total')
-            ->groupBy('tanggal')
+            ->groupBy(DB::raw('DATE(tanggal)'))
             ->orderBy('tanggal', 'asc')
             ->get();
 
@@ -294,7 +294,7 @@ class DashboardController extends Controller
                   ->orWhere('metode_pembayaran', '!=', 'request_stok');
             })
             ->selectRaw('DATE(tanggal) as tanggal, SUM(total) as total')
-            ->groupBy('tanggal')
+            ->groupBy(DB::raw('DATE(tanggal)'))
             ->orderBy('tanggal', 'asc')
             ->get();
 
