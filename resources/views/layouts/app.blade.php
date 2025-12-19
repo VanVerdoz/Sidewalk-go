@@ -1117,7 +1117,7 @@
                                         <div class="value">{{ \App\Models\RequestStok::count() }}</div>
                                     @elseif(($role ?? '') === 'raider')
                                         <div class="label">Total Request Stok Pending</div>
-                                        <div class="value">{{ \App\Models\RequestStok::where('status_permintaan','pending')->where('id_raider', session('user.id'))->count() }}</div>
+                                        <div class="value">{{ \App\Models\RequestStok::where('status','pending')->where('raider_id', session('user.id'))->count() }}</div>
                                     @elseif(($role ?? '') === 'admin')
                                         <div class="label">Total Laporan Keuangan</div>
                                         <div class="value">{{ \App\Models\LaporanKeuangan::count() }}</div>
