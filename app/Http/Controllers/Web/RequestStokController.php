@@ -14,73 +14,93 @@ class RequestStokController extends Controller
 {
     public function index()
     {
-        if (session('user.role') !== 'kepala_gudang') {
-            abort(403);
+        try {
+            if (session('user.role') !== 'kepala_gudang') {
+                abort(403);
+            }
+
+            $cabangList = RequestStok::select('cabang_id')
+                ->groupBy('cabang_id')
+                ->get()
+                ->map(function ($row) {
+                    $cabang = Cabang::find($row->cabang_id);
+                    $pendingCount = RequestStok::where('cabang_id', (int) $row->cabang_id)
+                        ->where('status', 'pending')
+                        ->count();
+                    $riderCount = RequestStok::where('cabang_id', (int) $row->cabang_id)
+                        ->select('raider_id')->groupBy('raider_id')->count();
+                    return [
+                        'cabang' => $cabang,
+                        'pending' => $pendingCount,
+                        'riders' => $riderCount,
+                    ];
+                });
+
+            return response(view('kepala-gudang.permintaan-stok', compact('cabangList'))->render());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Index Error: ' . $e->getMessage());
+            return response("<h1>ERROR CAUGHT IN Index</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>", 200);
         }
-
-        $cabangList = RequestStok::select('cabang_id')
-            ->groupBy('cabang_id')
-            ->get()
-            ->map(function ($row) {
-                $cabang = Cabang::find($row->cabang_id);
-                $pendingCount = RequestStok::where('cabang_id', (int) $row->cabang_id)
-                    ->where('status', 'pending')
-                    ->count();
-                $riderCount = RequestStok::where('cabang_id', (int) $row->cabang_id)
-                    ->select('raider_id')->groupBy('raider_id')->count();
-                return [
-                    'cabang' => $cabang,
-                    'pending' => $pendingCount,
-                    'riders' => $riderCount,
-                ];
-            });
-
-        return view('kepala-gudang.permintaan-stok', compact('cabangList'));
     }
 
     public function cabangView($cabangId)
     {
-        if (session('user.role') !== 'kepala_gudang') {
-            abort(403);
+        try {
+            if (session('user.role') !== 'kepala_gudang') {
+                abort(403);
+            }
+
+            $cabang = \App\Models\Cabang::findOrFail($cabangId);
+            $permintaan = RequestStok::with(['raider', 'details.produk'])
+                ->where('cabang_id', (int) $cabangId)
+                ->orderBy('tanggal', 'desc')
+                ->paginate(20);
+
+            return response(view('kepala-gudang.permintaan.cabang', compact('cabang', 'permintaan'))->render());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('CabangView Error: ' . $e->getMessage());
+            return response("<h1>ERROR CAUGHT IN CabangView</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>", 200);
         }
-
-        $cabang = \App\Models\Cabang::findOrFail($cabangId);
-        $permintaan = RequestStok::with(['raider', 'details.produk'])
-            ->where('cabang_id', (int) $cabangId)
-            ->orderBy('tanggal', 'desc')
-            ->paginate(20);
-
-        return view('kepala-gudang.permintaan.cabang', compact('cabang', 'permintaan'));
     }
 
     public function riderView($cabangId, $raiderId)
     {
-        if (session('user.role') !== 'kepala_gudang') {
-            abort(403);
+        try {
+            if (session('user.role') !== 'kepala_gudang') {
+                abort(403);
+            }
+
+            $cabang = \App\Models\Cabang::findOrFail($cabangId);
+            $raider = \App\Models\Pengguna::findOrFail($raiderId);
+
+            $permintaan = RequestStok::with(['details.produk'])
+                ->where('cabang_id', (int) $cabangId)
+                ->where('raider_id', (int) $raiderId)
+                ->orderBy('tanggal', 'desc')
+                ->get();
+
+            return response(view('kepala-gudang.permintaan.rider', compact('cabang', 'raider', 'permintaan'))->render());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('RiderView Error: ' . $e->getMessage());
+            return response("<h1>ERROR CAUGHT IN RiderView</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>", 200);
         }
-
-        $cabang = \App\Models\Cabang::findOrFail($cabangId);
-        $raider = \App\Models\Pengguna::findOrFail($raiderId);
-
-        $permintaan = RequestStok::with(['details.produk'])
-            ->where('cabang_id', (int) $cabangId)
-            ->where('raider_id', (int) $raiderId)
-            ->orderBy('tanggal', 'desc')
-            ->get();
-
-        return view('kepala-gudang.permintaan.rider', compact('cabang', 'raider', 'permintaan'));
     }
 
     public function detailView($permintaanId)
     {
-        if (session('user.role') !== 'kepala_gudang') {
-            abort(403);
+        try {
+            if (session('user.role') !== 'kepala_gudang') {
+                abort(403);
+            }
+
+            // PK is 'id', not 'id_permintaan'
+            $req = RequestStok::with(['details.produk', 'cabang', 'raider'])->where('id', $permintaanId)->firstOrFail();
+
+            return response(view('kepala-gudang.permintaan.detail', compact('req'))->render());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('DetailView Error: ' . $e->getMessage());
+            return response("<h1>ERROR CAUGHT IN DetailView</h1><p>" . $e->getMessage() . "</p><pre>" . $e->getTraceAsString() . "</pre>", 200);
         }
-
-        // PK is 'id', not 'id_permintaan'
-        $req = RequestStok::with(['details.produk', 'cabang', 'raider'])->where('id', $permintaanId)->firstOrFail();
-
-        return view('kepala-gudang.permintaan.detail', compact('req'));
     }
 
     public function create()
