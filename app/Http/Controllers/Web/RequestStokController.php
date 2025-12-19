@@ -18,16 +18,16 @@ class RequestStokController extends Controller
             abort(403);
         }
 
-        $cabangList = RequestStok::select('id_cabang')
-            ->groupBy('id_cabang')
+        $cabangList = RequestStok::select('cabang_id')
+            ->groupBy('cabang_id')
             ->get()
             ->map(function ($row) {
-                $cabang = Cabang::find($row->id_cabang);
-                $pendingCount = RequestStok::where('id_cabang', (int) $row->id_cabang)
-                    ->where('status_permintaan', 'pending')
+                $cabang = Cabang::find($row->cabang_id);
+                $pendingCount = RequestStok::where('cabang_id', (int) $row->cabang_id)
+                    ->where('status', 'pending')
                     ->count();
-                $riderCount = RequestStok::where('id_cabang', (int) $row->id_cabang)
-                    ->select('id_raider')->groupBy('id_raider')->count();
+                $riderCount = RequestStok::where('cabang_id', (int) $row->cabang_id)
+                    ->select('raider_id')->groupBy('raider_id')->count();
                 return [
                     'cabang' => $cabang,
                     'pending' => $pendingCount,
@@ -46,8 +46,8 @@ class RequestStokController extends Controller
 
         $cabang = \App\Models\Cabang::findOrFail($cabangId);
         $permintaan = RequestStok::with(['raider', 'details.produk'])
-            ->where('id_cabang', (int) $cabangId)
-            ->orderBy('dibuat_pada', 'desc')
+            ->where('cabang_id', (int) $cabangId)
+            ->orderBy('tanggal', 'desc')
             ->paginate(20);
 
         return view('kepala-gudang.permintaan.cabang', compact('cabang', 'permintaan'));
@@ -63,9 +63,9 @@ class RequestStokController extends Controller
         $raider = \App\Models\Pengguna::findOrFail($raiderId);
 
         $permintaan = RequestStok::with(['details.produk'])
-            ->where('id_cabang', (int) $cabangId)
-            ->where('id_raider', (int) $raiderId)
-            ->orderBy('dibuat_pada', 'desc')
+            ->where('cabang_id', (int) $cabangId)
+            ->where('raider_id', (int) $raiderId)
+            ->orderBy('tanggal', 'desc')
             ->get();
 
         return view('kepala-gudang.permintaan.rider', compact('cabang', 'raider', 'permintaan'));
@@ -77,10 +77,12 @@ class RequestStokController extends Controller
             abort(403);
         }
 
-        $req = RequestStok::with(['details.produk', 'cabang', 'raider'])->where('id_permintaan', $permintaanId)->firstOrFail();
+        // PK is 'id', not 'id_permintaan'
+        $req = RequestStok::with(['details.produk', 'cabang', 'raider'])->where('id', $permintaanId)->firstOrFail();
 
         return view('kepala-gudang.permintaan.detail', compact('req'));
     }
+
     public function create()
     {
         if (session('user.role') !== 'raider') {
@@ -107,9 +109,9 @@ class RequestStokController extends Controller
         if (!is_null($penggunaId)) {
             $today = now('Asia/Jakarta')->toDateString();
             $riwayat = RequestStok::with(['details.produk', 'cabang'])
-                ->where('id_raider', $penggunaId)
-                ->whereDate('dibuat_pada', $today)
-                ->orderBy('dibuat_pada', 'desc')
+                ->where('raider_id', $penggunaId)
+                ->whereDate('tanggal', $today)
+                ->orderBy('tanggal', 'desc')
                 ->paginate(10);
         }
 
@@ -191,17 +193,17 @@ class RequestStokController extends Controller
         }
 
         $req = RequestStok::findOrFail($id);
-        $note = trim((string) $req->keterangan);
+        $note = trim((string) $req->catatan);
         if ($note !== '') {
             $note .= ' | Disetujui Kepala Gudang pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');
         } else {
             $note = 'Disetujui Kepala Gudang pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');
         }
 
-        $req->keterangan = $note;
-        $req->status_permintaan = 'disetujui';
-        $req->disetujui_oleh = (int) (session('user.id'));
-        $req->waktu_disetujui = now('Asia/Jakarta');
+        $req->catatan = $note;
+        $req->status = 'disetujui';
+        // $req->disetujui_oleh = (int) (session('user.id')); // Column not exists
+        // $req->waktu_disetujui = now('Asia/Jakarta'); // Column not exists
         $req->save();
 
         return back()->with('success', 'Permintaan stok disetujui');
@@ -214,17 +216,17 @@ class RequestStokController extends Controller
         }
 
         $req = RequestStok::findOrFail($id);
-        $note = trim((string) $req->keterangan);
+        $note = trim((string) $req->catatan);
         if ($note !== '') {
             $note .= ' | Status diubah ke pending pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');
         } else {
             $note = 'Status diubah ke pending pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');
         }
 
-        $req->keterangan = $note;
-        $req->status_permintaan = 'pending';
-        $req->disetujui_oleh = null;
-        $req->waktu_disetujui = null;
+        $req->catatan = $note;
+        $req->status = 'pending';
+        // $req->disetujui_oleh = null;
+        // $req->waktu_disetujui = null;
         $req->save();
 
         return back()->with('success', 'Permintaan stok dikembalikan ke status pending');
@@ -237,7 +239,8 @@ class RequestStokController extends Controller
         }
 
         $req = RequestStok::findOrFail($id);
-        RequestStokDetail::where('id_permintaan', $req->id_permintaan)->delete();
+        // PK is id, details fk is request_id
+        RequestStokDetail::where('request_id', $req->id)->delete();
         $req->delete();
 
         return back()->with('success', 'Permintaan stok dihapus');
@@ -250,17 +253,17 @@ class RequestStokController extends Controller
         }
 
         $req = RequestStok::findOrFail($id);
-        $note = trim((string) $req->keterangan);
+        $note = trim((string) $req->catatan);
         if ($note !== '') {
             $note .= ' | Ditolak pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');
         } else {
             $note = 'Ditolak pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');
         }
 
-        $req->keterangan = $note;
-        $req->status_permintaan = 'ditolak';
-        $req->disetujui_oleh = null;
-        $req->waktu_disetujui = null;
+        $req->catatan = $note;
+        $req->status = 'ditolak';
+        // $req->disetujui_oleh = null;
+        // $req->waktu_disetujui = null;
         $req->save();
 
         return back()->with('success', 'Permintaan stok ditolak');

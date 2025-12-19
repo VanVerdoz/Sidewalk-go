@@ -248,7 +248,7 @@
                         $produkPertama = optional($firstDetail->produk)->nama_produk;
                         $detailCount = $req->details->count();
                         $totalQty = $req->details->sum('jumlah');
-                        $st = $req->status_permintaan ?? 'pending';
+                        $st = $req->status ?? 'pending';
                     @endphp
                     <tr>
                         <td data-label="No">{{ $loop->iteration }}</td>
@@ -260,7 +260,7 @@
                             @endif
                         </td>
                         <td data-label="Jumlah">{{ number_format($totalQty ?? 0, 0, ',', '.') }} unit</td>
-                        <td data-label="Tanggal">{{ \Carbon\Carbon::parse($req->dibuat_pada)->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
+                        <td data-label="Tanggal">{{ \Carbon\Carbon::parse($req->tanggal)->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
                         <td data-label="Status">
                             <span class="status-badge {{ $st === 'disetujui' ? 'status-disetujui' : 'status-pending' }}">{{ ucfirst($st) }}</span>
                         </td>

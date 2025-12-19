@@ -56,20 +56,20 @@
                 @php
                     $namaProduk = optional(optional($req->details->first())->produk)->nama_produk ?? '-';
                     $jumlah = $req->details->sum('jumlah');
-                    $status = $req->status_permintaan ?? 'pending';
+                    $status = $req->status ?? 'pending';
                 @endphp
                 <tr>
                     <td data-label="Raider">{{ ($raider->nama_lengkap ?? $raider->username) }} @if(!empty($raider->username)) ({{ $raider->username }}) @endif</td>
                     <td data-label="Produk">{{ $namaProduk }}</td>
                     <td data-label="Jumlah">{{ number_format($jumlah,0,',','.') }}</td>
-                    <td data-label="Tanggal">{{ \Carbon\Carbon::parse($req->dibuat_pada)->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
+                    <td data-label="Tanggal">{{ \Carbon\Carbon::parse($req->tanggal)->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
                     <td data-label="Aksi">
                         <div class="actions">
-                            <form action="{{ route('kepala.permintaan-stok.approve', $req->id_permintaan) }}" method="POST">
+                            <form action="{{ route('kepala.permintaan-stok.approve', $req->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-primary btn-xs"><i class="fas fa-check"></i> ACC</button>
                             </form>
-                            <form action="{{ route('kepala.permintaan-stok.pending', $req->id_permintaan) }}" method="POST">
+                            <form action="{{ route('kepala.permintaan-stok.pending', $req->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-secondary btn-xs"><i class="fas fa-clock"></i> Pending</button>
                             </form>

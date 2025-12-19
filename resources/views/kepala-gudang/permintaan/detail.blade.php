@@ -40,18 +40,18 @@
         </div>
         <div class="item">
             <div class="label">Tanggal permintaan</div>
-            <div class="value">{{ \Carbon\Carbon::parse($req->dibuat_pada)->format('d/m/Y H:i') }}</div>
+            <div class="value">{{ \Carbon\Carbon::parse($req->tanggal)->format('d/m/Y H:i') }}</div>
         </div>
         <div class="item">
             <div class="label">Status</div>
-            <div class="value">{{ ucfirst($req->status_permintaan ?? 'pending') }}</div>
+            <div class="value">{{ ucfirst($req->status ?? 'pending') }}</div>
         </div>
     </div>
 
     <div class="grid" style="margin-top:12px;">
         <div class="item" style="grid-column: 1 / -1;">
             <div class="label">Catatan Rider</div>
-            <div class="value">{{ $req->keterangan ?? '-' }}</div>
+            <div class="value">{{ $req->catatan ?? '-' }}</div>
         </div>
     </div>
 
@@ -67,11 +67,11 @@
     </div>
 
     <div class="actions">
-        <form action="{{ route('kepala.permintaan-stok.approve', $req->id_permintaan) }}" method="POST">
+        <form action="{{ route('kepala.permintaan-stok.approve', $req->id) }}" method="POST">
             @csrf
             <button type="submit" class="btn btn-approve"><i class="fas fa-check"></i> Setujui</button>
         </form>
-        <form action="{{ route('kepala.permintaan-stok.reject', $req->id_permintaan) }}" method="POST">
+        <form action="{{ route('kepala.permintaan-stok.reject', $req->id) }}" method="POST">
             @csrf
             <button type="submit" class="btn btn-reject"><i class="fas fa-times"></i> Tolak</button>
         </form>

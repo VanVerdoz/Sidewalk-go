@@ -60,7 +60,7 @@
                 @php
                     $produkNama = optional(optional($req->details->first())->produk)->nama_produk ?? '-';
                     $jumlah = $req->details->sum('jumlah');
-                    $status = $req->status_permintaan ?? 'pending';
+                    $status = $req->status ?? 'pending';
                     $raiderObj = optional($req->raider);
                     $raiderNama = ($raiderObj->nama_lengkap ?? $raiderObj->username ?? '-') . (isset($raiderObj->username) ? ' (' . $raiderObj->username . ')' : '');
                 @endphp
@@ -68,21 +68,21 @@
                     <td data-label="Raider">{{ $raiderNama }}</td>
                     <td data-label="Produk">{{ $produkNama }}</td>
                     <td data-label="Jumlah">{{ number_format($jumlah,0,',','.') }}</td>
-                    <td data-label="Tanggal">{{ \Carbon\Carbon::parse($req->dibuat_pada)->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
+                    <td data-label="Tanggal">{{ \Carbon\Carbon::parse($req->tanggal)->timezone('Asia/Jakarta')->format('d/m/Y H:i') }} WIB</td>
                     <td data-label="Aksi">
                         <div class="actions">
-                            <form action="{{ route('kepala.permintaan-stok.approve', $req->id_permintaan) }}" method="POST">
+                            <form action="{{ route('kepala.permintaan-stok.approve', $req->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-primary btn-xs"><i class="fas fa-check"></i> ACC</button>
                             </form>
-                            <form action="{{ route('kepala.permintaan-stok.pending', $req->id_permintaan) }}" method="POST">
+                            <form action="{{ route('kepala.permintaan-stok.pending', $req->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-secondary btn-xs"><i class="fas fa-clock"></i> Pending</button>
                             </form>
                         </div>
                     </td>
                     <td data-label="Status">
-                        @php $st = $req->status_permintaan ?? 'pending'; @endphp
+                        @php $st = $req->status ?? 'pending'; @endphp
                         @if($st === 'disetujui')
                             <span class="status-badge status-acc"><i class="fas fa-check"></i> ACC</span>
                         @else
