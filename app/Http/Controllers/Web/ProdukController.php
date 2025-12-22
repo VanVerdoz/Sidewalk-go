@@ -150,18 +150,15 @@ class ProdukController extends Controller
             abort(403);
         }
         $produk = Produk::findOrFail($id);
-        $produk->delete();
 
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus');
-    }
-}
-
-
-try {
-                 dihapus');
+        try {
+            $produk->delete();
+            return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus');
         } catch (QueryException $e) {
             if ($e->getCode() == '23503') {
-                return redirect()->back()->with('error','Prouk tdak dapat dius karena sudah memiliki riwayat transaksi atau stok. Silakan ubah stat menjadi "Tidak Tersedia" jika ingin menyembunyikannya.;
+                return redirect()->back()->with('error', 'Produk tidak dapat dihapus karena sudah memiliki riwayat transaksi atau stok. Silakan ubah status menjadi "Tidak Tersedia" jika ingin menyembunyikannya.');
             }
-            throw $e
+            throw $e;
         }
+    }
+}

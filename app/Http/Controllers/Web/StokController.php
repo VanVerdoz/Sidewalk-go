@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Stok;
+use App\Models\Cabang;
+use App\Models\Produk;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class StokController extends Controller
 {
@@ -63,11 +67,87 @@ class StokController extends Controller
         return $this->hapus($id);
     }
 
-    public function daftar(){}
-    public function buat(){}
-    public function simpan(Request $request){}
-    public function detail(string $id){}
-    public function ubah(string $id){}
-    public function perbarui(Request $request, string $id){}
-    public function hapus(string $id){}
+    public function daftar()
+    {
+        $query = Stok::with(['cabang', 'produk']);
+
+        // Filter berdasarkan role jika perlu (contoh: kepala cabang hanya lihat cabangnya)
+        // Saat ini tampilkan semua
+        
+        $stok = $query->orderBy('id', 'desc')->get();
+        return view('stok.index', compact('stok'));
+    }
+
+    public function buat()
+    {
+        $cabang = Cabang::all();
+        $produk = Produk::all();
+        return view('stok.create', compact('cabang', 'produk'));
+    }
+
+    public function simpan(Request $request)
+    {
+        $request->validate([
+            'cabang_id' => 'required|exists:cabang,id',
+            'produk_id' => 'required|exists:produk,id',
+            'jumlah' => 'required|numeric|min:0',
+        ]);
+
+        // Cek apakah stok untuk produk ini di cabang ini sudah ada
+        $existingStok = Stok::where('cabang_id', $request->cabang_id)
+                            ->where('produk_id', $request->produk_id)
+                            ->first();
+
+        if ($existingStok) {
+            return redirect()->back()->with('error', 'Stok untuk produk ini di cabang tersebut sudah ada. Silakan edit data yang sudah ada.');
+        }
+
+        Stok::create([
+            'cabang_id' => $request->cabang_id,
+            'produk_id' => $request->produk_id,
+            'jumlah' => $request->jumlah
+        ]);
+
+        return redirect()->route('stok.index')->with('success', 'Stok berhasil ditambahkan');
+    }
+
+    public function detail(string $id)
+    {
+        // Biasanya tidak butuh view detail khusus untuk stok, tapi jika ada:
+        // return view('stok.show', compact('stok'));
+        return redirect()->route('stok.index');
+    }
+
+    public function ubah(string $id)
+    {
+        $stok = Stok::findOrFail($id);
+        $cabang = Cabang::all();
+        $produk = Produk::all();
+        return view('stok.edit', compact('stok', 'cabang', 'produk'));
+    }
+
+    public function perbarui(Request $request, string $id)
+    {
+        $request->validate([
+            'jumlah' => 'required|numeric|min:0',
+        ]);
+
+        $stok = Stok::findOrFail($id);
+        $stok->update([
+            'jumlah' => $request->jumlah
+        ]);
+
+        return redirect()->route('stok.index')->with('success', 'Stok berhasil diperbarui');
+    }
+
+    public function hapus(string $id)
+    {
+        $stok = Stok::findOrFail($id);
+        try {
+            $stok->delete();
+            return redirect()->route('stok.index')->with('success', 'Stok berhasil dihapus');
+        } catch (QueryException $e) {
+            return redirect()->back()->with('error', 'Stok tidak dapat dihapus karena sedang digunakan dalam transaksi.');
+        }
+    }
 }
