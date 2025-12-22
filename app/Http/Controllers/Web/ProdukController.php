@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Produk;
 use App\Models\Stok;
-use App\Models\Cabang;
 
 class ProdukController extends Controller
 {
@@ -56,8 +55,7 @@ class ProdukController extends Controller
         if (!in_array(session('user.role'), ['kepala_gudang', 'owner'])) {
             abort(403);
         }
-        $cabang = Cabang::all();
-        return view('produk.create', compact('cabang'));
+        return view('produk.create');
     }
 
     public function simpan(Request $request)
@@ -71,25 +69,15 @@ class ProdukController extends Controller
             'kategori' => 'required|string',
             'status' => 'required|in:aktif,nonaktif',
             'deskripsi' => 'nullable|string',
-            'jumlah' => 'nullable|integer|min:0',
-            'cabang_id' => 'required_with:jumlah|exists:cabang,id',
         ]);
 
-        $produk = Produk::create([
+        Produk::create([
             'nama_produk' => $request->nama_produk,
             'harga' => $request->harga,
             'kategori' => $request->kategori,
             'status' => $request->status,
             'deskripsi' => $request->deskripsi,
         ]);
-
-        if ($request->filled('jumlah') && $request->filled('cabang_id')) {
-            Stok::create([
-                'produk_id' => $produk->id,
-                'cabang_id' => $request->cabang_id,
-                'jumlah' => $request->jumlah,
-            ]);
-        }
 
         return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan');
     }
