@@ -206,13 +206,25 @@ class RequestStokController extends Controller
         return redirect()->route('raider.permintaan-stok.create')->with('success', 'Permintaan stok berhasil dibuat');
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
         if (session('user.role') !== 'kepala_gudang') {
             abort(403);
         }
 
         $req = RequestStok::findOrFail($id);
+
+        // Update quantities if provided
+        if ($request->has('details') && is_array($request->details)) {
+            foreach ($request->details as $detailId => $data) {
+                if (isset($data['jumlah']) && $data['jumlah'] > 0) {
+                     RequestStokDetail::where('id', $detailId)
+                        ->where('request_id', $req->id)
+                        ->update(['jumlah' => (int) $data['jumlah']]);
+                }
+            }
+        }
+
         $note = trim((string) $req->catatan);
         if ($note !== '') {
             $note .= ' | Disetujui Kepala Gudang pada ' . now('Asia/Jakarta')->format('d/m/Y H:i');

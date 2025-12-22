@@ -119,6 +119,27 @@
         </div>
 
         <div class="form-group">
+            <label class="form-label">Jumlah Produk Awal (Opsional)</label>
+            <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah') }}" min="0">
+            @error('jumlah')
+                <small style="color: red;">{{ $message }}</small>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Pilih Cabang (Jika mengisi jumlah)</label>
+            <select name="cabang_id" class="form-control">
+                <option value="">-- Pilih Cabang --</option>
+                @foreach($cabang as $c)
+                    <option value="{{ $c->id }}" {{ old('cabang_id') == $c->id ? 'selected' : '' }}>{{ $c->nama_cabang }}</option>
+                @endforeach
+            </select>
+            @error('cabang_id')
+                <small style="color: red;">{{ $message }}</small>
+            @enderror
+        </div>
+
+        <div class="form-group">
             <label class="form-label">Kategori</label>
             <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
             @error('kategori')
