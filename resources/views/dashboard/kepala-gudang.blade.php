@@ -288,13 +288,7 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="quick-actions">
-    <a href="{{ route('produk.create') }}" class="btn-action btn-action-primary">
-        <i class="fas fa-plus"></i>
-        Tambah Produk
-    </a>
-</div>
+
 
 <!-- Content Grid -->
 <div class="content-grid">
