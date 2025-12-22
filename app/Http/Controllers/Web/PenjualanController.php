@@ -185,6 +185,9 @@ class PenjualanController extends Controller
 
     public function destroy(string $id)
     {
+        if (!in_array(session('user.role'), ['admin', 'owner'])) {
+            abort(403);
+        }
         $penjualan = Penjualan::findOrFail($id);
         $penjualan->delete();
 

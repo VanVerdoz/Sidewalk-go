@@ -53,7 +53,7 @@ class PenggunaController extends Controller
             'data' => $pengguna
         ]);
     }
-}
+
     public function simpan(Request $request)
     {
         if ($request->user()->role !== 'admin') {
@@ -134,3 +134,4 @@ class PenggunaController extends Controller
 
         return response()->json(['message' => 'Pengguna dihapus']);
     }
+}

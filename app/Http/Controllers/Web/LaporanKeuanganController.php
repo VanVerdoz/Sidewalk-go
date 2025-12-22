@@ -113,6 +113,9 @@ class LaporanKeuanganController extends Controller
 
     public function hapus(string $id)
     {
+        if (!in_array(session('user.role'), ['admin', 'owner'])) {
+            abort(403);
+        }
         $laporan = LaporanKeuangan::findOrFail($id);
         $laporan->delete();
 

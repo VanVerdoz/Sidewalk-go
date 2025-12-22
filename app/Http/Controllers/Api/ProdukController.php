@@ -54,7 +54,7 @@ class ProdukController extends Controller
             'data' => $produk
         ]);
     }
-}
+
     public function daftar()
     {
         $produk = Produk::all()->map(function ($item) {
@@ -124,3 +124,4 @@ class ProdukController extends Controller
 
         return response()->json(['message' => 'Produk dihapus']);
     }
+}

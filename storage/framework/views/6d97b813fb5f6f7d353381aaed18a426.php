@@ -1,0 +1,330 @@
+<?php $__env->startSection('title', 'Permintaan Stok Produk'); ?>
+
+<?php $__env->startPush('styles'); ?>
+<style>
+    .form-container {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: var(--shadow-sm);
+        width: 100%;
+        border: 1px solid var(--border);
+        color: var(--text);
+        box-sizing: border-box;
+    }
+    .page-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--text);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--text);
+    }
+    .form-control, .form-select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        background: var(--surface);
+        color: var(--text);
+    }
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 2px rgba(255,107,53,0.15);
+    }
+    .form-text {
+        font-size: 12px;
+        color: var(--muted);
+    }
+.form-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+}
+
+    .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg,#ff6b35,#f7931e);
+        color: #fff;
+    }
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+    .btn-danger {
+        background: linear-gradient(135deg,#ff4d4f,#ff6b6b);
+        color: #fff;
+    }
+
+    .produk-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .produk-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        background: var(--surface);
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text);
+        box-sizing: border-box;
+    }
+
+    .produk-row .produk-select {
+        flex: 2;
+    }
+
+    .produk-row .jumlah-input {
+        flex: 1;
+    }
+
+    .produk-row .row-action {
+        flex: 0 0 auto;
+    }
+
+    .btn-small {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+    .status-badge { display:inline-block; padding:6px 10px; border-radius:10px; font-size:12px; }
+    .status-pending { background: var(--surface); color:#f59e0b; border:1px solid #f59e0b; }
+    .status-disetujui { background: var(--surface); color:#10b981; border:1px solid #10b981; }
+    @media (max-width: 768px) {
+        .page-title { font-size: 20px; margin-bottom: 12px; }
+        .form-container { padding: 16px; border-radius: 14px; }
+        .produk-row { flex-direction: column; align-items: stretch; gap: 8px; }
+        .produk-row .produk-select, .produk-row .jumlah-input, .produk-row .row-action { flex: 1 1 auto; }
+        .form-actions { flex-direction: column; gap: 8px; }
+        .form-actions .btn { display: block; width: 100%; justify-content: center; }
+    }
+    @media (max-width: 480px) {
+        .page-title { font-size: 18px; }
+        .btn { padding: 8px 12px; font-size: 13px; }
+    }
+    @media (max-width: 640px) {
+        .produk-row { gap: 6px; }
+    }
+</style>
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startSection('content'); ?>
+<h2 class="page-title">Permintaan Stok Produk</h2>
+<div class="form-text" style="margin-bottom:10px;">
+    Waktu WIB: <span id="waktu-wib"></span>
+    <script>
+        (function() {
+            function updateWIB() {
+                const now = new Date();
+                const opts = { timeZone: 'Asia/Jakarta', hour12: false, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' };
+                const fmt = new Intl.DateTimeFormat('id-ID', opts).format(now);
+                document.getElementById('waktu-wib').textContent = fmt + ' WIB';
+            }
+            updateWIB();
+            setInterval(updateWIB, 1000);
+        })();
+    </script>
+</div>
+
+<div class="form-container">
+    <form action="<?php echo e(route('raider.permintaan-stok.store')); ?>" method="POST">
+        <?php echo csrf_field(); ?>
+
+	    <div class="form-group">
+	        <label class="form-label">Cabang</label>
+	        <select name="cabang_id" class="form-select" required>
+	            <option value="">-- Pilih Cabang --</option>
+                <?php $__currentLoopData = $cabang; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cb): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($cb->id); ?>" <?php echo e(old('cabang_id') == $cb->id ? 'selected' : ''); ?>>
+                    <?php echo e($cb->nama_cabang); ?> (Alamat: <?php echo e($cb->alamat ?? '-'); ?>)
+                </option>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+	        </select>
+	        <?php $__errorArgs = ['cabang_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+	            <div class="form-text" style="color:red;"><?php echo e($message); ?></div>
+	        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+	    </div>
+
+        <div class="form-group">
+            <label class="form-label">Produk yang Dibutuhkan</label>
+
+            <div id="produk-rows" class="produk-rows">
+                <div class="produk-row">
+                    <div class="produk-select">
+                        <select name="produk_id[]" class="form-select" required>
+                            <option value="">-- Pilih Produk --</option>
+                            <?php $__currentLoopData = $produk; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($item->id); ?>">
+                                    <?php echo e($item->nama_produk); ?> (<?php echo e($item->kategori ?? 'Tanpa Kategori'); ?>)
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+                    <div class="jumlah-input">
+                        <input type="number" name="jumlah[]" class="form-control" min="1" placeholder="Jumlah" required>
+                    </div>
+                    <div class="row-action">
+                        <button type="button" class="btn btn-danger btn-small" onclick="removeProdukRow(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-small" style="margin-top: 8px;" onclick="addProdukRow()">
+                <i class="fas fa-plus"></i> Tambah Produk
+            </button>
+
+            <?php $__errorArgs = ['produk_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="form-text" style="color:red;"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Catatan untuk Kepala Gudang (opsional)</label>
+            <textarea name="catatan" class="form-control" rows="3"><?php echo e(old('catatan')); ?></textarea>
+            <?php $__errorArgs = ['catatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="form-text" style="color:red;"><?php echo e($message); ?></div>
+            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+                Kirim Permintaan
+            </button>
+            <a href="<?php echo e(route('dashboard')); ?>" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Dashboard
+            </a>
+        </div>
+    </form>
+</div>
+
+
+<h2 class="page-title" style="margin-top:24px;">Riwayat Permintaan Stok</h2>
+<div class="form-container">
+    <?php if(isset($riwayat) && $riwayat->count()): ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Cabang</th>
+                    <th>Produk</th>
+                    <th>Jumlah</th>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $__currentLoopData = $riwayat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $req): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
+                        $firstDetail = optional($req->details->first());
+                        $produkPertama = optional($firstDetail->produk)->nama_produk;
+                        $detailCount = $req->details->count();
+                        $totalQty = $req->details->sum('jumlah');
+                        $st = $req->status ?? 'pending';
+                    ?>
+                    <tr>
+                        <td data-label="No"><?php echo e($loop->iteration); ?></td>
+                        <td data-label="Cabang"><?php echo e(optional($req->cabang)->nama_cabang ?? '-'); ?></td>
+                        <td data-label="Produk">
+                            <?php echo e($produkPertama ?? '-'); ?>
+
+                            <?php if($detailCount > 1): ?>
+                                (+<?php echo e($detailCount - 1); ?> produk lain)
+                            <?php endif; ?>
+                        </td>
+                        <td data-label="Jumlah"><?php echo e(number_format($totalQty ?? 0, 0, ',', '.')); ?> unit</td>
+                        <td data-label="Tanggal"><?php echo e(\Carbon\Carbon::parse($req->tanggal)->timezone('Asia/Jakarta')->format('d/m/Y H:i')); ?> WIB</td>
+                        <td data-label="Status">
+                            <span class="status-badge <?php echo e($st === 'disetujui' ? 'status-disetujui' : 'status-pending'); ?>"><?php echo e(ucfirst($st)); ?></span>
+                        </td>
+                    </tr>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </tbody>
+        </table>
+        
+    <?php else: ?>
+        <div class="form-text">Belum ada riwayat permintaan stok.</div>
+    <?php endif; ?>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('scripts'); ?>
+<script>
+    function addProdukRow() {
+        const container = document.getElementById('produk-rows');
+        if (!container) return;
+
+        const firstRow = container.querySelector('.produk-row');
+        if (!firstRow) return;
+
+        const newRow = firstRow.cloneNode(true);
+
+        newRow.querySelectorAll('select, input').forEach(function (el) {
+            el.value = '';
+        });
+
+        container.appendChild(newRow);
+    }
+
+    function removeProdukRow(button) {
+        const row = button.closest('.produk-row');
+        const container = document.getElementById('produk-rows');
+        if (!row || !container) return;
+
+        // Minimal 1 baris harus tetap ada
+        if (container.children.length > 1) {
+            row.remove();
+        }
+    }
+
+</script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\RplBo\UasFix\BE-API-SW\resources\views\raider\permintaan-stok.blade.php ENDPATH**/ ?>

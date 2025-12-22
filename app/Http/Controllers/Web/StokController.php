@@ -142,6 +142,9 @@ class StokController extends Controller
 
     public function hapus(string $id)
     {
+        if (!in_array(session('user.role'), ['admin', 'kepala_gudang'])) {
+            abort(403);
+        }
         $stok = Stok::findOrFail($id);
         try {
             $stok->delete();

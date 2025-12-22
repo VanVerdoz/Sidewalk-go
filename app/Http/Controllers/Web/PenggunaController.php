@@ -128,7 +128,7 @@ class PenggunaController extends Controller
 
     public function hapus(string $id)
     {
-        if (session('user.role') === 'owner') {
+        if (session('user.role') !== 'admin') {
             abort(403);
         }
         $pengguna = Pengguna::findOrFail($id);
