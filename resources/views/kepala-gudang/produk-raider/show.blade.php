@@ -8,7 +8,8 @@
         <a href="{{ route('kepala.produk-raider.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
-        @if(session('user.role') === 'kepala_gudang')
+        @php $role = strtolower(trim(session('user.role') ?? '')); @endphp
+        @if($role === 'kepala_gudang')
         <a href="{{ route('kepala.produk-raider.create', $cabang->id) }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Tambah Stok Cabang
         </a>

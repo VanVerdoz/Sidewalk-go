@@ -14,7 +14,8 @@ class ProdukRaiderController extends Controller
 {
     public function index()
     {
-        if (session('user.role') !== 'kepala_gudang') {
+        $role = strtolower(trim(session('user.role') ?? ''));
+        if (!in_array($role, ['kepala_gudang', 'raider'])) {
             abort(403);
         }
 
