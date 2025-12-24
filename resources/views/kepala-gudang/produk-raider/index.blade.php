@@ -4,204 +4,77 @@
 
 @push('styles')
 <style>
-    /* Full Screen Focus Mode */
-    .sidebar, .header {
-        display: none !important;
-    }
-    .main-content {
-        margin-left: 0 !important;
-        padding: 0 !important;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--bg);
-    }
-    
-    /* Content Layout */
-    .content-center {
-        width: 100%;
-        max-width: 600px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+    .page-title { font-size: 24px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+    .branch-section { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-sm); margin-bottom: 18px; border: 1px solid var(--border); color: var(--text); }
+    .branch-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .branch-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .req-table { width: 100%; border-collapse: collapse; }
+    .req-table th, .req-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text); }
+    .req-table th { background: var(--table-head); color: var(--text); text-align: left; }
+    .btn-small { padding: 8px 10px; font-size: 12px; border-radius: 8px; }
+    .req-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .page-title { 
-        font-size: 28px; 
-        font-weight: 700; 
-        margin-bottom: 30px; 
-        color: var(--text);
-        text-align: center;
+    @media (max-width: 768px) {
+        .page-title { font-size: 20px; }
+        .branch-header { padding: 12px 14px; }
+        .branch-title { font-size: 15px; }
+        .req-actions { flex-direction: column; }
+        .req-actions .btn { width: 100%; justify-content: center; }
     }
-
-    .card-select-cabang { 
-        background: var(--surface); 
-        border-radius: 16px; 
-        box-shadow: var(--shadow-md); 
-        border: 1px solid var(--border); 
-        color: var(--text);
-        width: 100%;
-        overflow: hidden;
-    }
-
-    .card-header { 
-        padding: 20px 24px; 
-        border-bottom: 1px solid var(--border); 
-        background: var(--surface);
-    }
-    
-    .card-title { 
-        font-size: 18px; 
-        font-weight: 600; 
-        color: var(--text); 
-        margin: 0;
-    }
-
-    .card-body {
-        padding: 30px 24px;
-    }
-    
-    .form-group { margin-bottom: 0; }
-    .form-label { 
-        display: block; 
-        margin-bottom: 12px; 
-        font-weight: 600; 
-        color: var(--text); 
-        font-size: 16px;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 14px 16px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: var(--bg);
-        color: var(--text);
-        font-size: 15px;
-        transition: all 0.2s;
-    }
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-    }
-
-    #branchDetails {
-        display: none;
-        margin-top: 30px;
-        padding-top: 24px;
-        border-top: 1px solid var(--border);
-        animation: slideDown 0.3s ease-out;
-    }
-
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 16px;
-        border-bottom: 1px dashed var(--border);
-        padding-bottom: 12px;
-    }
-    .detail-row:last-of-type { border-bottom: none; margin-bottom: 24px; }
-    
-    .detail-label { font-weight: 500; color: var(--muted); }
-    .detail-value { font-weight: 600; color: var(--text); text-align: right; }
-
-    .btn-action {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 14px;
-        background: var(--primary);
-        color: white;
-        border-radius: 10px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: transform 0.2s, box-shadow 0.2s;
-        font-size: 16px;
-    }
-    .btn-action:hover { 
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
-        color: white;
-    }
-
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+    @media (max-width: 640px) {
+        .req-table thead { display: none; }
+        .req-table { border: 0; }
+        .req-table, .req-table tbody { display: block; width: 100%; }
+        .req-table tr { display: block; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-sm); padding: 8px; }
+        .req-table td { display: inline-block; margin: 0 4px 8px; white-space: normal; padding: 8px 10px; border-bottom: 0; vertical-align: top; }
+        .req-table td[data-label="No"],
+        .req-table td[data-label="Total Jenis Produk"] { width: calc(33.33% - 8px); }
+        .req-table td[data-label="Cabang"],
+        .req-table td[data-label="Alamat"] { width: 100%; display: block; }
+        .req-actions { flex-direction: column; }
+        .req-actions .btn { width: 100%; justify-content: center; }
+        .req-table td[data-label="Aksi"] { display: block; width: 100%; }
+        .req-table td::before { content: attr(data-label); display: block; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="content-center">
-    <h2 class="page-title">Pilih Cabang</h2>
+<h2 class="page-title">Produk per Cabang – Pilih Cabang</h2>
 
-    <div class="card-select-cabang">
-        <div class="card-header">
-            <h3 class="card-title">Formulir Pemilihan Cabang</h3>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label for="cabangSelect" class="form-label">Silakan Pilih Cabang</label>
-                <select id="cabangSelect" class="form-control">
-                    <option value="" selected disabled>-- Pilih Cabang --</option>
-                    @foreach($cabangs as $cabang)
-                        <option value="{{ $cabang->id }}" 
-                                data-alamat="{{ $cabang->alamat ?? '-' }}" 
-                                data-url="{{ route('kepala.produk-raider.show', $cabang->id) }}">
-                            {{ $cabang->nama_cabang }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div id="branchDetails">
-                <div class="detail-row">
-                    <span class="detail-label">Nama Cabang</span>
-                    <span class="detail-value" id="detailNama">-</span>
-                </div>
-                
-                <div class="detail-row">
-                    <span class="detail-label">Alamat</span>
-                    <span class="detail-value" id="detailAlamat">-</span>
-                </div>
-
-                <a href="#" id="btnLanjut" class="btn-action">
-                    Lanjut Lihat Produk <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
-                </a>
-            </div>
-        </div>
+<div class="branch-section">
+    <div class="branch-header">
+        <div class="branch-title">Daftar Cabang</div>
+    </div>
+    <div style="padding:12px 16px;">
+        <table class="req-table">
+            <thead>
+                <tr>
+                    <th>Cabang</th>
+                    <th>Alamat</th>
+                    <th>Total Jenis Produk</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($cabangs as $cabang)
+                    <tr>
+                        <td data-label="Cabang">{{ $cabang->nama_cabang }}</td>
+                        <td data-label="Alamat">{{ $cabang->alamat ?? '-' }}</td>
+                        <td data-label="Total Jenis Produk">{{ $cabang->stok->count() }} Jenis</td>
+                        <td data-label="Aksi">
+                            <div class="req-actions">
+                                <a href="{{ route('kepala.produk-raider.show', $cabang->id) }}" class="btn btn-primary btn-small">
+                                    <i class="fas fa-box-open"></i> Lihat Produk
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" style="text-align:center;">Tidak ada data cabang.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const select = document.getElementById('cabangSelect');
-        const detailsDiv = document.getElementById('branchDetails');
-        const detailNama = document.getElementById('detailNama');
-        const detailAlamat = document.getElementById('detailAlamat');
-        const btnLanjut = document.getElementById('btnLanjut');
-
-        select.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            
-            if (selectedOption.value) {
-                // Update details
-                detailNama.textContent = selectedOption.text.trim();
-                detailAlamat.textContent = selectedOption.getAttribute('data-alamat');
-                
-                // Update button link
-                btnLanjut.href = selectedOption.getAttribute('data-url');
-                
-                // Show details section
-                detailsDiv.style.display = 'block';
-            } else {
-                detailsDiv.style.display = 'none';
-            }
-        });
-    });
-</script>
 @endsection
