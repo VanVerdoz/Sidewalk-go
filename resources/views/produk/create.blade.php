@@ -119,16 +119,16 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Jumlah Produk Awal (Opsional)</label>
-            <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah') }}" min="0">
+            <label class="form-label">Jumlah Produk Awal</label>
+            <input type="number" name="jumlah" class="form-control" value="{{ old('jumlah') }}" min="0" required>
             @error('jumlah')
                 <small style="color: red;">{{ $message }}</small>
             @enderror
         </div>
 
         <div class="form-group">
-            <label class="form-label">Pilih Cabang (Jika mengisi jumlah)</label>
-            <select name="cabang_id" class="form-control">
+            <label class="form-label">Pilih Cabang</label>
+            <select name="cabang_id" class="form-control" required>
                 <option value="">-- Pilih Cabang --</option>
                 @foreach($cabang as $c)
                     <option value="{{ $c->id }}" {{ old('cabang_id') == $c->id ? 'selected' : '' }}>{{ $c->nama_cabang }}</option>

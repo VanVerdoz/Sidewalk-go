@@ -138,6 +138,35 @@
             @enderror
         </div>
 
+        <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 20px;">
+            <label class="form-label" style="font-weight: 600; font-size: 16px;">Kelola Stok</label>
+            
+            @if($produk->stok->count() > 0)
+                <div style="margin-bottom: 15px; font-size: 14px; background: rgba(0,0,0,0.02); padding: 10px; border-radius: 8px;">
+                    <strong style="display:block; margin-bottom:5px;">Stok Saat Ini:</strong>
+                    <ul style="padding-left: 20px; margin: 0;">
+                        @foreach($produk->stok as $s)
+                            <li>{{ $s->cabang->nama_cabang ?? 'Unknown' }}: <strong>{{ $s->jumlah }}</strong></li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Belum ada stok tercatat.</p>
+            @endif
+
+            <label class="form-label">Update Stok Cabang</label>
+            <select name="cabang_id" class="form-control" style="margin-bottom: 10px;">
+                <option value="">-- Pilih Cabang untuk Update Stok --</option>
+                @foreach($cabang as $c)
+                    <option value="{{ $c->id }}">{{ $c->nama_cabang }}</option>
+                @endforeach
+            </select>
+            
+            <label class="form-label">Jumlah Stok Baru</label>
+            <input type="number" name="jumlah" class="form-control" min="0" placeholder="Masukkan jumlah stok baru (jika ingin mengubah)">
+            <small style="color: #666; display: block; margin-top: 5px;">*Biarkan kosong jika tidak ingin mengubah stok.</small>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i>
