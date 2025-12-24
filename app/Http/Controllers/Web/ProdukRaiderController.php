@@ -90,7 +90,6 @@ class ProdukRaiderController extends Controller
             'produk_id.*' => 'required|exists:produk,id',
             'jumlah' => 'required|array|min:1',
             'jumlah.*' => 'required|integer|min:1',
-            'catatan' => 'nullable|string',
         ]);
 
         try {
@@ -101,7 +100,7 @@ class ProdukRaiderController extends Controller
                 'cabang_id' => (int) $cabangId,
                 'raider_id' => null, // No specific raider, just branch
                 'status' => 'disetujui',
-                'catatan' => 'Dikirim oleh Kepala Gudang | ' . ($request->catatan ?? '-'),
+                'catatan' => 'Dikirim oleh Kepala Gudang',
                 'tanggal' => now('Asia/Jakarta'),
             ]);
 

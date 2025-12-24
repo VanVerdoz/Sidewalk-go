@@ -26,11 +26,6 @@
                     <i class="fas fa-info-circle"></i> Masukkan jumlah barang yang diberikan ke Cabang. (Stok tidak akan dipotong dari Gudang)
                 </div>
 
-                <div class="form-group mb-4" style="margin-bottom:1rem;">
-                    <label class="block mb-2 font-bold" style="display:block; margin-bottom:0.5rem; font-weight:600;">Catatan (Opsional)</label>
-                    <textarea name="catatan" class="form-control" rows="2" placeholder="Contoh: Stok tambahan untuk event..."></textarea>
-                </div>
-
                 <div class="mb-4" style="margin-bottom:1.5rem;">
                     <h4 class="font-bold mb-3" style="font-weight:600; margin-bottom:1rem;">Pilih Produk & Jumlah</h4>
                     
