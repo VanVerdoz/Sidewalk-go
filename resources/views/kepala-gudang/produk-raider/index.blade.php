@@ -4,31 +4,11 @@
 
 @section('content')
 <style>
-    /* Full Screen Focus Mode */
-    .sidebar, .header {
-        display: none !important;
-    }
-    .main-content {
-        margin-left: 0 !important;
-        padding: 0 !important;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--bg);
-    }
-    
-    .content {
-        width: 100%;
-        padding: 0 !important;
-    }
-    
     .content-center {
-        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        min-height: calc(100vh - 150px); /* Adjust based on header height */
     }
 
     .card-select-cabang {
@@ -44,6 +24,7 @@
         .content-center {
             padding: 20px;
             align-items: center;
+            min-height: calc(100vh - 100px);
         }
         .card-select-cabang {
             box-shadow: none;
