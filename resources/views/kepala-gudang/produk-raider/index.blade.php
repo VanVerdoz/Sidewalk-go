@@ -4,24 +4,46 @@
 
 @section('content')
 <style>
-    .content-center {
+    /* Full Screen Focus Mode */
+    .sidebar, .header {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: calc(100vh - 150px); /* Adjust based on header height */
+        background: var(--bg);
     }
+    
+    .content {
+        width: 100%;
+        padding: 0 !important;
+    }
+    
+    .content-center {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
     .card-select-cabang {
         width: 100%;
         max-width: 500px;
         margin: 0 auto;
         box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         border: 1px solid var(--border);
+        background: var(--surface);
     }
     
     @media (max-width: 768px) {
         .content-center {
-            align-items: flex-start;
-            padding-top: 40px;
+            padding: 20px;
+            align-items: center;
         }
         .card-select-cabang {
             box-shadow: none;
