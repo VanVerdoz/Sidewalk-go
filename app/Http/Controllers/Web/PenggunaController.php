@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pengguna;
+use App\Models\LaporanKeuangan;
+use App\Models\RequestStok;
+use App\Models\Penjualan;
+use Illuminate\Support\Facades\DB;
 
 class PenggunaController extends Controller
 {
