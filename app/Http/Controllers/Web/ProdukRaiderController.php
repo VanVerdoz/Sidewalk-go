@@ -72,9 +72,13 @@ class ProdukRaiderController extends Controller
         if ($selectedCabangId) {
             $selectedCabang = Cabang::find($selectedCabangId);
             if ($selectedCabang) {
-                $stokCabang = Stok::with('produk')
-                    ->where('cabang_id', $selectedCabangId)
-                    ->where('jumlah', '>', 0)
+                // Ambil semua produk dan join dengan stok berdasarkan cabang yang dipilih
+                // Ini memastikan semua produk muncul meskipun belum ada record di tabel stok untuk cabang tersebut
+                $stokCabang = Produk::leftJoin('stok', function($join) use ($selectedCabangId) {
+                        $join->on('produk.id', '=', 'stok.produk_id')
+                             ->where('stok.cabang_id', '=', $selectedCabangId);
+                    })
+                    ->select('produk.*', 'stok.jumlah as stok_jumlah')
                     ->get();
             }
         }

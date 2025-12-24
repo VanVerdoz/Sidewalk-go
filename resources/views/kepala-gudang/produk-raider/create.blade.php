@@ -50,9 +50,9 @@
                                         <label style="display:block; margin-bottom:4px; font-size:13px;">Produk</label>
                                         <select name="produk_id[]" required style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
                                             <option value="">-- Pilih Produk --</option>
-                                            @foreach($stokCabang as $stok)
-                                                <option value="{{ $stok->produk_id }}" data-max="{{ $stok->jumlah }}">
-                                                    {{ $stok->produk->nama_produk }} (Stok: {{ number_format($stok->jumlah, 0, ',', '.') }})
+                                            @foreach($stokCabang as $item)
+                                                <option value="{{ $item->id }}" data-max="{{ $item->stok_jumlah ?? 0 }}">
+                                                    {{ $item->nama_produk }} (Stok: {{ number_format($item->stok_jumlah ?? 0, 0, ',', '.') }})
                                                 </option>
                                             @endforeach
                                         </select>
