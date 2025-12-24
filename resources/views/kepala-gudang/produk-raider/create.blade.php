@@ -52,7 +52,7 @@
                                             <option value="">-- Pilih Produk --</option>
                                             @foreach($stokCabang as $stok)
                                                 <option value="{{ $stok->produk_id }}" data-max="{{ $stok->jumlah }}">
-                                                    {{ $stok->produk->nama_produk }} (Stok: {{ $stok->jumlah }})
+                                                    {{ $stok->produk->nama_produk }} (Stok: {{ number_format($stok->jumlah, 0, ',', '.') }})
                                                 </option>
                                             @endforeach
                                         </select>
@@ -144,8 +144,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const input = row.querySelector('input[type="number"]');
             
             if (max) {
-                input.max = max;
-                input.placeholder = 'Max: ' + max;
+                // Parse float to remove trailing zeros for display
+                const maxDisplay = parseFloat(max);
+                input.max = max; // Keep original for validation
+                input.placeholder = 'Max: ' + maxDisplay;
             } else {
                 input.removeAttribute('max');
                 input.placeholder = 'Jml';
