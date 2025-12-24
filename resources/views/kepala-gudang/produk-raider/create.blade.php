@@ -22,87 +22,58 @@
             <form action="{{ route('kepala.produk-raider.store', $raider->id) }}" method="POST">
                 @csrf
                 
-                {{-- Hidden input for cabang_id since we auto-select the best one --}}
-                @if($selectedCabang)
-                    <input type="hidden" name="cabang_id" value="{{ $selectedCabang->id }}">
-                    <div class="alert alert-info mb-4" style="background: #e3f2fd; border-left: 4px solid #2196F3; color: #0d47a1;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <i class="fas fa-warehouse"></i> Sumber Stok: <strong>{{ $selectedCabang->nama_cabang }}</strong>
-                            </div>
-                            <!-- Optional: Allow changing branch if really needed, but keep it subtle -->
-                            <small><a href="#" onclick="document.getElementById('cabang_selector').style.display='block'; this.style.display='none'; return false;">Ubah Gudang</a></small>
-                        </div>
-                        <div id="cabang_selector" style="display: none; margin-top: 10px;">
-                            <select class="form-control" onchange="window.location.href='{{ route('kepala.produk-raider.create', $raider->id) }}?cabang_id=' + this.value">
-                                @foreach($cabangList as $c)
-                                    <option value="{{ $c->id }}" {{ ($selectedCabang && $selectedCabang->id == $c->id) ? 'selected' : '' }}>
-                                        {{ $c->nama_cabang }} (Total Stok: {{ $c->stok->sum('jumlah') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                @else
-                     <div class="alert alert-warning">
-                        Tidak ada cabang yang ditemukan.
-                    </div>
-                @endif
+                <div class="alert alert-info mb-4" style="background: #e3f2fd; border-left: 4px solid #2196F3; color: #0d47a1;">
+                    <i class="fas fa-info-circle"></i> Masukkan jumlah barang yang diberikan ke Raider. (Stok tidak akan dipotong dari Gudang)
+                </div>
 
-                @if($selectedCabang)
-                    <div class="form-group mb-4" style="margin-bottom:1rem;">
-                        <label class="block mb-2 font-bold" style="display:block; margin-bottom:0.5rem; font-weight:600;">Catatan (Opsional)</label>
-                        <textarea name="catatan" class="form-control" rows="2" placeholder="Contoh: Stok tambahan untuk event..."></textarea>
-                    </div>
+                <div class="form-group mb-4" style="margin-bottom:1rem;">
+                    <label class="block mb-2 font-bold" style="display:block; margin-bottom:0.5rem; font-weight:600;">Catatan (Opsional)</label>
+                    <textarea name="catatan" class="form-control" rows="2" placeholder="Contoh: Stok tambahan untuk event..."></textarea>
+                </div>
 
-                    <div class="mb-4" style="margin-bottom:1.5rem;">
-                        <h4 class="font-bold mb-3" style="font-weight:600; margin-bottom:1rem;">Pilih Produk & Jumlah</h4>
-                        
-                        @if(count($stokCabang) > 0)
-                            <div id="produk-container">
-                                <div class="produk-row form-row mb-3 align-items-end" style="display:flex; gap:10px; align-items:flex-end; margin-bottom:10px;">
-                                    <div class="col-6" style="flex:2;">
-                                        <label style="display:block; margin-bottom:4px; font-size:13px;">Produk</label>
-                                        <select name="produk_id[]" required style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
-                                            <option value="">-- Pilih Produk --</option>
-                                            @foreach($stokCabang as $item)
-                                                <option value="{{ $item->id }}" data-max="{{ $item->stok_jumlah ?? 0 }}">
-                                                    {{ $item->nama_produk }} (Stok Tersedia: {{ number_format($item->stok_jumlah ?? 0, 0, ',', '.') }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-4" style="flex:1;">
-                                        <label style="display:block; margin-bottom:4px; font-size:13px;">Jumlah Kirim</label>
-                                        <input type="number" name="jumlah[]" min="1" required placeholder="Jml" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
-                                    </div>
-                                    <div class="col-2" style="width:auto;">
-                                        <button type="button" class="btn btn-danger btn-remove-row" style="display:none;">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                <div class="mb-4" style="margin-bottom:1.5rem;">
+                    <h4 class="font-bold mb-3" style="font-weight:600; margin-bottom:1rem;">Pilih Produk & Jumlah</h4>
+                    
+                    @if(count($stokCabang) > 0)
+                        <div id="produk-container">
+                            <div class="produk-row form-row mb-3 align-items-end" style="display:flex; gap:10px; align-items:flex-end; margin-bottom:10px;">
+                                <div class="col-6" style="flex:2;">
+                                    <label style="display:block; margin-bottom:4px; font-size:13px;">Produk</label>
+                                    <select name="produk_id[]" required style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
+                                        <option value="">-- Pilih Produk --</option>
+                                        @foreach($stokCabang as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->nama_produk }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-4" style="flex:1;">
+                                    <label style="display:block; margin-bottom:4px; font-size:13px;">Jumlah Kirim</label>
+                                    <input type="number" name="jumlah[]" min="1" required placeholder="Jml" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text);">
+                                </div>
+                                <div class="col-2" style="width:auto;">
+                                    <button type="button" class="btn btn-danger btn-remove-row" style="display:none;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <button type="button" id="add-product-btn" class="btn btn-secondary btn-small mt-2">
-                                <i class="fas fa-plus"></i> Tambah Baris Produk
-                            </button>
+                        </div>
+                        <button type="button" id="add-product-btn" class="btn btn-secondary btn-small mt-2">
+                            <i class="fas fa-plus"></i> Tambah Baris Produk
+                        </button>
 
-                            <div class="d-flex justify-content-end mt-4" style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-paper-plane"></i> Kirim Stok Sekarang
-                                </button>
-                            </div>
-                        @else
-                            <div class="alert alert-error">
-                                Stok produk di cabang ini sedang kosong.
-                            </div>
-                        @endif
-                    </div>
-                @else
-                    <div class="alert alert-warning">
-                        Silakan pilih cabang asal terlebih dahulu.
-                    </div>
-                @endif
+                        <div class="d-flex justify-content-end mt-4" style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Kirim Stok Sekarang
+                            </button>
+                        </div>
+                    @else
+                        <div class="alert alert-error">
+                            Belum ada produk terdaftar.
+                        </div>
+                    @endif
+                </div>
             </form>
         </div>
     </div>

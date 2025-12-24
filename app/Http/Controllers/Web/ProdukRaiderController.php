@@ -64,38 +64,18 @@ class ProdukRaiderController extends Controller
 
         $raider = Pengguna::findOrFail($raiderId);
         
-        // Auto-select the branch with the most stock (Main Warehouse strategy)
-        $cabangList = Cabang::with('stok')->get();
-        $bestCabang = $cabangList->sortByDesc(function($c) {
-            return $c->stok->sum('jumlah');
-        })->first();
+        // Ambil semua produk (tanpa filter stok cabang)
+        $stokCabang = Produk::all();
+        
+        // Tambahkan properti dummy untuk kompatibilitas view
+        $stokCabang->each(function($product) {
+            $product->stok_jumlah = 9999; // Unlimited/Not tracked
+            $product->total_stok = 9999;
+        });
 
-        // If specific branch requested via URL, use it, otherwise use best branch
-        $selectedCabangId = $request->input('cabang_id');
+        // Tidak ada cabang terpilih
         $selectedCabang = null;
-
-        if ($selectedCabangId) {
-            $selectedCabang = $cabangList->where('id', $selectedCabangId)->first();
-        } else {
-            $selectedCabang = $bestCabang ?? Cabang::first();
-        }
-
-        if ($selectedCabang) {
-            $selectedCabangId = $selectedCabang->id;
-        }
-
-        // Ambil semua produk dengan stok di Gudang/Cabang Terpilih
-        $stokCabang = collect();
-        if ($selectedCabang) {
-            $stokCabang = Produk::with('stok')->get();
-
-            // Map stok_jumlah agar mudah diakses di view
-            $stokCabang->each(function($product) use ($selectedCabangId) {
-                $stokDiCabang = $product->stok->where('cabang_id', $selectedCabangId)->first();
-                $product->stok_jumlah = $stokDiCabang ? $stokDiCabang->jumlah : 0;
-                $product->total_stok = $product->stok->sum('jumlah');
-            });
-        }
+        $cabangList = [];
 
         return view('kepala-gudang.produk-raider.create', compact('raider', 'stokCabang', 'selectedCabang', 'cabangList'));
     }
@@ -107,7 +87,6 @@ class ProdukRaiderController extends Controller
         }
 
         $request->validate([
-            'cabang_id' => 'required|exists:cabang,id',
             'produk_id' => 'required|array|min:1',
             'produk_id.*' => 'required|exists:produk,id',
             'jumlah' => 'required|array|min:1',
@@ -118,7 +97,9 @@ class ProdukRaiderController extends Controller
         try {
             DB::beginTransaction();
 
-            $cabangId = $request->cabang_id;
+            // Gunakan Gudang Utama sebagai default jika ada, jika tidak null
+            $cabangUtama = Cabang::first();
+            $cabangId = $cabangUtama ? $cabangUtama->id : null;
             
             // 1. Create RequestStok (Approved)
             $req = RequestStok::create([
@@ -140,19 +121,8 @@ class ProdukRaiderController extends Controller
                     'jumlah' => $jumlah,
                 ]);
 
-                // 3. Deduct from Cabang Stock
-                $stok = Stok::where('cabang_id', $cabangId)
-                            ->where('produk_id', $produkId)
-                            ->lockForUpdate()
-                            ->first();
-
-                if (!$stok || $stok->jumlah < $jumlah) {
-                    $produkInfo = Produk::find($produkId);
-                    throw new \Exception('Stok tidak mencukupi untuk produk: ' . ($produkInfo ? $produkInfo->nama_produk : $produkId));
-                }
-
-                $stok->jumlah -= $jumlah;
-                $stok->save();
+                // 3. SKIP Stock Deduction from Cabang/Gudang
+                // Sesuai request user: "gausah di ambil di stok produk"
             }
 
             DB::commit();
