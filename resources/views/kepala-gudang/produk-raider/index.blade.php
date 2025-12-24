@@ -40,41 +40,79 @@
 @endpush
 
 @section('content')
-<h2 class="page-title">Produk per Cabang – Pilih Cabang</h2>
+<h2 class="page-title">Produk per Cabang</h2>
 
 <div class="branch-section">
     <div class="branch-header">
-        <div class="branch-title">Daftar Cabang</div>
+        <div class="branch-title">Pilih Cabang</div>
     </div>
-    <div style="padding:12px 16px;">
-        <table class="req-table">
-            <thead>
-                <tr>
-                    <th>Cabang</th>
-                    <th>Alamat</th>
-                    <th>Total Jenis Produk</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($cabangs as $cabang)
-                    <tr>
-                        <td data-label="Cabang">{{ $cabang->nama_cabang }}</td>
-                        <td data-label="Alamat">{{ $cabang->alamat ?? '-' }}</td>
-                        <td data-label="Total Jenis Produk">{{ $cabang->stok->count() }} Jenis</td>
-                        <td data-label="Aksi">
-                            <div class="req-actions">
-                                <a href="{{ route('kepala.produk-raider.show', $cabang->id) }}" class="btn btn-primary btn-small">
-                                    <i class="fas fa-box-open"></i> Lihat Produk
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="4" style="text-align:center;">Tidak ada data cabang.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div style="padding:16px;">
+        <div class="form-group">
+            <label for="cabang-select" style="margin-bottom: 8px; display: block; font-weight: 500;">Silakan Pilih Cabang</label>
+            <select id="cabang-select" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text);">
+                <option value="">-- Pilih Cabang --</option>
+                @foreach($cabangs as $cabang)
+                    <option value="{{ $cabang->id }}">{{ $cabang->nama_cabang }}</option>
+                @endforeach
+            </select>
+        </div>
     </div>
 </div>
+
+<div id="stok-container">
+    <div style="text-align: center; padding: 40px; color: var(--muted);">
+        <i class="fas fa-store" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+        <p>Pilih cabang di atas untuk melihat daftar produk.</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cabangSelect = document.getElementById('cabang-select');
+        const stokContainer = document.getElementById('stok-container');
+        const baseUrl = "{{ route('kepala.produk-raider.show', ':id') }}";
+
+        cabangSelect.addEventListener('change', function() {
+            const cabangId = this.value;
+            
+            if (!cabangId) {
+                stokContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--muted);">
+                        <i class="fas fa-store" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>Pilih cabang di atas untuk melihat daftar produk.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Show loading state
+            stokContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--primary);"></i>
+                    <p style="margin-top: 10px;">Memuat data produk...</p>
+                </div>
+            `;
+
+            const url = baseUrl.replace(':id', cabangId);
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                stokContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                stokContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #ef4444;">
+                        <p>Gagal memuat data. Silakan coba lagi.</p>
+                    </div>
+                `;
+            });
+        });
+    });
+</script>
 @endsection

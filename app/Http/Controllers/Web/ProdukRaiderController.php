@@ -25,7 +25,7 @@ class ProdukRaiderController extends Controller
         return view('kepala-gudang.produk-raider.index', compact('cabangs'));
     }
 
-    public function show($cabangId)
+    public function show(Request $request, $cabangId)
     {
         if (!in_array(session('user.role'), ['kepala_gudang', 'raider'])) {
             abort(403);
@@ -38,6 +38,10 @@ class ProdukRaiderController extends Controller
             ->where('cabang_id', $cabangId)
             ->where('jumlah', '>', 0)
             ->get();
+
+        if ($request->ajax()) {
+            return view('kepala-gudang.produk-raider.partials.product-list', compact('cabang', 'stokCabang'));
+        }
 
         return view('kepala-gudang.produk-raider.show', compact('cabang', 'stokCabang'));
     }
