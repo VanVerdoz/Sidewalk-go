@@ -131,9 +131,28 @@ class PenggunaController extends Controller
         if (session('user.role') !== 'admin') {
             abort(403);
         }
-        $pengguna = Pengguna::findOrFail($id);
-        $pengguna->delete();
 
-        return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil dihapus');
+        try {
+            DB::beginTransaction();
+
+            // 1. Set null pada Laporan Keuangan (karena FK constraint on delete no action)
+            LaporanKeuangan::where('dibuat_oleh', $id)->update(['dibuat_oleh' => null]);
+
+            // 2. Set null pada Request Stok (jika ada relasi raider)
+            RequestStok::where('raider_id', $id)->update(['raider_id' => null]);
+
+            // 3. Set null pada Penjualan (jika belum otomatis set null)
+            Penjualan::where('pengguna_id', $id)->update(['pengguna_id' => null]);
+
+            $pengguna = Pengguna::findOrFail($id);
+            $pengguna->delete();
+
+            DB::commit();
+            return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil dihapus');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+        }
     }
 }
