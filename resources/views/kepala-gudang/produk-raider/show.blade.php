@@ -34,7 +34,7 @@
                             <td>Rp {{ number_format($stok->produk->harga ?? 0, 0, ',', '.') }}</td>
                             <td>
                                 <span style="background:var(--primary); color:white; padding:4px 10px; border-radius:4px; font-weight:bold;">
-                                    {{ $stok->jumlah }}
+                                    {{ number_format($stok->jumlah, 0, ',', '.') }}
                                 </span>
                             </td>
                         </tr>
