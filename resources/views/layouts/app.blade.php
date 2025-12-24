@@ -1014,6 +1014,12 @@
                         <span>Request Stok</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('kepala.produk-raider.index') }}" class="{{ request()->routeIs('kepala.produk-raider.*') ? 'active' : '' }}">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Produk per Cabang</span>
+                    </a>
+                </li>
                 @endif
 
                 @if($role === 'kepala_gudang')

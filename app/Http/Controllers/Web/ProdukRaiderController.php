@@ -26,7 +26,7 @@ class ProdukRaiderController extends Controller
 
     public function show($cabangId)
     {
-        if (session('user.role') !== 'kepala_gudang') {
+        if (!in_array(session('user.role'), ['kepala_gudang', 'raider'])) {
             abort(403);
         }
 

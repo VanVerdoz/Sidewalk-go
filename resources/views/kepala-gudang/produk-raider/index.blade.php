@@ -27,9 +27,11 @@
                                 <a href="{{ route('kepala.produk-raider.show', $cabang->id) }}" class="btn btn-small btn-primary">
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
+                                @if(session('user.role') === 'kepala_gudang')
                                 <a href="{{ route('kepala.produk-raider.create', $cabang->id) }}" class="btn btn-small btn-success">
                                     <i class="fas fa-paper-plane"></i> Kirim Stok
                                 </a>
+                                @endif
                             </td>
                         </tr>
                         @empty
