@@ -52,7 +52,7 @@
                                             <option value="">-- Pilih Produk --</option>
                                             @foreach($stokCabang as $item)
                                                 <option value="{{ $item->id }}" data-max="{{ $item->stok_jumlah ?? 0 }}">
-                                                    {{ $item->nama_produk }} (Stok: {{ number_format($item->stok_jumlah ?? 0, 0, ',', '.') }})
+                                                    {{ $item->nama_produk }} (Stok: {{ number_format($item->stok_jumlah ?? 0, 0, ',', '.') }} | Total: {{ number_format($item->total_stok ?? 0, 0, ',', '.') }})
                                                 </option>
                                             @endforeach
                                         </select>

@@ -138,6 +138,33 @@
             @enderror
         </div>
 
+        <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600; color: var(--text);">Tambah Stok (Opsional)</h4>
+            
+            <div class="form-group">
+                <label class="form-label">Cabang</label>
+                <select name="cabang_id" class="form-control">
+                    <option value="">-- Pilih Cabang --</option>
+                    @foreach($cabang as $c)
+                        <option value="{{ $c->id }}" {{ old('cabang_id') == $c->id ? 'selected' : '' }}>
+                            {{ $c->nama_cabang }} ({{ $c->lokasi }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('cabang_id')
+                    <small style="color: red;">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Jumlah Stok Tambahan</label>
+                <input type="number" name="tambah_stok" class="form-control" min="1" placeholder="Masukkan jumlah stok yang ingin ditambahkan">
+                @error('tambah_stok')
+                    <small style="color: red;">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i>

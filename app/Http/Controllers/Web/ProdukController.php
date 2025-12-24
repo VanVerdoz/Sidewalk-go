@@ -115,7 +115,8 @@ class ProdukController extends Controller
             abort(403);
         }
         $produk = Produk::findOrFail($id);
-        return view('produk.edit', compact('produk'));
+        $cabang = Cabang::all();
+        return view('produk.edit', compact('produk', 'cabang'));
     }
 
     public function perbarui(Request $request, string $id)
@@ -129,18 +130,38 @@ class ProdukController extends Controller
             'kategori' => 'required|string',
             'status' => 'required|in:aktif,nonaktif',
             'deskripsi' => 'nullable|string',
+            'tambah_stok' => 'nullable|integer|min:1',
+            'cabang_id' => 'required_with:tambah_stok|exists:cabang,id',
         ]);
 
-        $produk = Produk::findOrFail($id);
-        $produk->update([
-            'nama_produk' => $request->nama_produk,
-            'harga' => $request->harga,
-            'kategori' => $request->kategori,
-            'status' => $request->status,
-            'deskripsi' => $request->deskripsi,
-        ]);
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('produk.index')->with('success', 'Produk berhasil diupdate');
+            $produk = Produk::findOrFail($id);
+            $produk->update([
+                'nama_produk' => $request->nama_produk,
+                'harga' => $request->harga,
+                'kategori' => $request->kategori,
+                'status' => $request->status,
+                'deskripsi' => $request->deskripsi,
+            ]);
+
+            if ($request->filled('tambah_stok') && $request->tambah_stok > 0) {
+                $stok = Stok::firstOrNew([
+                    'produk_id' => $produk->id,
+                    'cabang_id' => $request->cabang_id,
+                ]);
+                $stok->jumlah = ($stok->exists ? $stok->jumlah : 0) + $request->tambah_stok;
+                $stok->save();
+            }
+
+            DB::commit();
+            return redirect()->route('produk.index')->with('success', 'Produk berhasil diupdate');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('error', 'Gagal update produk: ' . $e->getMessage());
+        }
     }
 
     public function hapus(string $id)
