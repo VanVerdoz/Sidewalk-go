@@ -63,16 +63,21 @@ class ProdukRaiderController extends Controller
         }
 
         $raider = Pengguna::findOrFail($raiderId);
-        $cabangList = Cabang::all();
         
+        // Auto-select the branch with the most stock (Main Warehouse strategy)
+        $cabangList = Cabang::with('stok')->get();
+        $bestCabang = $cabangList->sortByDesc(function($c) {
+            return $c->stok->sum('jumlah');
+        })->first();
+
+        // If specific branch requested via URL, use it, otherwise use best branch
         $selectedCabangId = $request->input('cabang_id');
         $selectedCabang = null;
 
         if ($selectedCabangId) {
-            $selectedCabang = Cabang::find($selectedCabangId);
+            $selectedCabang = $cabangList->where('id', $selectedCabangId)->first();
         } else {
-            // Default to first branch if no selection
-            $selectedCabang = Cabang::first();
+            $selectedCabang = $bestCabang ?? Cabang::first();
         }
 
         if ($selectedCabang) {

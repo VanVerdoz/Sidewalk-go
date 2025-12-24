@@ -22,23 +22,34 @@
             <form action="{{ route('kepala.produk-raider.store', $raider->id) }}" method="POST">
                 @csrf
                 
-                <div class="form-group mb-4" style="margin-bottom:1rem;">
-                    <label class="block mb-2 font-bold" style="display:block; margin-bottom:0.5rem; font-weight:600;">Pilih Cabang Asal</label>
-                    <select name="cabang_id" id="cabang_select" class="form-control" required onchange="window.location.href='{{ route('kepala.produk-raider.create', $raider->id) }}?cabang_id=' + this.value">
-                        <option value="">-- Pilih Cabang --</option>
-                        @foreach($cabangList as $c)
-                            <option value="{{ $c->id }}" {{ ($selectedCabang && $selectedCabang->id == $c->id) ? 'selected' : '' }}>
-                                {{ $c->nama_cabang }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                {{-- Hidden input for cabang_id since we auto-select the best one --}}
+                @if($selectedCabang)
+                    <input type="hidden" name="cabang_id" value="{{ $selectedCabang->id }}">
+                    <div class="alert alert-info mb-4" style="background: #e3f2fd; border-left: 4px solid #2196F3; color: #0d47a1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <i class="fas fa-warehouse"></i> Sumber Stok: <strong>{{ $selectedCabang->nama_cabang }}</strong>
+                            </div>
+                            <!-- Optional: Allow changing branch if really needed, but keep it subtle -->
+                            <small><a href="#" onclick="document.getElementById('cabang_selector').style.display='block'; this.style.display='none'; return false;">Ubah Gudang</a></small>
+                        </div>
+                        <div id="cabang_selector" style="display: none; margin-top: 10px;">
+                            <select class="form-control" onchange="window.location.href='{{ route('kepala.produk-raider.create', $raider->id) }}?cabang_id=' + this.value">
+                                @foreach($cabangList as $c)
+                                    <option value="{{ $c->id }}" {{ ($selectedCabang && $selectedCabang->id == $c->id) ? 'selected' : '' }}>
+                                        {{ $c->nama_cabang }} (Total Stok: {{ $c->stok->sum('jumlah') }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                @else
+                     <div class="alert alert-warning">
+                        Tidak ada cabang yang ditemukan.
+                    </div>
+                @endif
 
                 @if($selectedCabang)
-                    <div class="alert alert-info mb-4">
-                        <i class="fas fa-info-circle"></i> Stok akan diambil dari <strong>{{ $selectedCabang->nama_cabang }}</strong>.
-                    </div>
-
                     <div class="form-group mb-4" style="margin-bottom:1rem;">
                         <label class="block mb-2 font-bold" style="display:block; margin-bottom:0.5rem; font-weight:600;">Catatan (Opsional)</label>
                         <textarea name="catatan" class="form-control" rows="2" placeholder="Contoh: Stok tambahan untuk event..."></textarea>
