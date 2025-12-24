@@ -4,119 +4,175 @@
 
 @push('styles')
 <style>
-    .page-title { font-size: 24px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
-    .branch-section { 
+    /* Full Screen Focus Mode */
+    .sidebar, .header {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+    }
+    
+    /* Content Layout */
+    .content-center {
+        width: 100%;
+        max-width: 600px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .page-title { 
+        font-size: 28px; 
+        font-weight: 700; 
+        margin-bottom: 30px; 
+        color: var(--text);
+        text-align: center;
+    }
+
+    .card-select-cabang { 
         background: var(--surface); 
         border-radius: 16px; 
-        box-shadow: var(--shadow-sm); 
+        box-shadow: var(--shadow-md); 
         border: 1px solid var(--border); 
         color: var(--text);
-        max-width: 600px;
-        margin: 0 auto; /* Center the card */
+        width: 100%;
+        overflow: hidden;
     }
-    .branch-header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        padding: 16px 20px; 
+
+    .card-header { 
+        padding: 20px 24px; 
         border-bottom: 1px solid var(--border); 
+        background: var(--surface);
     }
-    .branch-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    
+    .card-title { 
+        font-size: 18px; 
+        font-weight: 600; 
+        color: var(--text); 
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 30px 24px;
+    }
     
     .form-group { margin-bottom: 0; }
-    .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text); }
+    .form-label { 
+        display: block; 
+        margin-bottom: 12px; 
+        font-weight: 600; 
+        color: var(--text); 
+        font-size: 16px;
+    }
+    
     .form-control {
         width: 100%;
-        padding: 12px;
-        border-radius: 8px;
+        padding: 14px 16px;
+        border-radius: 10px;
         border: 1px solid var(--border);
         background: var(--bg);
         color: var(--text);
         font-size: 15px;
+        transition: all 0.2s;
     }
     .form-control:focus {
         outline: none;
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
     }
 
     #branchDetails {
-        display: none; /* Hidden by default */
-        margin-top: 24px;
+        display: none;
+        margin-top: 30px;
         padding-top: 24px;
         border-top: 1px solid var(--border);
-        animation: fadeIn 0.3s ease-in-out;
+        animation: slideDown 0.3s ease-out;
     }
 
-    .detail-item { margin-bottom: 12px; }
-    .detail-label { font-weight: 600; color: var(--muted); font-size: 14px; display: block; margin-bottom: 4px; }
-    .detail-value { font-size: 16px; color: var(--text); }
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        border-bottom: 1px dashed var(--border);
+        padding-bottom: 12px;
+    }
+    .detail-row:last-of-type { border-bottom: none; margin-bottom: 24px; }
+    
+    .detail-label { font-weight: 500; color: var(--muted); }
+    .detail-value { font-weight: 600; color: var(--text); text-align: right; }
 
     .btn-action {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         background: var(--primary);
         color: white;
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 600;
         text-decoration: none;
-        margin-top: 16px;
-        transition: opacity 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-size: 16px;
     }
-    .btn-action:hover { opacity: 0.9; }
+    .btn-action:hover { 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+        color: white;
+    }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-        .page-title { font-size: 20px; text-align: center; }
-        .branch-section { margin: 0 16px; }
     }
 </style>
 @endpush
 
 @section('content')
-<h2 class="page-title" style="text-align: center;">Pilih Cabang</h2>
+<div class="content-center">
+    <h2 class="page-title">Pilih Cabang</h2>
 
-<div class="branch-section">
-    <div class="branch-header">
-        <div class="branch-title">Formulir Pemilihan Cabang</div>
-    </div>
-    <div style="padding: 24px;">
-        <div class="form-group">
-            <label for="cabangSelect" class="form-label">Silakan Pilih Cabang</label>
-            <select id="cabangSelect" class="form-control">
-                <option value="" selected disabled>-- Pilih Cabang --</option>
-                @foreach($cabangs as $cabang)
-                    <option value="{{ $cabang->id }}" 
-                            data-alamat="{{ $cabang->alamat ?? '-' }}" 
-                            data-url="{{ route('kepala.produk-raider.show', $cabang->id) }}">
-                        {{ $cabang->nama_cabang }}
-                    </option>
-                @endforeach
-            </select>
+    <div class="card-select-cabang">
+        <div class="card-header">
+            <h3 class="card-title">Formulir Pemilihan Cabang</h3>
         </div>
-
-        <div id="branchDetails">
-            <h4 style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">Keterangan Cabang</h4>
-            
-            <div class="detail-item">
-                <span class="detail-label">Nama Cabang</span>
-                <div class="detail-value" id="detailNama">-</div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="cabangSelect" class="form-label">Silakan Pilih Cabang</label>
+                <select id="cabangSelect" class="form-control">
+                    <option value="" selected disabled>-- Pilih Cabang --</option>
+                    @foreach($cabangs as $cabang)
+                        <option value="{{ $cabang->id }}" 
+                                data-alamat="{{ $cabang->alamat ?? '-' }}" 
+                                data-url="{{ route('kepala.produk-raider.show', $cabang->id) }}">
+                            {{ $cabang->nama_cabang }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            
-            <div class="detail-item">
-                <span class="detail-label">Alamat</span>
-                <div class="detail-value" id="detailAlamat">-</div>
-            </div>
 
-            <a href="#" id="btnLanjut" class="btn-action">
-                <i class="fas fa-box-open" style="margin-right: 8px;"></i> Lihat Produk
-            </a>
+            <div id="branchDetails">
+                <div class="detail-row">
+                    <span class="detail-label">Nama Cabang</span>
+                    <span class="detail-value" id="detailNama">-</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Alamat</span>
+                    <span class="detail-value" id="detailAlamat">-</span>
+                </div>
+
+                <a href="#" id="btnLanjut" class="btn-action">
+                    Lanjut Lihat Produk <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>
