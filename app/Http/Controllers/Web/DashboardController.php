@@ -261,6 +261,68 @@ class DashboardController extends Controller
     private function raiderDashboard()
     {
         $userId = session('user.id');
+        // Reload user dari DB untuk memastikan data terbaru (termasuk cabang_id)
+        $user = Pengguna::find($userId);
+
+        // --- Fitur Pilih Cabang untuk Raider ---
+        
+        // 1. Cek apakah user sudah terikat dengan cabang tertentu
+        if ($user && $user->cabang_id) {
+            $selectedCabangId = $user->cabang_id;
+        } else {
+            // Jika belum terikat, cek apakah ada request untuk memilih cabang
+            $selectedCabangId = request('cabang_id');
+
+            if ($selectedCabangId) {
+                // Cek apakah cabang ini sudah diambil oleh Raider lain
+                $isTaken = Pengguna::where('cabang_id', $selectedCabangId)
+                    ->where('id', '!=', $userId)
+                    ->exists();
+
+                if ($isTaken) {
+                    $selectedCabangId = null;
+                    session()->flash('error', 'Cabang ini sudah dipilih oleh Raider lain.');
+                } else {
+                    // Kunci cabang ini untuk user ini
+                    $user->cabang_id = $selectedCabangId;
+                    $user->save();
+                    
+                    // Update session
+                    session(['user' => $user->toArray()]);
+                }
+            }
+        }
+
+        // 2. Ambil daftar cabang yang TERSEDIA (belum dipilih orang lain) + Cabang milik user sendiri
+        $takenCabangIds = Pengguna::whereNotNull('cabang_id')
+            ->where('id', '!=', $userId)
+            ->pluck('cabang_id')
+            ->toArray();
+
+        $cabangList = Cabang::whereNotIn('id', $takenCabangIds)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $selectedCabang = null;
+        $stokCabang = collect([]);
+        $riwayatPermintaan = collect([]);
+
+        if ($selectedCabangId) {
+            $selectedCabang = Cabang::find($selectedCabangId);
+            if ($selectedCabang) {
+                // Ambil Stok Produk Cabang
+                $stokCabang = Stok::with('produk')
+                    ->where('cabang_id', $selectedCabangId)
+                    ->get();
+
+                // Ambil Riwayat Permintaan Stok Cabang
+                $riwayatPermintaan = RequestStok::with(['detail_request.produk'])
+                    ->where('cabang_id', $selectedCabangId)
+                    ->orderBy('tanggal', 'desc')
+                    ->get();
+            }
+        }
+        // ---------------------------------------
 
         $transaksiHarian = Penjualan::where('pengguna_id', $userId)
             ->whereDate('tanggal', today())
@@ -314,7 +376,12 @@ class DashboardController extends Controller
             'totalPenjualanHariIni',
             'transaksiMingguIni',
             'chartLabels',
-            'chartData'
+            'chartData',
+            'cabangList',
+            'selectedCabang',
+            'selectedCabangId',
+            'stokCabang',
+            'riwayatPermintaan'
         ));
     }
 

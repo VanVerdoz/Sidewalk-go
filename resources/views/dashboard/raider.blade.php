@@ -291,6 +291,108 @@
     </a>
 </div>
 
+<!-- Pilih Cabang Section -->
+<div class="chart-container" style="margin-bottom: 30px;">
+    <h3 class="chart-title">Pilih Cabang</h3>
+    
+    @if(session('error'))
+        <div style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ffcdd2;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <form action="{{ route('dashboard') }}" method="GET" class="flex gap-4 items-center">
+        <select name="cabang_id" class="form-control" onchange="this.form.submit()" 
+            {{ session('user.cabang_id') ? 'disabled' : '' }}
+            style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); width: 100%; max-width: 400px; background: var(--surface); color: var(--text); {{ session('user.cabang_id') ? 'opacity: 0.7; cursor: not-allowed;' : '' }}">
+            <option value="">-- Pilih Cabang --</option>
+            @foreach($cabangList as $cabang)
+                <option value="{{ $cabang->id }}" {{ (request('cabang_id') == $cabang->id || session('user.cabang_id') == $cabang->id) ? 'selected' : '' }}>
+                    {{ $cabang->nama_cabang }} - {{ $cabang->alamat }}
+                </option>
+            @endforeach
+        </select>
+        @if(!session('user.cabang_id'))
+            <noscript><button type="submit" class="btn-action btn-action-primary">Pilih</button></noscript>
+        @endif
+    </form>
+    @if(session('user.cabang_id'))
+        <p style="margin-top: 10px; font-size: 13px; color: var(--muted);">
+            <i class="fas fa-lock"></i> Anda telah terhubung dengan cabang ini.
+        </p>
+    @endif
+</div>
+
+@if($selectedCabang)
+    <!-- Stok Produk Cabang -->
+    <div class="chart-container" style="margin-bottom: 30px;">
+        <h3 class="chart-title">Stok Produk di Cabang: {{ $selectedCabang->nama_cabang }}</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; color: var(--text);">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border);">
+                        <th style="padding: 12px; text-align: left;">Produk</th>
+                        <th style="padding: 12px; text-align: left;">Jumlah Stok</th>
+                        <th style="padding: 12px; text-align: left;">Satuan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($stokCabang as $stok)
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 12px;">{{ $stok->produk->nama_produk ?? '-' }}</td>
+                            <td style="padding: 12px;">{{ $stok->jumlah }}</td>
+                            <td style="padding: 12px;">{{ $stok->produk->satuan ?? '-' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" style="padding: 20px; text-align: center; color: var(--muted);">Tidak ada data stok untuk cabang ini.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Riwayat Permintaan Stok -->
+    <div class="chart-container" style="margin-bottom: 30px;">
+        <h3 class="chart-title">Riwayat Permintaan Stok: {{ $selectedCabang->nama_cabang }}</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; color: var(--text);">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border);">
+                        <th style="padding: 12px; text-align: left;">Tanggal</th>
+                        <th style="padding: 12px; text-align: left;">Status</th>
+                        <th style="padding: 12px; text-align: left;">Detail Produk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($riwayatPermintaan as $request)
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 12px;">{{ \Carbon\Carbon::parse($request->tanggal)->format('d M Y') }}</td>
+                            <td style="padding: 12px;">
+                                <span class="hero-pill" style="background: {{ $request->status == 'approved' ? '#4caf50' : ($request->status == 'rejected' ? '#f44336' : '#ff9800') }}; color: white;">
+                                    {{ ucfirst($request->status) }}
+                                </span>
+                            </td>
+                            <td style="padding: 12px;">
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    @foreach($request->detail_request as $detail)
+                                        <li>{{ $detail->produk->nama_produk ?? 'Produk Hapus' }} ({{ $detail->jumlah_minta }})</li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" style="padding: 20px; text-align: center; color: var(--muted);">Tidak ada riwayat permintaan stok untuk cabang ini.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+@endif
+
 <!-- Sales Chart -->
 <div class="chart-container">
     <h3 class="chart-title">Penjualan 7 Hari Terakhir</h3>
