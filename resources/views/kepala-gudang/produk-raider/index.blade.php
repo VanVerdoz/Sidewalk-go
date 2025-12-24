@@ -13,28 +13,28 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Nama Raider</th>
                             <th>Cabang</th>
+                            <th>Alamat</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($raiders as $raider)
+                        @forelse($cabangs as $cabang)
                         <tr>
-                            <td>{{ $raider->nama_lengkap ?? $raider->username }}</td>
-                            <td>{{ $raider->cabang_name }}</td>
+                            <td>{{ $cabang->nama_cabang }}</td>
+                            <td>{{ $cabang->alamat }}</td>
                             <td class="table-actions">
-                                <a href="{{ route('kepala.produk-raider.show', $raider->id) }}" class="btn btn-small btn-primary">
+                                <a href="{{ route('kepala.produk-raider.show', $cabang->id) }}" class="btn btn-small btn-primary">
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
-                                <a href="{{ route('kepala.produk-raider.create', $raider->id) }}" class="btn btn-small btn-success">
+                                <a href="{{ route('kepala.produk-raider.create', $cabang->id) }}" class="btn btn-small btn-success">
                                     <i class="fas fa-paper-plane"></i> Kirim Stok
                                 </a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="text-center">Tidak ada data raider.</td>
+                            <td colspan="3" class="text-center">Tidak ada data cabang.</td>
                         </tr>
                         @endforelse
                     </tbody>

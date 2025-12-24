@@ -1024,6 +1024,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="<?php echo e(route('kepala.produk-raider.index')); ?>" class="<?php echo e(request()->routeIs('kepala.produk-raider.*') ? 'active' : ''); ?>">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Produk per Cabang</span>
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo e(route('kepala.produk-terjual')); ?>" class="<?php echo e(request()->routeIs('kepala.produk-terjual') ? 'active' : ''); ?>">
                         <i class="fas fa-chart-bar"></i>
                         <span>Produk Terjual</span>

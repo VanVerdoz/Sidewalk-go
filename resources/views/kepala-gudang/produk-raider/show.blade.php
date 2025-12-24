@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Stok - ' . ($raider->nama_lengkap ?? $raider->username))
+@section('title', 'Riwayat Stok - ' . $cabang->nama_cabang)
 
 @section('content')
 <div class="content">
@@ -8,14 +8,14 @@
         <a href="{{ route('kepala.produk-raider.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
-        <a href="{{ route('kepala.produk-raider.create', $raider->id) }}" class="btn btn-primary">
+        <a href="{{ route('kepala.produk-raider.create', $cabang->id) }}" class="btn btn-primary">
             <i class="fas fa-paper-plane"></i> Kirim Stok Baru
         </a>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">Riwayat Pengiriman Stok ke {{ $raider->nama_lengkap ?? $raider->username }}</h4>
+            <h4 class="card-title">Riwayat Pengiriman Stok ke {{ $cabang->nama_cabang }}</h4>
         </div>
         <div class="card-body">
             <div class="table-container">

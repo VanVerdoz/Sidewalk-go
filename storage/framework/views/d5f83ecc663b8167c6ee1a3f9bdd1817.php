@@ -171,6 +171,25 @@ endif;
 unset($__errorArgs, $__bag); ?>
         </div>
 
+        <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <h4 style="margin-bottom: 15px; font-size: 16px; font-weight: 600; color: var(--text);">Tambah Stok (Opsional)</h4>
+            
+            <div class="form-group">
+                <label class="form-label">Jumlah Stok Tambahan</label>
+                <input type="number" name="tambah_stok" class="form-control" min="1" placeholder="Masukkan jumlah stok yang ingin ditambahkan ke Stok Induk">
+                <?php $__errorArgs = ['tambah_stok'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                    <small style="color: red;"><?php echo e($message); ?></small>
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i>

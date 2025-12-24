@@ -20,67 +20,66 @@ class ProdukRaiderController extends Controller
             abort(403);
         }
 
-        // List all Raiders
-        $raiders = Pengguna::where('role', 'raider')->get();
-
-        // Attach inferred Cabang to each raider based on last stock request
-        foreach ($raiders as $raider) {
-            $lastRequest = RequestStok::where('raider_id', $raider->id)
-                ->with('cabang')
-                ->orderBy('tanggal', 'desc')
-                ->first();
-            
-            $raider->cabang_name = $lastRequest && $lastRequest->cabang 
-                ? $lastRequest->cabang->nama_cabang 
-                : '-';
-        }
+        // List all Cabang (Branches)
+        $cabangs = Cabang::all();
         
-        return view('kepala-gudang.produk-raider.index', compact('raiders'));
+        return view('kepala-gudang.produk-raider.index', compact('cabangs'));
     }
 
-    public function show($raiderId)
+    public function show($cabangId)
     {
         if (session('user.role') !== 'kepala_gudang') {
             abort(403);
         }
 
-        $raider = Pengguna::findOrFail($raiderId);
+        $cabang = Cabang::findOrFail($cabangId);
 
-        // Show history of requests/transfers
-        $transfers = RequestStok::with(['details.produk', 'cabang'])
-            ->where('raider_id', $raiderId)
-            ->where('status', 'disetujui')
+        // Show history of requests/transfers for this branch
+        $transfers = RequestStok::with(['details.produk'])
+            ->where('cabang_id', $cabangId)
             ->orderBy('tanggal', 'desc')
             ->paginate(20);
 
-        return view('kepala-gudang.produk-raider.show', compact('raider', 'transfers'));
+        return view('kepala-gudang.produk-raider.show', compact('cabang', 'transfers'));
     }
 
-    public function create(Request $request, $raiderId)
+    public function create(Request $request, $cabangId)
     {
         if (session('user.role') !== 'kepala_gudang') {
             abort(403);
         }
 
-        $raider = Pengguna::findOrFail($raiderId);
+        $cabang = Cabang::findOrFail($cabangId);
         
-        // Ambil semua produk (tanpa filter stok cabang)
-        $stokCabang = Produk::all();
+        // Ambil semua produk
+        // Mengambil stok dari Cabang Utama (first branch created or by ID pattern if needed)
+        // Asumsi: Gudang Utama adalah Cabang pertama yang dibuat atau yang memiliki stok terbanyak
+        // Kita akan ambil total stok dari seluruh sistem saja sebagai referensi, atau stok gudang utama
         
-        // Tambahkan properti dummy untuk kompatibilitas view
+        // Ambil Gudang Utama (Asumsi Cabang dengan ID terkecil atau pattern tertentu)
+        // Di sini kita ambil total stok dari tabel stok untuk produk tersebut (sum)
+        // Atau ambil stok dari cabang "Pusat" jika ada. 
+        // Untuk amannya, kita tampilkan total stok yang tersedia di sistem.
+        
+        $stokCabang = Produk::with(['stok' => function($query) {
+            // Jika ingin stok gudang utama saja, filter by cabang_id tertentu
+            // Tapi karena user bilang "gausah di ambil di stok produk" (deduct), 
+            // kita hanya tampilkan info saja.
+        }])->get();
+        
+        // Map total stok
         $stokCabang->each(function($product) {
-            $product->stok_jumlah = 9999; // Unlimited/Not tracked
-            $product->total_stok = 9999;
+            // Hitung total stok yang ada di tabel stok untuk produk ini
+            $totalStok = $product->stok->sum('jumlah');
+            
+            $product->stok_jumlah = $totalStok; 
+            $product->total_stok = $totalStok;
         });
 
-        // Tidak ada cabang terpilih
-        $selectedCabang = null;
-        $cabangList = [];
-
-        return view('kepala-gudang.produk-raider.create', compact('raider', 'stokCabang', 'selectedCabang', 'cabangList'));
+        return view('kepala-gudang.produk-raider.create', compact('cabang', 'stokCabang'));
     }
 
-    public function store(Request $request, $raiderId)
+    public function store(Request $request, $cabangId)
     {
         if (session('user.role') !== 'kepala_gudang') {
             abort(403);
@@ -97,14 +96,10 @@ class ProdukRaiderController extends Controller
         try {
             DB::beginTransaction();
 
-            // Gunakan Gudang Utama sebagai default jika ada, jika tidak null
-            $cabangUtama = Cabang::first();
-            $cabangId = $cabangUtama ? $cabangUtama->id : null;
-            
-            // 1. Create RequestStok (Approved)
+            // Create RequestStok for the specific Cabang
             $req = RequestStok::create([
-                'cabang_id' => $cabangId,
-                'raider_id' => (int) $raiderId,
+                'cabang_id' => (int) $cabangId,
+                'raider_id' => null, // No specific raider, just branch
                 'status' => 'disetujui',
                 'catatan' => 'Dikirim oleh Kepala Gudang | ' . ($request->catatan ?? '-'),
                 'tanggal' => now('Asia/Jakarta'),
@@ -114,19 +109,18 @@ class ProdukRaiderController extends Controller
                 $jumlah = (int) $request->jumlah[$index];
                 if (!$produkId || !$jumlah) continue;
 
-                // 2. Create RequestStokDetail
+                // Create RequestStokDetail
                 RequestStokDetail::create([
                     'request_id' => $req->id,
                     'produk_id' => $produkId,
                     'jumlah' => $jumlah,
                 ]);
 
-                // 3. SKIP Stock Deduction from Cabang/Gudang
-                // Sesuai request user: "gausah di ambil di stok produk"
+                // Note: Stock deduction from Gudang is disabled per user request
             }
 
             DB::commit();
-            return redirect()->route('kepala.produk-raider.show', $raiderId)->with('success', 'Stok berhasil dikirim ke Raider');
+            return redirect()->route('kepala.produk-raider.show', $cabangId)->with('success', 'Stok berhasil dikirim ke Cabang');
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -131,8 +131,8 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Jumlah Produk Awal (Opsional)</label>
-            <input type="number" name="jumlah" class="form-control" value="<?php echo e(old('jumlah')); ?>" min="0">
+            <label class="form-label">Jumlah Produk Awal</label>
+            <input type="number" name="jumlah" class="form-control" value="<?php echo e(old('jumlah')); ?>" min="0" required>
             <?php $__errorArgs = ['jumlah'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -146,8 +146,8 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Pilih Cabang (Jika mengisi jumlah)</label>
-            <select name="cabang_id" class="form-control">
+            <label class="form-label">Pilih Cabang</label>
+            <select name="cabang_id" class="form-control" required>
                 <option value="">-- Pilih Cabang --</option>
                 <?php $__currentLoopData = $cabang; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <option value="<?php echo e($c->id); ?>" <?php echo e(old('cabang_id') == $c->id ? 'selected' : ''); ?>><?php echo e($c->nama_cabang); ?></option>

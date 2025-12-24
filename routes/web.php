@@ -61,9 +61,9 @@ Route::middleware(['web'])->group(function () {
 
         // Kepala Gudang: Produk Raider (Kirim Stok ke Raider)
         Route::get('/kepala-gudang/produk-raider', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'index'])->name('kepala.produk-raider.index');
-        Route::get('/kepala-gudang/produk-raider/{raiderId}', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'show'])->name('kepala.produk-raider.show');
-        Route::get('/kepala-gudang/produk-raider/{raiderId}/create', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'create'])->name('kepala.produk-raider.create');
-        Route::post('/kepala-gudang/produk-raider/{raiderId}', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'store'])->name('kepala.produk-raider.store');
+        Route::get('/kepala-gudang/produk-raider/{cabangId}', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'show'])->name('kepala.produk-raider.show');
+        Route::get('/kepala-gudang/produk-raider/{cabangId}/create', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'create'])->name('kepala.produk-raider.create');
+        Route::post('/kepala-gudang/produk-raider/{cabangId}', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'store'])->name('kepala.produk-raider.store');
 
         // Aksi Kepala Gudang terhadap permintaan stok raider
         Route::post('/kepala-gudang/permintaan-stok/{id}/approve', [RequestStokController::class, 'approve'])->name('kepala.permintaan-stok.approve');
