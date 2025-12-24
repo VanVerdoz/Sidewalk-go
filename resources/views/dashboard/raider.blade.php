@@ -291,37 +291,45 @@
     </a>
 </div>
 
-<!-- Pilih Cabang Section -->
-<div class="chart-container" style="margin-bottom: 30px;">
-    <h3 class="chart-title">Pilih Cabang</h3>
-    
-    @if(session('error'))
-        <div style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ffcdd2;">
-            {{ session('error') }}
+<!-- Pilih Cabang / Info Cabang Section -->
+@if($selectedCabang)
+    <div class="chart-container" style="margin-bottom: 30px; background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; border: none;">
+        <h3 class="chart-title" style="color: white; margin-bottom: 10px;">
+            <i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i> Lokasi Cabang Anda
+        </h3>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+            {{ $selectedCabang->nama_cabang }}
         </div>
-    @endif
-
-    <form action="{{ route('dashboard') }}" method="GET" class="flex gap-4 items-center">
-        <select name="cabang_id" class="form-control" onchange="this.form.submit()" 
-            {{ session('user.cabang_id') ? 'disabled' : '' }}
-            style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); width: 100%; max-width: 400px; background: var(--surface); color: var(--text); {{ session('user.cabang_id') ? 'opacity: 0.7; cursor: not-allowed;' : '' }}">
-            <option value="">-- Pilih Cabang --</option>
-            @foreach($cabangList as $cabang)
-                <option value="{{ $cabang->id }}" {{ (request('cabang_id') == $cabang->id || session('user.cabang_id') == $cabang->id) ? 'selected' : '' }}>
-                    {{ $cabang->nama_cabang }} - {{ $cabang->alamat }}
-                </option>
-            @endforeach
-        </select>
-        @if(!session('user.cabang_id'))
-            <noscript><button type="submit" class="btn-action btn-action-primary">Pilih</button></noscript>
+        <div style="font-size: 15px; opacity: 0.9;">
+            {{ $selectedCabang->alamat }}
+        </div>
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 13px;">
+            <i class="fas fa-info-circle"></i> Anda sedang mengelola stok dan permintaan untuk cabang ini.
+        </div>
+    </div>
+@else
+    <div class="chart-container" style="margin-bottom: 30px;">
+        <h3 class="chart-title">Pilih Cabang</h3>
+        
+        @if(session('error'))
+            <div style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ffcdd2;">
+                {{ session('error') }}
+            </div>
         @endif
-    </form>
-    @if(session('user.cabang_id'))
-        <p style="margin-top: 10px; font-size: 13px; color: var(--muted);">
-            <i class="fas fa-lock"></i> Anda telah terhubung dengan cabang ini.
-        </p>
-    @endif
-</div>
+
+        <form action="{{ route('dashboard') }}" method="GET" class="flex gap-4 items-center">
+            <select name="cabang_id" class="form-control" onchange="this.form.submit()" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); width: 100%; max-width: 400px; background: var(--surface); color: var(--text);">
+                <option value="">-- Pilih Cabang --</option>
+                @foreach($cabangList as $cabang)
+                    <option value="{{ $cabang->id }}" {{ request('cabang_id') == $cabang->id ? 'selected' : '' }}>
+                        {{ $cabang->nama_cabang }} - {{ $cabang->alamat }}
+                    </option>
+                @endforeach
+            </select>
+            <noscript><button type="submit" class="btn-action btn-action-primary">Pilih</button></noscript>
+        </form>
+    </div>
+@endif
 
 @if($selectedCabang)
     <!-- Stok Produk Cabang -->
