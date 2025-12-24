@@ -1024,6 +1024,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('kepala.produk-raider.index') }}" class="{{ request()->routeIs('kepala.produk-raider.*') ? 'active' : '' }}">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Produk Raider</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('kepala.produk-terjual') }}" class="{{ request()->routeIs('kepala.produk-terjual') ? 'active' : '' }}">
                         <i class="fas fa-chart-bar"></i>
                         <span>Produk Terjual</span>
