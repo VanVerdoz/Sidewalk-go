@@ -27,9 +27,7 @@
             min-height: calc(100vh - 100px);
         }
         .card-select-cabang {
-            box-shadow: none;
-            border: none;
-            background: transparent;
+            max-width: 100%;
         }
         .card-body {
             padding: 20px !important;
