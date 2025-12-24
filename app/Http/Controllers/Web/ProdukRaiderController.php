@@ -23,8 +23,17 @@ class ProdukRaiderController extends Controller
         // List all Raiders
         $raiders = Pengguna::where('role', 'raider')->get();
 
-        // Calculate current stock for each Raider (Approved Requests - Sales) ?? 
-        // For now, let's just list Raiders and maybe their last request date.
+        // Attach inferred Cabang to each raider based on last stock request
+        foreach ($raiders as $raider) {
+            $lastRequest = RequestStok::where('raider_id', $raider->id)
+                ->with('cabang')
+                ->orderBy('tanggal', 'desc')
+                ->first();
+            
+            $raider->cabang_name = $lastRequest && $lastRequest->cabang 
+                ? $lastRequest->cabang->nama_cabang 
+                : '-';
+        }
         
         return view('kepala-gudang.produk-raider.index', compact('raiders'));
     }

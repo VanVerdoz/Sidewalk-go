@@ -22,7 +22,7 @@
                         @forelse($raiders as $raider)
                         <tr>
                             <td>{{ $raider->nama_lengkap ?? $raider->username }}</td>
-                            <td>{{ $raider->cabang->nama_cabang ?? '-' }}</td>
+                            <td>{{ $raider->cabang_name }}</td>
                             <td class="table-actions">
                                 <a href="{{ route('kepala.produk-raider.show', $raider->id) }}" class="btn btn-small btn-primary">
                                     <i class="fas fa-eye"></i> Detail
