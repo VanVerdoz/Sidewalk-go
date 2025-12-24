@@ -3,15 +3,47 @@
 @section('title', 'Produk per Cabang')
 
 @section('content')
-<div class="content">
-    <div class="card" style="max-width: 600px; margin: 0 auto;">
-        <div class="card-header">
-            <h4 class="card-title">Pilih Cabang</h4>
+<style>
+    .content-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 150px); /* Adjust based on header height */
+    }
+    .card-select-cabang {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border: 1px solid var(--border);
+    }
+    
+    @media (max-width: 768px) {
+        .content-center {
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+        .card-select-cabang {
+            box-shadow: none;
+            border: none;
+            background: transparent;
+        }
+        .card-body {
+            padding: 20px !important;
+        }
+    }
+</style>
+
+<div class="content-center">
+    <div class="card card-select-cabang">
+        <div class="card-header" style="text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            <h4 class="card-title" style="font-size: 1.5rem;">Pilih Cabang</h4>
+            <p style="color: var(--muted); margin-top: 5px;">Silakan pilih cabang untuk melihat stok produk</p>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="padding: 30px;">
             <div class="form-group">
                 <label for="cabangSelect" class="form-label" style="font-weight: bold; margin-bottom: 10px; display: block;">Pilih berdasarkan cabang Anda</label>
-                <select id="cabangSelect" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text);">
+                <select id="cabangSelect" class="form-control" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 16px;">
                     <option value="" selected disabled>-- Pilih Cabang --</option>
                     @foreach($cabangs as $cabang)
                         <option value="{{ $cabang->id }}">{{ $cabang->nama_cabang }}</option>
@@ -19,10 +51,16 @@
                 </select>
             </div>
             
-            <div style="margin-top: 20px; text-align: right;">
-                <button type="button" id="btnLanjut" class="btn btn-primary" disabled>
+            <div style="margin-top: 25px;">
+                <button type="button" id="btnLanjut" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px; font-weight: 600;" disabled>
                     Lanjut <i class="fas fa-arrow-right"></i>
                 </button>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                 <a href="{{ route('dashboard') }}" style="color: var(--muted); text-decoration: none; font-size: 14px;">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                 </a>
             </div>
         </div>
     </div>
@@ -44,8 +82,6 @@
         btn.addEventListener('click', function() {
             const cabangId = select.value;
             if (cabangId) {
-                // Construct URL manually since route() helper is PHP-side
-                // Base pattern: /kepala-gudang/produk-raider/{id}
                 const baseUrl = "{{ route('kepala.produk-raider.index') }}";
                 window.location.href = baseUrl + '/' + cabangId;
             }
