@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Raider')
+@section('title', 'Produk per Cabang')
 
 @section('content')
 <div class="content">
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">Daftar Raider</h4>
+            <h4 class="card-title">Produk per Cabang</h4>
         </div>
         <div class="card-body">
             <div class="table-container">
