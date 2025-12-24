@@ -16,6 +16,11 @@ class Cabang extends Model
         'status',
     ];
 
+    public function stok()
+    {
+        return $this->hasMany(Stok::class, 'cabang_id');
+    }
+
     protected static function boot()
     {
         parent::boot();
