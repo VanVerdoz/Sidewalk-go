@@ -115,8 +115,7 @@ class ProdukController extends Controller
             abort(403);
         }
         $produk = Produk::findOrFail($id);
-        $cabang = Cabang::all();
-        return view('produk.edit', compact('produk', 'cabang'));
+        return view('produk.edit', compact('produk'));
     }
 
     public function perbarui(Request $request, string $id)
@@ -131,7 +130,6 @@ class ProdukController extends Controller
             'status' => 'required|in:aktif,nonaktif',
             'deskripsi' => 'nullable|string',
             'tambah_stok' => 'nullable|integer|min:1',
-            'cabang_id' => 'required_with:tambah_stok|exists:cabang,id',
         ]);
 
         try {
@@ -147,12 +145,17 @@ class ProdukController extends Controller
             ]);
 
             if ($request->filled('tambah_stok') && $request->tambah_stok > 0) {
-                $stok = Stok::firstOrNew([
-                    'produk_id' => $produk->id,
-                    'cabang_id' => $request->cabang_id,
-                ]);
-                $stok->jumlah = ($stok->exists ? $stok->jumlah : 0) + $request->tambah_stok;
-                $stok->save();
+                // Ambil cabang pertama sebagai "Stok Induk"
+                $cabangUtama = Cabang::first();
+                
+                if ($cabangUtama) {
+                    $stok = Stok::firstOrNew([
+                        'produk_id' => $produk->id,
+                        'cabang_id' => $cabangUtama->id,
+                    ]);
+                    $stok->jumlah = ($stok->exists ? $stok->jumlah : 0) + $request->tambah_stok;
+                    $stok->save();
+                }
             }
 
             DB::commit();
