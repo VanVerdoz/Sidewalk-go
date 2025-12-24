@@ -114,8 +114,9 @@ class ProdukController extends Controller
         if (!in_array(session('user.role'), ['kepala_gudang', 'owner'])) {
             abort(403);
         }
-        $produk = Produk::findOrFail($id);
-        return view('produk.edit', compact('produk'));
+        $produk = Produk::with('stok.cabang')->findOrFail($id);
+        $cabang = Cabang::all();
+        return view('produk.edit', compact('produk', 'cabang'));
     }
 
     public function perbarui(Request $request, string $id)
@@ -129,6 +130,8 @@ class ProdukController extends Controller
             'kategori' => 'required|string',
             'status' => 'required|in:aktif,nonaktif',
             'deskripsi' => 'nullable|string',
+            'jumlah' => 'nullable|integer|min:0',
+            'cabang_id' => 'nullable|exists:cabang,id',
         ]);
 
         $produk = Produk::findOrFail($id);
@@ -139,6 +142,13 @@ class ProdukController extends Controller
             'status' => $request->status,
             'deskripsi' => $request->deskripsi,
         ]);
+
+        if ($request->filled('cabang_id') && $request->filled('jumlah')) {
+            Stok::updateOrCreate(
+                ['produk_id' => $id, 'cabang_id' => $request->cabang_id],
+                ['jumlah' => $request->jumlah]
+            );
+        }
 
         return redirect()->route('produk.index')->with('success', 'Produk berhasil diupdate');
     }
