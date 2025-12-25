@@ -57,7 +57,7 @@
         <thead>
             <tr>
                 <th>Nama Produk</th>
-                <th style="text-align:center;">Sisa Hari Ini</th>
+                <th style="text-align:center;">Jumlah Produk Tersisa</th>
             </tr>
         </thead>
         <tbody>
@@ -73,7 +73,7 @@
         </tbody>
     </table>
     @else
-    <div class="empty">Belum ada produk belum laku hari ini untuk cabang ini.</div>
+    <div class="empty">Belum ada stok produk untuk cabang ini.</div>
     @endif
 </div>
 @else

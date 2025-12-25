@@ -109,25 +109,32 @@ class ProdukRaiderController extends Controller
         if (!empty($selectedCabangId)) {
             $selectedCabang = Cabang::find($selectedCabangId);
             if ($selectedCabang) {
-                $closing = ClosingHarian::where('cabang_id', $selectedCabang->id)
-                    ->whereDate('tanggal', $tanggal)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-                if ($closing && $closing->stok_akhir) {
-                    $payload = json_decode($closing->stok_akhir, true) ?: [];
-                    $detail = $payload['detail'] ?? [];
-                    foreach ($detail as $row) {
-                        $pid = (int) ($row['produk_id'] ?? 0);
-                        $sisa = (int) ($row['sisa'] ?? 0);
-                        $produk = Produk::find($pid);
-                        if ($produk) {
-                            $items->push([
-                                'produk' => $produk,
-                                'sisa' => $sisa,
-                            ]);
-                        }
-                    }
-                }
+                // Ambil stok untuk cabang ini
+                $stokCabang = Stok::with('produk')
+                    ->where('cabang_id', $selectedCabangId)
+                    ->where('jumlah', '>', 0)
+                    ->get();
+
+                // Hitung penjualan hari ini per produk
+                $soldToday = DetailPenjualan::whereHas('penjualan', function ($q) use ($selectedCabangId, $tanggal) {
+                        $q->whereDate('tanggal', $tanggal)
+                          ->where('cabang_id', $selectedCabangId);
+                    })
+                    ->select('produk_id', DB::raw('SUM(jumlah) as total'))
+                    ->groupBy('produk_id')
+                    ->pluck('total', 'produk_id');
+
+                // Map stok ke items dengan perhitungan sisa
+                $items = $stokCabang->map(function ($item) use ($soldToday) {
+                    $sold = (int) ($soldToday[$item->produk_id] ?? 0);
+                    $sisa = max((int)$item->jumlah - $sold, 0);
+                    
+                    return [
+                        'produk' => $item->produk,
+                        'sisa' => $sisa,
+                    ];
+                });
+
                 $totalProduk = $items->count();
                 $totalUnitSisa = $items->sum('sisa');
             }
