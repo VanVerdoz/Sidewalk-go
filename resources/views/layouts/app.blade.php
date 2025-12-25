@@ -1091,11 +1091,7 @@
                                 <button type="button" class="btn btn-toggle btn-small" id="themeToggle" title="Mode tampilan (Gelap/Terang)" aria-label="Toggle mode"><i class="fas fa-moon"></i></button>
                                 <span id="themeLabel" class="theme-label">Gelap</span>
                             </div>
-                            <a href="{{ route('profile.show') }}" class="btn btn-profile">
-                                <i class="fas fa-user-cog"></i>
-                                <span class="btn-profile-text">Profil</span>
-                            </a>
-                            <div class="header-user">
+                            <a href="{{ route('profile.show') }}" class="header-user" style="text-decoration: none;">
                                 <div class="header-user-avatar">
                                     <i class="fas fa-user"></i>
                                 </div>
@@ -1103,7 +1099,7 @@
                                     <h4>{{ $user['nama_lengkap'] ?? $user['username'] ?? 'Admin' }}</h4>
                                     <p>{{ ucfirst(str_replace('_', ' ', $role)) }}</p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                     @if(request()->routeIs('dashboard'))
