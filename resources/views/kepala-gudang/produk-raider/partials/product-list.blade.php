@@ -15,7 +15,7 @@
                     <tr>
                         <th>Nama Produk</th>
                         <th>Harga</th>
-                        <th>Jumlah Stok</th>
+                        <th style="text-align: center;">Jumlah Stok</th>
                         @if($role === 'kepala_gudang')
                         <th>Aksi</th>
                         @endif
@@ -29,7 +29,7 @@
                             <span style="color: var(--muted); margin-left: 6px;">({{ $stok->produk->kategori ?? '-' }})</span>
                         </td>
                         <td data-label="Harga">Rp {{ number_format($stok->produk->harga ?? 0, 0, ',', '.') }}</td>
-                        <td data-label="Jumlah Stok">
+                        <td data-label="Jumlah Stok" style="text-align: center;">
                             {{ number_format($stok->jumlah, 0, ',', '.') }}
                         </td>
                         @if($role === 'kepala_gudang')
