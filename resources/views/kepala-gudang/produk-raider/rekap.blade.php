@@ -27,17 +27,32 @@
             <i class="fas fa-arrow-left"></i> Produk per Cabang
         </a>
     </div>
+</div>
 
-@foreach($cabangs as $cabang)
+<div class="card" style="margin-bottom: 14px;">
+    <form action="{{ route('kepala.rekap-sisa-hari-ini') }}" method="GET" style="display:flex; gap:10px; align-items:center;">
+        <label for="cabang_id" style="font-size:13px; color: var(--muted);">Pilih Cabang</label>
+        <select name="cabang_id" id="cabang_id" onchange="this.form.submit()" style="min-width:220px;">
+            <option value="">-- Pilih Cabang --</option>
+            @foreach($cabangs as $cb)
+                <option value="{{ $cb->id }}" {{ $selectedCabangId == $cb->id ? 'selected' : '' }}>
+                    {{ $cb->nama_cabang ?? 'Cabang '.$cb->id }}
+                </option>
+            @endforeach
+        </select>
+    </form>
+</div>
+
+@if(!empty($selectedCabangId) && $selectedCabang)
 <div class="card">
     <div class="card-header">
-        <div class="card-title">{{ $cabang->nama_cabang ?? ('Cabang '.$cabang->id) }}</div>
+        <div class="card-title">{{ $selectedCabang->nama_cabang ?? ('Cabang '.$selectedCabang->id) }}</div>
         <div class="summary">
-            <div><span class="badge badge-info">Belum Laku: {{ $rekap[$cabang->id]['total_belum_laku'] }}</span></div>
-            <div><span class="badge badge-info">Total Unit: {{ number_format($rekap[$cabang->id]['total_unit_belum_laku'], 0, ',', '.') }}</span></div>
+            <div><span class="badge badge-info">Belum Laku: {{ $totalBelumLaku }}</span></div>
+            <div><span class="badge badge-info">Total Unit: {{ number_format($totalUnitBelumLaku, 0, ',', '.') }}</span></div>
         </div>
     </div>
-    @if($rekap[$cabang->id]['total_belum_laku'] > 0)
+    @if($items->count() > 0)
     <table class="table">
         <thead>
             <tr>
@@ -46,7 +61,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($rekap[$cabang->id]['items'] as $row)
+            @foreach($items as $row)
             <tr>
                 <td>
                     {{ $row['produk']->nama_produk }}
@@ -61,5 +76,7 @@
     <div class="empty">Belum ada produk belum laku hari ini untuk cabang ini.</div>
     @endif
 </div>
-@endforeach
+@else
+<div class="empty">Silakan pilih cabang untuk melihat rekapan sisa hari ini.</div>
+@endif
 @endsection
