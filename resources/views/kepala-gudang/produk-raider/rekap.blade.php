@@ -31,18 +31,51 @@
         .summary { flex-direction: row; gap: 8px; width: 100%; }
         .summary > div { flex: 1; }
         .badge { width: 100%; text-align: center; }
-        .btn { width: 100%; justify-content: center; }
+        .page-header .btn { width: 100%; justify-content: center; }
         .card-header { flex-direction: column; align-items: flex-start; }
         .card-title { margin-bottom: 8px; }
         
         /* Mobile Card View for Table */
         .table thead { display: none; }
-        .table tbody tr { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; padding: 12px; box-shadow: var(--shadow-sm); }
-        .table td { display: flex; justify-content: space-between; align-items: center; border: none; padding: 6px 0; white-space: normal; }
-        .table td:first-child { font-weight: 600; margin-bottom: 4px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        .table td:last-child { justify-content: flex-end; color: var(--primary); font-weight: 600; font-size: 15px; }
-        .table td::before { content: attr(data-label); font-weight: normal; color: var(--muted); font-size: 13px; margin-right: 10px; }
-        .table td:first-child::before { display: none; }
+        .table tbody tr { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            margin-bottom: 12px; 
+            padding: 16px; 
+            box-shadow: var(--shadow-sm); 
+        }
+        .table td { border: none; padding: 0; white-space: normal; }
+        .table td:first-child { 
+            flex: 1; 
+            font-weight: 600; 
+            text-align: left; 
+            margin-bottom: 0; 
+            padding-bottom: 0; 
+            border-bottom: none; 
+            padding-right: 12px;
+        }
+        .table td:last-child { 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-end; 
+            color: #ff6b35; /* Orange color */
+            font-weight: 700; 
+            font-size: 16px; 
+            flex-shrink: 0;
+        }
+        .table td::before { display: none; }
+        .table td:last-child::before { 
+            content: "Sisa:"; 
+            font-weight: normal; 
+            color: var(--muted); 
+            font-size: 13px; 
+            margin-right: 6px; 
+            display: inline-block;
+        }
     }
 </style>
 @endpush
