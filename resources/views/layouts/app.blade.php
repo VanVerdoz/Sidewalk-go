@@ -118,25 +118,12 @@
             text-align: center;
         }
 
-        .sidebar-logo-circle {
-            width: 90px;
-            height: 90px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-            backdrop-filter: blur(4px);
-            flex-shrink: 0;
-        }
-
-        .sidebar-logo-circle img {
-            width: 55px;
+        .sidebar-logo-img {
+            width: 120px;
             height: auto;
             object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 6px 15px rgba(0,0,0,0.15));
         }
 
         .sidebar-logo-circle i {
@@ -952,9 +939,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-logo">
-                <div class="sidebar-logo-circle">
-                   <img src="{{ asset('images/sw3.png') }}" alt="Logo Sidewalk.Go">
-                </div>
+                <img class="sidebar-logo-img" src="{{ asset('images/sw3.png') }}" alt="Logo Sidewalk.Go">
                 <h2>Sidewalk.Go</h2>
             </div>
 
