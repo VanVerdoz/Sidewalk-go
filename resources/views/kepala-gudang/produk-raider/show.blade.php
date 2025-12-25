@@ -36,24 +36,25 @@
                     <tbody>
                         @forelse($stokCabang as $stok)
                         <tr>
-                            <td>{{ $stok->produk->nama_produk ?? '-' }}</td>
+                            <td>
+                                {{ $stok->produk->nama_produk ?? '-' }}
+                                <span style="color: var(--muted); margin-left: 6px;">({{ $stok->produk->kategori ?? '-' }})</span>
+                            </td>
                             <td>Rp {{ number_format($stok->produk->harga ?? 0, 0, ',', '.') }}</td>
                             <td>
-                                <span style="background:var(--primary); color:white; padding:4px 10px; border-radius:4px; font-weight:bold;">
-                                    {{ number_format($stok->jumlah, 0, ',', '.') }}
-                                </span>
+                                {{ number_format($stok->jumlah, 0, ',', '.') }}
                             </td>
                             @if($role === 'kepala_gudang')
                             <td>
                                 <div class="action-buttons" style="display:flex; gap:8px; flex-wrap:wrap;">
-                                    <a href="{{ route('stok.edit', $stok->id) }}" class="btn btn-sm btn-secondary">
-                                        <i class="fas fa-edit"></i> Edit
+                                    <a href="{{ route('stok.edit', $stok->id) }}" class="btn btn-sm btn-secondary" title="Edit">
+                                        <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('stok.destroy', $stok->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin menghapus stok ini?')">
+                                    <form action="{{ route('stok.destroy', $stok->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin menghapus stok ini?')" title="Hapus">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i> Hapus
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 </div>
