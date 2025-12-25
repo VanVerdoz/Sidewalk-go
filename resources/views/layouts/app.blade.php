@@ -1005,6 +1005,12 @@
                         <span>Produk per Cabang</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('kepala.rekap-sisa-hari-ini') }}" class="{{ request()->routeIs('kepala.rekap-sisa-hari-ini') ? 'active' : '' }}">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Rekap Sisa Hari Ini</span>
+                    </a>
+                </li>
                 @endif
 
                 @if($role === 'kepala_gudang')

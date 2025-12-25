@@ -95,7 +95,7 @@ class ProdukRaiderController extends Controller
     public function rekap(Request $request)
     {
         $role = strtolower(trim(session('user.role') ?? ''));
-        if (!in_array($role, ['kepala_gudang', 'admin', 'owner'])) {
+        if (!in_array($role, ['kepala_gudang', 'admin', 'owner', 'raider'])) {
             abort(403);
         }
         $cabangs = Cabang::orderBy('id', 'asc')->get();
