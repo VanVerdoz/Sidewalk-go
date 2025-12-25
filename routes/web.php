@@ -65,6 +65,7 @@ Route::middleware(['web'])->group(function () {
         Route::get('/kepala-gudang/produk-raider/{cabangId}/create', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'create'])->name('kepala.produk-raider.create');
         Route::post('/kepala-gudang/produk-raider/{cabangId}', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'store'])->name('kepala.produk-raider.store');
         Route::get('/kepala-gudang/rekap-sisa-hari-ini', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'rekap'])->name('kepala.rekap-sisa-hari-ini');
+        Route::get('/kepala_gudang/rekap-sisa-hari-ini', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'rekap']);
 
         // Raider: Input Sisa Hari Ini
         Route::get('/raider/sisa-hari-ini', [\App\Http\Controllers\Web\PenjualanController::class, 'sisaHariIniForm'])->name('raider.sisa-hari-ini.form');
