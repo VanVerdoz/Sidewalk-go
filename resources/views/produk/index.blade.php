@@ -194,7 +194,6 @@
                 <th>Nama Produk</th>
                 <th>Kategori</th>
                 <th>Harga</th>
-                <th>Jumlah Produk</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>
@@ -206,7 +205,6 @@
                 <td data-label="Nama Produk">{{ $item->nama_produk }}</td>
                 <td data-label="Kategori">{{ $item->kategori ?? '-' }}</td>
                     <td data-label="Harga">Rp. {{ number_format($item->harga, 0, ',', '.') }}</td>
-                <td data-label="Jumlah Produk">{{ number_format($item->stok->sum('jumlah'), 0, ',', '.') }}</td>
                 <td data-label="Status">
                     @if($item->status == 'aktif')
                         <span class="badge badge-success">Tersedia</span>
