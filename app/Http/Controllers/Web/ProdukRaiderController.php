@@ -8,6 +8,7 @@ use App\Models\Pengguna;
 use App\Models\Produk;
 use App\Models\Cabang;
 use App\Models\Stok;
+use App\Models\DetailPenjualan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,11 +39,28 @@ class ProdukRaiderController extends Controller
         $stokCabang = Stok::with('produk')
             ->where('cabang_id', $cabangId)
             ->where('jumlah', '>', 0)
-            ->get()
-            ->filter(function($s) {
+            ->get();
+
+        // Filter visibility by 1 day (if set)
+        $stokCabang = $stokCabang->filter(function($s) {
                 $key = "cabang:{$s->cabang_id}:stok_visible:{$s->produk_id}";
                 return Cache::get($key, false);
             });
+
+        // Compute today's sold quantity per product in this branch
+        $soldToday = DetailPenjualan::whereHas('penjualan', function ($q) use ($cabangId) {
+                $q->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
+                  ->where('cabang_id', $cabangId);
+            })
+            ->select('produk_id', DB::raw('SUM(jumlah) as total'))
+            ->groupBy('produk_id')
+            ->pluck('total', 'produk_id');
+
+        // Attach remaining today to each stock item
+        $stokCabang->each(function ($item) use ($soldToday) {
+            $sold = (int) ($soldToday[$item->produk_id] ?? 0);
+            $item->sisa_hari_ini = max((int)$item->jumlah - $sold, 0);
+        });
 
         if ($request->ajax()) {
             return view('kepala-gudang.produk-raider.partials.product-list', compact('cabang', 'stokCabang'));

@@ -16,6 +16,7 @@
                         <th>Nama Produk</th>
                         <th>Harga</th>
                         <th style="text-align: center;">Jumlah Stok</th>
+                        <th style="text-align: center;">Sisa Hari Ini</th>
                         @if($role === 'kepala_gudang')
                         <th>Aksi</th>
                         @endif
@@ -31,6 +32,9 @@
                         <td data-label="Harga">Rp {{ number_format($stok->produk->harga ?? 0, 0, ',', '.') }}</td>
                         <td data-label="Jumlah Stok" style="text-align: center;">
                             {{ number_format($stok->jumlah, 0, ',', '.') }}
+                        </td>
+                        <td data-label="Sisa Hari Ini" style="text-align: center;">
+                            {{ number_format($stok->sisa_hari_ini ?? 0, 0, ',', '.') }}
                         </td>
                         @if($role === 'kepala_gudang')
                         <td data-label="Aksi">
