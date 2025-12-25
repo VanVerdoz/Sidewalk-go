@@ -1246,5 +1246,55 @@
         })();
     </script>
     @stack('scripts')
+    <!-- Global Loader -->
+    <div id="global-loader" style="display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 99999; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 50px; color: #ff6b35;"></i>
+            <p style="margin-top: 15px; font-weight: 600; color: #333;">Memuat...</p>
+        </div>
+    </div>
+    <style>
+        .dark #global-loader { background: rgba(13, 17, 23, 0.85) !important; }
+        .dark #global-loader p { color: #e6e7eb !important; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('global-loader');
+            const showLoader = () => { if(loader) loader.style.display = 'flex'; };
+            const hideLoader = () => { if(loader) loader.style.display = 'none'; };
+
+            // Page Navigation
+            window.addEventListener('beforeunload', function() {
+                showLoader();
+            });
+
+            // Form Submit
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    if (form.checkValidity()) showLoader();
+                });
+            });
+
+            // Fetch API Interceptor
+            const originalFetch = window.fetch;
+            window.fetch = function() {
+                showLoader();
+                return originalFetch.apply(this, arguments).finally(hideLoader);
+            };
+            
+            // XHR Interceptor
+            const originalOpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function() {
+                this.addEventListener('loadstart', showLoader);
+                this.addEventListener('loadend', hideLoader);
+                originalOpen.apply(this, arguments);
+            };
+
+            // Hide on back/forward cache
+            window.addEventListener('pageshow', function(event) {
+                hideLoader();
+            });
+        });
+    </script>
 </body>
 </html>
