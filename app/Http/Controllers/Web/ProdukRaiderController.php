@@ -103,8 +103,8 @@ class ProdukRaiderController extends Controller
         $selectedCabangId = $request->query('cabang_id');
         $selectedCabang = null;
         $items = collect();
-        $totalBelumLaku = 0;
-        $totalUnitBelumLaku = 0;
+        $totalProduk = 0;
+        $totalUnitSisa = 0;
 
         if (!empty($selectedCabangId)) {
             $selectedCabang = Cabang::find($selectedCabangId);
@@ -113,31 +113,23 @@ class ProdukRaiderController extends Controller
                     ->whereDate('tanggal', $tanggal)
                     ->orderBy('created_at', 'desc')
                     ->first();
-                $visibleStok = Stok::where('cabang_id', $selectedCabang->id)->get()->filter(function($s) use ($selectedCabang) {
-                    $key = "cabang:{$selectedCabang->id}:stok_visible:{$s->produk_id}";
-                    return Cache::get($key, false);
-                })->keyBy('produk_id');
                 if ($closing && $closing->stok_akhir) {
                     $payload = json_decode($closing->stok_akhir, true) ?: [];
                     $detail = $payload['detail'] ?? [];
                     foreach ($detail as $row) {
                         $pid = (int) ($row['produk_id'] ?? 0);
-                        if (!$visibleStok->has($pid)) continue;
                         $sisa = (int) ($row['sisa'] ?? 0);
-                        $awal = (int) ($visibleStok[$pid]->jumlah ?? 0);
-                        if ($awal > 0 && $sisa === $awal) {
-                            $produk = Produk::find($pid);
-                            if ($produk) {
-                                $items->push([
-                                    'produk' => $produk,
-                                    'jumlah_belum_laku' => $sisa,
-                                ]);
-                            }
+                        $produk = Produk::find($pid);
+                        if ($produk) {
+                            $items->push([
+                                'produk' => $produk,
+                                'sisa' => $sisa,
+                            ]);
                         }
                     }
                 }
-                $totalBelumLaku = $items->count();
-                $totalUnitBelumLaku = $items->sum('jumlah_belum_laku');
+                $totalProduk = $items->count();
+                $totalUnitSisa = $items->sum('sisa');
             }
         }
 
@@ -146,8 +138,8 @@ class ProdukRaiderController extends Controller
             'selectedCabangId',
             'selectedCabang',
             'items',
-            'totalBelumLaku',
-            'totalUnitBelumLaku',
+            'totalProduk',
+            'totalUnitSisa',
             'tanggal'
         ));
     }

@@ -48,8 +48,8 @@
     <div class="card-header">
         <div class="card-title">{{ $selectedCabang->nama_cabang ?? ('Cabang '.$selectedCabang->id) }}</div>
         <div class="summary">
-            <div><span class="badge badge-info">Belum Laku: {{ $totalBelumLaku }}</span></div>
-            <div><span class="badge badge-info">Total Unit: {{ number_format($totalUnitBelumLaku, 0, ',', '.') }}</span></div>
+            <div><span class="badge badge-info">Total Produk: {{ $totalProduk }}</span></div>
+            <div><span class="badge badge-info">Total Sisa: {{ number_format($totalUnitSisa, 0, ',', '.') }}</span></div>
         </div>
     </div>
     @if($items->count() > 0)
@@ -57,7 +57,7 @@
         <thead>
             <tr>
                 <th>Nama Produk</th>
-                <th style="text-align:center;">Jumlah Belum Laku</th>
+                <th style="text-align:center;">Sisa Hari Ini</th>
             </tr>
         </thead>
         <tbody>
@@ -67,7 +67,7 @@
                     {{ $row['produk']->nama_produk }}
                     <span style="color: var(--muted);">({{ $row['produk']->kategori ?? '-' }})</span>
                 </td>
-                <td style="text-align:center;">{{ number_format($row['jumlah_belum_laku'], 0, ',', '.') }}</td>
+                <td style="text-align:center;">{{ number_format($row['sisa'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
         </tbody>
