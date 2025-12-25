@@ -123,13 +123,15 @@ class StokController extends Controller
         $stok = Stok::findOrFail($id);
         $cabang = Cabang::all();
         $produk = Produk::all();
-        return view('stok.edit', compact('stok', 'cabang', 'produk'));
+        $redirectTo = request()->query('redirect_to', url()->previous());
+        return view('stok.edit', compact('stok', 'cabang', 'produk', 'redirectTo'));
     }
 
     public function perbarui(Request $request, string $id)
     {
         $request->validate([
             'jumlah' => 'required|numeric|min:0',
+            'harga' => 'nullable|numeric|min:0',
         ]);
 
         $stok = Stok::findOrFail($id);
@@ -137,7 +139,14 @@ class StokController extends Controller
             'jumlah' => $request->jumlah
         ]);
 
-        return redirect()->route('stok.index')->with('success', 'Stok berhasil diperbarui');
+        if ($request->has('harga')) {
+            $stok->produk->update([
+                'harga' => $request->harga
+            ]);
+        }
+
+        $redirectTo = $request->input('redirect_to', route('stok.index'));
+        return redirect($redirectTo)->with('success', 'Stok dan harga berhasil diperbarui');
     }
 
     public function hapus(string $id)

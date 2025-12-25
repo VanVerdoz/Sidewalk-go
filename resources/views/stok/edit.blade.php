@@ -107,6 +107,7 @@
     <form action="{{ route('stok.update', $stok->id) }}" method="POST">
         @csrf
         @method('PUT')
+        <input type="hidden" name="redirect_to" value="{{ $redirectTo }}">
         
         <div class="form-group">
             <label class="form-label">Cabang</label>
@@ -116,6 +117,15 @@
         <div class="form-group">
             <label class="form-label">Produk</label>
             <input type="text" class="form-control" value="{{ $stok->produk->nama_produk }}" disabled>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Harga (Rp)</label>
+            <input type="number" name="harga" class="form-control" value="{{ old('harga', $stok->produk->harga) }}" min="0">
+            <small style="color: var(--muted); font-size: 12px; margin-top: 4px; display: block;">Mengubah harga akan mengubah harga produk ini di semua cabang.</small>
+            @error('harga')
+                <small style="color: red;">{{ $message }}</small>
+            @enderror
         </div>
 
         <div class="form-group">
@@ -131,7 +141,7 @@
                 <i class="fas fa-save"></i>
                 Simpan Perubahan
             </button>
-            <a href="{{ route('stok.index') }}" class="btn btn-secondary">
+            <a href="{{ $redirectTo }}" class="btn btn-secondary">
                 <i class="fas fa-times"></i>
                 Batal
             </a>
