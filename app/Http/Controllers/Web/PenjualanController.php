@@ -9,6 +9,8 @@ use App\Models\Penjualan;
 use App\Models\DetailPenjualan;
 use App\Models\Produk;
 use App\Models\Cabang;
+use App\Models\Stok;
+use App\Models\ClosingHarian;
 
 class PenjualanController extends Controller
 {
@@ -192,5 +194,73 @@ class PenjualanController extends Controller
         $penjualan->delete();
 
         return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dihapus');
+    }
+
+    public function sisaHariIniForm(Request $request)
+    {
+        if (session('user.role') !== 'raider') {
+            abort(403);
+        }
+        $cabangList = Cabang::orderBy('id', 'asc')->get();
+        $selectedCabangId = $request->query('cabang_id');
+        $stok = collect();
+        if (!empty($selectedCabangId)) {
+            $stok = Stok::with('produk')
+                ->where('cabang_id', (int)$selectedCabangId)
+                ->where('jumlah', '>', 0)
+                ->get();
+        }
+        return view('raider.sisa-hari-ini', compact('cabangList', 'selectedCabangId', 'stok'));
+    }
+
+    public function sisaHariIniStore(Request $request)
+    {
+        if (session('user.role') !== 'raider') {
+            abort(403);
+        }
+        $request->validate([
+            'cabang_id' => 'required|exists:cabang,id',
+            'produk_id' => 'required|array|min:1',
+            'produk_id.*' => 'required|exists:produk,id',
+            'sisa' => 'required|array|min:1',
+            'sisa.*' => 'required|integer|min:0',
+        ]);
+
+        $penggunaId = (int) (session('user.id'));
+        $tanggal = now('Asia/Jakarta')->toDateString();
+
+        $detail = [];
+        foreach ($request->produk_id as $idx => $pid) {
+            $detail[] = [
+                'produk_id' => (int) $pid,
+                'sisa' => (int) ($request->sisa[$idx] ?? 0),
+            ];
+        }
+
+        $totalPenjualan = Penjualan::where('cabang_id', (int)$request->cabang_id)
+            ->whereDate('tanggal', $tanggal)
+            ->sum('total');
+
+        ClosingHarian::create([
+            'cabang_id' => (int)$request->cabang_id,
+            'pengguna_id' => $penggunaId,
+            'tanggal' => $tanggal,
+            'total_penjualan' => $totalPenjualan,
+            'stok_akhir' => json_encode(['detail' => $detail]),
+            'created_at' => now('Asia/Jakarta'),
+        ]);
+
+        $belumLaku = 0;
+        // Hitung jumlah produk yang sisa == stok awal (indikasi belum laku)
+        $stokCabang = Stok::where('cabang_id', (int)$request->cabang_id)->get()->keyBy('produk_id');
+        foreach ($detail as $row) {
+            $awal = (int) ($stokCabang[$row['produk_id']]->jumlah ?? 0);
+            if ($awal > 0 && $row['sisa'] === $awal) {
+                $belumLaku++;
+            }
+        }
+
+        return redirect()->route('raider.sisa-hari-ini.form', ['cabang_id' => $request->cabang_id])
+            ->with('success', "Sisa hari ini tersimpan. Ada {$belumLaku} produk belum laku hari ini.");
     }
 }

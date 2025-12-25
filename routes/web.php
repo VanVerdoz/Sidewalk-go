@@ -65,6 +65,10 @@ Route::middleware(['web'])->group(function () {
         Route::get('/kepala-gudang/produk-raider/{cabangId}/create', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'create'])->name('kepala.produk-raider.create');
         Route::post('/kepala-gudang/produk-raider/{cabangId}', [\App\Http\Controllers\Web\ProdukRaiderController::class, 'store'])->name('kepala.produk-raider.store');
 
+        // Raider: Input Sisa Hari Ini
+        Route::get('/raider/sisa-hari-ini', [\App\Http\Controllers\Web\PenjualanController::class, 'sisaHariIniForm'])->name('raider.sisa-hari-ini.form');
+        Route::post('/raider/sisa-hari-ini', [\App\Http\Controllers\Web\PenjualanController::class, 'sisaHariIniStore'])->name('raider.sisa-hari-ini.store');
+
         // Aksi Kepala Gudang terhadap permintaan stok raider
         Route::post('/kepala-gudang/permintaan-stok/{id}/approve', [RequestStokController::class, 'approve'])->name('kepala.permintaan-stok.approve');
         Route::post('/kepala-gudang/permintaan-stok/{id}/pending', [RequestStokController::class, 'pending'])->name('kepala.permintaan-stok.pending');

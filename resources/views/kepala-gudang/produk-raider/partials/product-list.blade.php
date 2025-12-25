@@ -9,6 +9,12 @@
         @endif
     </div>
     <div class="card-body">
+        @if(isset($unsoldProducts) && $unsoldProducts->count() > 0)
+        <div class="alert alert-info" style="margin-bottom: 12px;">
+            Ada {{ $unsoldProducts->count() }} produk belum laku hari ini:
+            {{ implode(', ', $unsoldProducts->all()) }}
+        </div>
+        @endif
         <div class="table-container">
             <table class="req-table" style="width: 100%;">
                 <thead>

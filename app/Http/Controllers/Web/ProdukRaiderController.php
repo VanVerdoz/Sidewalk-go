@@ -9,6 +9,7 @@ use App\Models\Produk;
 use App\Models\Cabang;
 use App\Models\Stok;
 use App\Models\DetailPenjualan;
+use App\Models\ClosingHarian;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -62,11 +63,34 @@ class ProdukRaiderController extends Controller
             $item->sisa_hari_ini = max((int)$item->jumlah - $sold, 0);
         });
 
-        if ($request->ajax()) {
-            return view('kepala-gudang.produk-raider.partials.product-list', compact('cabang', 'stokCabang'));
+        // Build info banner data from Raider's input (ClosingHarian)
+        $unsoldProducts = collect();
+        $closing = ClosingHarian::where('cabang_id', $cabangId)
+            ->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
+            ->orderBy('created_at', 'desc')
+            ->first();
+        if ($closing && $closing->stok_akhir) {
+            $payload = json_decode($closing->stok_akhir, true) ?: [];
+            $detail = $payload['detail'] ?? [];
+            $stokMap = Stok::where('cabang_id', $cabangId)->get()->keyBy('produk_id');
+            foreach ($detail as $row) {
+                $pid = (int) ($row['produk_id'] ?? 0);
+                $sisa = (int) ($row['sisa'] ?? 0);
+                $awal = (int) ($stokMap[$pid]->jumlah ?? 0);
+                if ($awal > 0 && $sisa === $awal) {
+                    $produk = Produk::find($pid);
+                    if ($produk && $produk->nama_produk) {
+                        $unsoldProducts->push($produk->nama_produk);
+                    }
+                }
+            }
         }
 
-        return view('kepala-gudang.produk-raider.show', compact('cabang', 'stokCabang'));
+        if ($request->ajax()) {
+            return view('kepala-gudang.produk-raider.partials.product-list', compact('cabang', 'stokCabang', 'unsoldProducts'));
+        }
+
+        return view('kepala-gudang.produk-raider.show', compact('cabang', 'stokCabang', 'unsoldProducts'));
     }
 
     public function create(Request $request, $cabangId)

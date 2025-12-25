@@ -21,6 +21,12 @@
             <h4 class="card-title">Stok Tersedia di {{ $cabang->nama_cabang }}</h4>
         </div>
         <div class="card-body">
+            @if(isset($unsoldProducts) && $unsoldProducts->count() > 0)
+            <div class="alert alert-info" style="margin-bottom: 12px;">
+                Ada {{ $unsoldProducts->count() }} produk belum laku hari ini:
+                {{ implode(', ', $unsoldProducts->all()) }}
+            </div>
+            @endif
             <div class="table-container">
                 <table>
                     <thead>
