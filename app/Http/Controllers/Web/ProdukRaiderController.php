@@ -115,6 +115,12 @@ class ProdukRaiderController extends Controller
                     ->where('jumlah', '>', 0)
                     ->get();
 
+                // Filter visibility by 1 day (if set)
+                $stokCabang = $stokCabang->filter(function($s) {
+                    $key = "cabang:{$s->cabang_id}:stok_visible:{$s->produk_id}";
+                    return Cache::get($key, false);
+                });
+
                 // Hitung penjualan hari ini per produk
                 $soldToday = DetailPenjualan::whereHas('penjualan', function ($q) use ($selectedCabangId, $tanggal) {
                         $q->whereDate('tanggal', $tanggal)
