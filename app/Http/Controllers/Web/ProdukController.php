@@ -9,6 +9,7 @@ use App\Models\Stok;
 use App\Models\Cabang;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ProdukController extends Controller
 {
@@ -94,6 +95,9 @@ class ProdukController extends Controller
                     'cabang_id' => $cabangUtama->id,
                     'jumlah' => $request->jumlah,
                 ]);
+                // Set visibility cache for 1 day
+                $key = "cabang:{$cabangUtama->id}:stok_visible:{$produk->id}";
+                Cache::put($key, true, now()->addDay());
             }
 
             DB::commit();

@@ -9,6 +9,7 @@ use App\Models\Produk;
 use App\Models\Cabang;
 use App\Models\Stok;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ProdukRaiderController extends Controller
 {
@@ -37,7 +38,11 @@ class ProdukRaiderController extends Controller
         $stokCabang = Stok::with('produk')
             ->where('cabang_id', $cabangId)
             ->where('jumlah', '>', 0)
-            ->get();
+            ->get()
+            ->filter(function($s) {
+                $key = "cabang:{$s->cabang_id}:stok_visible:{$s->produk_id}";
+                return Cache::get($key, false);
+            });
 
         if ($request->ajax()) {
             return view('kepala-gudang.produk-raider.partials.product-list', compact('cabang', 'stokCabang'));
@@ -94,6 +99,10 @@ class ProdukRaiderController extends Controller
 
                 $stok->jumlah = ($stok->exists ? $stok->jumlah : 0) + $jumlah;
                 $stok->save();
+
+                // Set visibility cache for 1 day
+                $key = "cabang:{$cabangId}:stok_visible:{$produkId}";
+                Cache::put($key, true, now()->addDay());
             }
 
             DB::commit();
