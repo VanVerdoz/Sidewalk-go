@@ -63,7 +63,6 @@ class ProdukRaiderController extends Controller
             $item->sisa_hari_ini = max((int)$item->jumlah - $sold, 0);
         });
 
-        // Build info banner data from Raider's input (ClosingHarian)
         $unsoldProducts = collect();
         $closing = ClosingHarian::where('cabang_id', $cabangId)
             ->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
@@ -91,6 +90,50 @@ class ProdukRaiderController extends Controller
         }
 
         return view('kepala-gudang.produk-raider.show', compact('cabang', 'stokCabang', 'unsoldProducts'));
+    }
+
+    public function rekap()
+    {
+        if (session('user.role') !== 'kepala_gudang') {
+            abort(403);
+        }
+        $cabangs = Cabang::orderBy('id', 'asc')->get();
+        $tanggal = now('Asia/Jakarta')->toDateString();
+        $rekap = [];
+        foreach ($cabangs as $cabang) {
+            $closing = ClosingHarian::where('cabang_id', $cabang->id)
+                ->whereDate('tanggal', $tanggal)
+                ->orderBy('created_at', 'desc')
+                ->first();
+            $items = collect();
+            if ($closing && $closing->stok_akhir) {
+                $payload = json_decode($closing->stok_akhir, true) ?: [];
+                $detail = $payload['detail'] ?? [];
+                $stokMap = Stok::where('cabang_id', $cabang->id)->get()->keyBy('produk_id');
+                foreach ($detail as $row) {
+                    $pid = (int) ($row['produk_id'] ?? 0);
+                    $sisa = (int) ($row['sisa'] ?? 0);
+                    $produk = Produk::find($pid);
+                    if ($produk) {
+                        $awal = (int) ($stokMap[$pid]->jumlah ?? 0);
+                        $items->push([
+                            'produk' => $produk,
+                            'stok_awal' => $awal,
+                            'sisa' => $sisa,
+                            'belum_laku' => ($awal > 0 && $sisa === $awal),
+                        ]);
+                    }
+                }
+            }
+            $rekap[$cabang->id] = [
+                'cabang' => $cabang,
+                'items' => $items,
+                'total_items' => $items->count(),
+                'total_belum_laku' => $items->where('belum_laku', true)->count(),
+                'total_sisa' => $items->sum('sisa'),
+            ];
+        }
+        return view('kepala-gudang.produk-raider.rekap', compact('cabangs', 'rekap', 'tanggal'));
     }
 
     public function create(Request $request, $cabangId)

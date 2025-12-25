@@ -40,7 +40,12 @@
 @endpush
 
 @section('content')
-<h2 class="page-title">Produk per Cabang</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <h2 class="page-title">Produk per Cabang</h2>
+    <a href="{{ route('kepala.rekap-sisa-hari-ini') }}" class="btn btn-info">
+        <i class="fas fa-list"></i> Rekapan Sisa Hari Ini
+    </a>
+</div>
 
 <div class="branch-section">
     <div class="branch-header">
