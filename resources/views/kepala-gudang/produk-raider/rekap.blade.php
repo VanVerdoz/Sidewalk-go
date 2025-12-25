@@ -13,6 +13,9 @@
     .table th, .table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
     .table th { background: var(--table-head); text-align: left; }
     @media (max-width: 640px) { .summary { flex-direction: column; gap:8px; } }
+    .badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; }
+    .badge-info { background: #e0f2fe; color:#0369a1; }
+    .empty { color: var(--muted); padding:10px 0; }
 </style>
 @endpush
 
@@ -30,19 +33,16 @@
     <div class="card-header">
         <div class="card-title">{{ $cabang->nama_cabang ?? ('Cabang '.$cabang->id) }}</div>
         <div class="summary">
-            <div>Total produk: {{ $rekap[$cabang->id]['total_items'] }}</div>
-            <div>Total sisa: {{ number_format($rekap[$cabang->id]['total_sisa'], 0, ',', '.') }}</div>
-            <div>Belum laku: {{ $rekap[$cabang->id]['total_belum_laku'] }}</div>
+            <div><span class="badge badge-info">Belum Laku: {{ $rekap[$cabang->id]['total_belum_laku'] }}</span></div>
+            <div><span class="badge badge-info">Total Unit: {{ number_format($rekap[$cabang->id]['total_unit_belum_laku'], 0, ',', '.') }}</span></div>
         </div>
     </div>
-    @if($rekap[$cabang->id]['total_items'] > 0)
+    @if($rekap[$cabang->id]['total_belum_laku'] > 0)
     <table class="table">
         <thead>
             <tr>
-                <th>Produk</th>
-                <th style="text-align:center;">Stok Saat Ini</th>
-                <th style="text-align:center;">Sisa Hari Ini</th>
-                <th style="text-align:center;">Status</th>
+                <th>Nama Produk</th>
+                <th style="text-align:center;">Jumlah Belum Laku</th>
             </tr>
         </thead>
         <tbody>
@@ -52,21 +52,13 @@
                     {{ $row['produk']->nama_produk }}
                     <span style="color: var(--muted);">({{ $row['produk']->kategori ?? '-' }})</span>
                 </td>
-                <td style="text-align:center;">{{ number_format($row['stok_awal'], 0, ',', '.') }}</td>
-                <td style="text-align:center;">{{ number_format($row['sisa'], 0, ',', '.') }}</td>
-                <td style="text-align:center;">
-                    @if($row['belum_laku'])
-                        <span class="badge badge-warning">Belum Laku</span>
-                    @else
-                        <span class="badge badge-success">Terjual Sebagian/Full</span>
-                    @endif
-                </td>
+                <td style="text-align:center;">{{ number_format($row['jumlah_belum_laku'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
     @else
-    <div style="color: var(--muted);">Belum ada input sisa hari ini dari Raider untuk cabang ini.</div>
+    <div class="empty">Belum ada produk belum laku hari ini untuk cabang ini.</div>
     @endif
 </div>
 @endforeach
