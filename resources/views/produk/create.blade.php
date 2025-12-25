@@ -126,18 +126,7 @@
             @enderror
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Pilih Cabang</label>
-            <select name="cabang_id" class="form-control" required>
-                <option value="">-- Pilih Cabang --</option>
-                @foreach($cabang as $c)
-                    <option value="{{ $c->id }}" {{ old('cabang_id') == $c->id ? 'selected' : '' }}>{{ $c->nama_cabang }}</option>
-                @endforeach
-            </select>
-            @error('cabang_id')
-                <small style="color: red;">{{ $message }}</small>
-            @enderror
-        </div>
+        
 
         <div class="form-group">
             <label class="form-label">Kategori</label>

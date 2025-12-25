@@ -74,7 +74,6 @@ class ProdukController extends Controller
             'status' => 'required|in:aktif,nonaktif',
             'deskripsi' => 'nullable|string',
             'jumlah' => 'required|integer|min:0',
-            'cabang_id' => 'required|exists:cabang,id',
         ]);
 
         try {
@@ -88,11 +87,14 @@ class ProdukController extends Controller
                 'deskripsi' => $request->deskripsi,
             ]);
 
-            Stok::create([
-                'produk_id' => $produk->id,
-                'cabang_id' => $request->cabang_id,
-                'jumlah' => $request->jumlah,
-            ]);
+            $cabangUtama = Cabang::first();
+            if ($cabangUtama && $request->jumlah > 0) {
+                Stok::create([
+                    'produk_id' => $produk->id,
+                    'cabang_id' => $cabangUtama->id,
+                    'jumlah' => $request->jumlah,
+                ]);
+            }
 
             DB::commit();
             return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan');
