@@ -16,6 +16,9 @@
                         <th>Nama Produk</th>
                         <th>Harga</th>
                         <th>Jumlah Stok</th>
+                        @if($role === 'kepala_gudang')
+                        <th>Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -28,10 +31,26 @@
                                 {{ number_format($stok->jumlah, 0, ',', '.') }}
                             </span>
                         </td>
+                        @if($role === 'kepala_gudang')
+                        <td data-label="Aksi">
+                            <div class="req-actions">
+                                <a href="{{ route('stok.edit', $stok->id) }}" class="btn btn-secondary btn-small">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="{{ route('stok.destroy', $stok->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin menghapus stok ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-small">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        @endif
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="text-center" style="text-align: center;">Belum ada stok di cabang ini.</td>
+                        <td colspan="{{ $role === 'kepala_gudang' ? 4 : 3 }}" class="text-center" style="text-align: center;">Belum ada stok di cabang ini.</td>
                     </tr>
                     @endforelse
                 </tbody>
