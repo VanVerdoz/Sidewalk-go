@@ -12,9 +12,14 @@ class Stok extends Model
         'cabang_id',
         'produk_id',
         'jumlah',
+        'updated_at',
     ];
 
     public $timestamps = false;
+    
+    protected $casts = [
+        'updated_at' => 'datetime',
+    ];
 
     public function cabang()
     {

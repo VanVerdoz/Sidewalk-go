@@ -36,17 +36,15 @@ class ProdukRaiderController extends Controller
 
         $cabang = Cabang::findOrFail($cabangId);
 
-        // Show CURRENT STOCK for this branch
+        // Show CURRENT STOCK for this branch (Only visible if updated TODAY)
         $stokCabang = Stok::with('produk')
             ->where('cabang_id', $cabangId)
             ->where('jumlah', '>', 0)
+            ->whereDate('updated_at', now('Asia/Jakarta')->toDateString()) // Filter stok hari ini
             ->get();
 
-        // Filter visibility by 1 day (if set)
-        $stokCabang = $stokCabang->filter(function($s) {
-                $key = "cabang:{$s->cabang_id}:stok_visible:{$s->produk_id}";
-                return Cache::get($key, false);
-            });
+        // REMOVED: Cache filter
+        // $stokCabang = $stokCabang->filter(...)
 
         // Compute today's sold quantity per product in this branch
         $soldToday = DetailPenjualan::whereHas('penjualan', function ($q) use ($cabangId) {
@@ -203,12 +201,20 @@ class ProdukRaiderController extends Controller
                     'produk_id' => $produkId
                 ]);
 
-                $stok->jumlah = ($stok->exists ? $stok->jumlah : 0) + $jumlah;
+                // Reset stok jika data yang ada bukan dari hari ini (sudah lewat sehari)
+                if ($stok->exists) {
+                    $lastUpdate = $stok->updated_at; // Menggunakan casting datetime di Model
+                    if (!$lastUpdate || !$lastUpdate->isToday()) {
+                        $stok->jumlah = 0;
+                    }
+                }
+
+                $stok->jumlah = ($stok->jumlah ?? 0) + $jumlah;
+                $stok->updated_at = now(); // Set updated_at ke sekarang
                 $stok->save();
 
-                // Set visibility cache for 1 day
-                $key = "cabang:{$cabangId}:stok_visible:{$produkId}";
-                Cache::put($key, true, now()->addDay());
+                // REMOVED: Cache logic
+                // Cache::put($key, true, now()->addDay());
             }
 
             DB::commit();
