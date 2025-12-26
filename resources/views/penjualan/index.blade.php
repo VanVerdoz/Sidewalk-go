@@ -262,49 +262,41 @@
         .action-buttons .btn { width: auto; justify-content: center; }
     }
     @media (max-width: 640px) {
-        .table-container { margin: 0; width: 100%; border-radius: 0; padding: 12px; }
+        .table-container { 
+            margin: 0; 
+            width: 100%; 
+            border-radius: 0; 
+            padding: 12px;
+            overflow-x: auto; 
+        }
         .rekap-container { margin: 0; width: 100%; border-radius: 0; padding-left: 12px; padding-right: 12px; }
-        .table-container { overflow-x: hidden; }
-        .transaksi-table thead { display: none; }
-        .transaksi-table { border: 0; border-radius: 0; box-shadow: none; background: transparent; overflow: visible !important; }
-        .transaksi-table, .transaksi-table tbody { display: block; width: 100%; }
-        .transaksi-table tr {
-            display: block;
-            gap: 0;
-            margin-bottom: 8px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--surface);
-            box-shadow: var(--shadow-sm);
-            padding: 10px 12px;
-            overflow: visible;
-            max-width: 100%;
+        
+        /* Reset table styles for horizontal scrolling */
+        .transaksi-table { 
+            display: table;
+            width: 100%;
+            min-width: 800px; /* Ensure table is wide enough to trigger scroll */
+        }
+        .transaksi-table thead { display: table-header-group; }
+        .transaksi-table tbody { display: table-row-group; }
+        .transaksi-table tr { 
+            display: table-row; 
+            margin-bottom: 0;
+            border: none;
+            box-shadow: none;
+            background: transparent;
+            padding: 0;
         }
         .transaksi-table td {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            column-gap: 8px;
-            align-items: start;
-            margin: 0 0 8px 0;
-            white-space: normal;
-            word-break: normal;
-            overflow-wrap: break-word;
-            padding: 0;
-            border-bottom: 0;
-            font-size: 12px;
-            line-height: 1.4;
-            vertical-align: top;
-            width: 100%;
+            display: table-cell;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            white-space: nowrap; /* Keep text on one line */
         }
-        .transaksi-table td[data-label="Aksi"] {
-            white-space: nowrap;
-        }
-        .transaksi-table td::before {
-            content: attr(data-label) ": ";
-            font-weight: 600;
-            color: var(--muted);
-        }
-        .action-buttons { display:flex; gap: 8px; flex-wrap: nowrap; align-items: center; }
+        .transaksi-table td::before { content: none; }
+        
+        .action-buttons { display: flex; gap: 8px; }
         .btn-icon { width: 36px; height: 36px; }
         .btn-sm { padding: 5px 8px; font-size: 11px; }
     }
