@@ -267,10 +267,17 @@
             width: 100%; 
             border-radius: 0; 
             padding: 12px;
-            overflow-x: auto; 
+            /* overflow-x: auto; REMOVED from container */
         }
         .rekap-container { margin: 0; width: 100%; border-radius: 0; padding-left: 12px; padding-right: 12px; }
         
+        /* New wrapper for table scroll */
+        .table-responsive-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         /* Reset table styles for horizontal scrolling */
         .transaksi-table { 
             display: table;
@@ -420,6 +427,7 @@
     @endif
 
     @if($penjualan->count() > 0)
+    <div class="table-responsive-wrapper">
     <table class="table transaksi-table">
         <thead>
             <tr>
@@ -477,6 +485,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     @else
     <div class="empty-state">
         <i class="fas fa-shopping-cart"></i>
