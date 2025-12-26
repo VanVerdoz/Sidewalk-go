@@ -68,14 +68,23 @@ class PenjualanController extends Controller
                 // Monitoring konsistensi cabang untuk hari ini
                 $counts = $penjualan->groupBy('cabang_id')->map->count();
                 $expectedCabangId = $counts->sortDesc()->keys()->first();
-                $wrongNos = [];
-                foreach ($penjualan as $idx => $row) {
+                $wrongBranches = [];
+
+                foreach ($penjualan as $row) {
                     if ((string) $row->cabang_id !== (string) $expectedCabangId) {
-                        $wrongNos[] = $idx + 1;
+                        if ($row->cabang) {
+                            $wrongBranches[] = $row->cabang->nama_cabang;
+                        } else {
+                            $wrongBranches[] = $row->cabang_id;
+                        }
                     }
                 }
-                if (!empty($wrongNos)) {
-                    $monitorWarningCabang = 'Peringatan cabang anda salah, sesuaikan dengan alamat saat ini';
+                
+                $wrongBranches = array_unique($wrongBranches);
+
+                if (!empty($wrongBranches)) {
+                    $branchStr = implode(', ', $wrongBranches);
+                    $monitorWarningCabang = "Peringatan cabang anda salah, ubah cabang $branchStr anda";
                 } elseif ($penjualan->count() > 0) {
                     $monitorOkCabang = 'Mantap transaksi anda berhasil';
                 }
@@ -183,30 +192,6 @@ class PenjualanController extends Controller
                 'jumlah' => 1,
                 'harga' => $produk->harga,
             ]);
-        }
-
-        if (session('user.role') === 'raider' && session('user.id')) {
-            $today = now('Asia/Jakarta')->toDateString();
-            $list = Penjualan::where('pengguna_id', (int) session('user.id'))
-                ->whereDate('tanggal', $today)
-                ->where(function ($q) {
-                    $q->whereNull('metode_pembayaran')
-                      ->orWhere('metode_pembayaran', '!=', 'request_stok');
-                })
-                ->orderBy('id', 'asc')
-                ->get();
-
-            $counts = $list->groupBy('cabang_id')->map->count();
-            $expectedCabangId = $counts->sortDesc()->keys()->first();
-
-            $wrongNos = [];
-            foreach ($list as $idx => $row) {
-                if ((string) $row->cabang_id !== (string) $expectedCabangId) {
-                    $wrongNos[] = $idx + 1;
-                }
-            }
-
-            // Monitoring handled in index; jangan buat pesan per transaksi
         }
 
         return redirect()->route('penjualan.index');
