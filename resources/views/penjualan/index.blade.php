@@ -348,19 +348,7 @@
 </div>
 
 @if(session('user.role') === 'raider')
-<div style="margin-top: 8px;">
-    @if(!empty($monitorWarningCabang))
-    <div style="background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 12px;">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span style="margin-left:6px;">{{ $monitorWarningCabang }}</span>
-    </div>
-    @elseif(!empty($monitorOkCabang))
-    <div style="display:inline-flex; align-items:center; gap:6px; background:#dcfce7; color:#14532d; border:1px solid #bbf7d0; border-radius:999px; padding:4px 10px; font-size:12px;">
-        <i class="fas fa-check-circle"></i>
-        <span>{{ $monitorOkCabang }}</span>
-    </div>
-    @endif
-</div>
+<div style="margin-top: 8px;"></div>
 @endif
 
 <div class="table-container">
@@ -429,6 +417,21 @@
             </div>
         </div>
     </div>
+    @if(session('user.role') === 'raider' && (!empty($monitorWarningCabang) || !empty($monitorOkCabang)))
+    <div class="rekap-container" style="margin-top: 8px;">
+        @if(!empty($monitorWarningCabang))
+        <div style="background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 12px;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span style="margin-left:6px;">{{ $monitorWarningCabang }}</span>
+        </div>
+        @elseif(!empty($monitorOkCabang))
+        <div style="background:#dcfce7; color:#14532d; border:1px solid #bbf7d0; border-radius:10px; padding:10px 12px;">
+            <i class="fas fa-check-circle"></i>
+            <span style="margin-left:6px;">{{ $monitorOkCabang }}</span>
+        </div>
+        @endif
+    </div>
+    @endif
     @endif
 
     @if($penjualan->count() > 0)
