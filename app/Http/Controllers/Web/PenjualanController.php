@@ -11,6 +11,7 @@ use App\Models\Produk;
 use App\Models\Cabang;
 use App\Models\Stok;
 use App\Models\ClosingHarian;
+use App\Models\RequestStok;
 
 class PenjualanController extends Controller
 {
@@ -103,7 +104,14 @@ class PenjualanController extends Controller
     {
         $produk = Produk::where('status', 'aktif')->get();
         $cabang = Cabang::all();
-        return view('penjualan.create', compact('produk', 'cabang'));
+        $currentCabangId = null;
+        if (session('user.role') === 'raider' && session('user.id')) {
+            $currentCabangId = RequestStok::where('raider_id', (int) session('user.id'))
+                ->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
+                ->orderBy('tanggal', 'desc')
+                ->value('cabang_id');
+        }
+        return view('penjualan.create', compact('produk', 'cabang', 'currentCabangId'));
     }
 
     public function store(Request $request)
@@ -116,6 +124,18 @@ class PenjualanController extends Controller
             'keterangan' => 'nullable|string',
             'produk_id' => 'nullable|exists:produk,id',
         ]);
+
+        if (session('user.role') === 'raider' && session('user.id')) {
+            $currentCabangId = RequestStok::where('raider_id', (int) session('user.id'))
+                ->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
+                ->orderBy('tanggal', 'desc')
+                ->value('cabang_id');
+            if (!empty($currentCabangId) && (string) $request->cabang_id !== (string) $currentCabangId) {
+                return back()->withErrors([
+                    'cabang_id' => 'Input sesuai lokasi cabang anda saat ini',
+                ])->withInput();
+            }
+        }
 
         $produk = null;
         if ($request->filled('produk_id')) {

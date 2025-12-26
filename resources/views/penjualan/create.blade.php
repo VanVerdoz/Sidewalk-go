@@ -95,11 +95,14 @@
             <select name="cabang_id" class="form-select" required>
                 <option value="">-- Pilih Cabang --</option>
                 @foreach($cabang as $cb)
-                    <option value="{{ $cb->id }}" {{ old('cabang_id') == $cb->id ? 'selected' : '' }}>
-                        {{ $cb->nama_cabang ?? 'Cabang '.$cb->id }}
+                    <option value="{{ $cb->id }}" {{ old('cabang_id', $currentCabangId ?? '') == $cb->id ? 'selected' : '' }}>
+                        {{ $cb->nama_cabang ?? 'Cabang '.$cb->id }} — {{ $cb->alamat ?? '-' }}
                     </option>
                 @endforeach
             </select>
+            @if(session('user.role') === 'raider')
+                <div class="form-text">Input sesuai lokasi cabang anda saat ini.</div>
+            @endif
             @error('cabang_id')
                 <div class="form-text" style="color:red;">{{ $message }}</div>
             @enderror
