@@ -349,10 +349,10 @@
             <span style="margin-left:6px;">{{ $monitorWarningCabang }}</span>
         </div>
         @elseif(!empty($monitorOkCabang))
-        <div style="flex-basis: 100%; margin-top: 8px; background: #dcfce7; color: #14532d; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 12px;">
+        <span style="display:inline-flex; align-items:center; gap:6px; margin-top:8px; background:#dcfce7; color:#14532d; border:1px solid #bbf7d0; border-radius:999px; padding:4px 10px; font-size:12px;">
             <i class="fas fa-check-circle"></i>
-            <span style="margin-left:6px;">{{ $monitorOkCabang }}</span>
-        </div>
+            <span>{{ $monitorOkCabang }}</span>
+        </span>
         @endif
         @endif
     </div>

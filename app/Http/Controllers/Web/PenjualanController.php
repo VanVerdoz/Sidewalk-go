@@ -75,7 +75,7 @@ class PenjualanController extends Controller
                     }
                 }
                 if (!empty($wrongNos)) {
-                    $monitorWarningCabang = 'Ada kesalahan cabang anda ada yang berbeda, silahkan cek dan sesuaikan cabang anda. Salah di No: ' . implode(', ', $wrongNos);
+                    $monitorWarningCabang = 'Peringatan cabang anda salah, sesuaikan dengan alamat saat ini';
                 } elseif ($penjualan->count() > 0) {
                     $monitorOkCabang = 'Mantap transaksi anda berhasil';
                 }
