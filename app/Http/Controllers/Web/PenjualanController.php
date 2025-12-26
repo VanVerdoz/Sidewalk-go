@@ -166,7 +166,34 @@ class PenjualanController extends Controller
             ]);
         }
 
-        return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil ditambahkan');
+        if (session('user.role') === 'raider' && session('user.id')) {
+            $today = now('Asia/Jakarta')->toDateString();
+            $list = Penjualan::where('pengguna_id', (int) session('user.id'))
+                ->whereDate('tanggal', $today)
+                ->where(function ($q) {
+                    $q->whereNull('metode_pembayaran')
+                      ->orWhere('metode_pembayaran', '!=', 'request_stok');
+                })
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $counts = $list->groupBy('cabang_id')->map->count();
+            $expectedCabangId = $counts->sortDesc()->keys()->first();
+
+            $wrongNos = [];
+            foreach ($list as $idx => $row) {
+                if ((string) $row->cabang_id !== (string) $expectedCabangId) {
+                    $wrongNos[] = $idx + 1;
+                }
+            }
+
+            if (!empty($wrongNos)) {
+                $msg = 'Ada kesalahan cabang anda ada yang berbeda, silahkan cek dan sesuaikan cabang anda. Salah di No: ' . implode(', ', $wrongNos);
+                return redirect()->route('penjualan.index')->with('warning_cabang', $msg);
+            }
+        }
+
+        return redirect()->route('penjualan.index')->with('success', 'Mantap transaksi anda berhasil');
     }
 
     public function show(string $id)
