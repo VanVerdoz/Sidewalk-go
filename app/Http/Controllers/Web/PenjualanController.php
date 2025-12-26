@@ -234,13 +234,31 @@ class PenjualanController extends Controller
 
     public function destroy(string $id)
     {
-        if (!in_array(session('user.role'), ['admin', 'owner'])) {
-            abort(403);
-        }
-        $penjualan = Penjualan::findOrFail($id);
-        $penjualan->delete();
+        $role = session('user.role');
+        $userId = session('user.id');
+        $penjualan = Penjualan::with('detail_penjualan')->findOrFail($id);
 
-        return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dihapus');
+        if (in_array($role, ['admin', 'owner'])) {
+            $penjualan->detail_penjualan()->delete();
+            $penjualan->delete();
+            return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dihapus');
+        }
+
+        if ($role === 'raider') {
+            $isOwner = (string) $penjualan->pengguna_id === (string) $userId;
+            $isToday = \Carbon\Carbon::parse($penjualan->tanggal)->isSameDay(\Carbon\Carbon::today());
+            $isAllowedType = empty($penjualan->metode_pembayaran) || $penjualan->metode_pembayaran !== 'request_stok';
+
+            if (!$isOwner || !$isToday || !$isAllowedType) {
+                abort(403);
+            }
+
+            $penjualan->detail_penjualan()->delete();
+            $penjualan->delete();
+            return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dihapus');
+        }
+
+        abort(403);
     }
 
     public function sisaHariIniForm(Request $request)
