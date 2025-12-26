@@ -44,6 +44,8 @@ class PenjualanController extends Controller
             // Rekap penjualan harian khusus untuk raider
             $totalPendapatanHariIni = null;
             $totalProdukHariIni = null;
+            $monitorWarningCabang = null;
+            $monitorOkCabang = null;
 
             if ($role === 'raider' && $userId) {
                 $totalPendapatanHariIni = Penjualan::where('pengguna_id', $userId)
@@ -62,6 +64,21 @@ class PenjualanController extends Controller
                                ->orWhere('metode_pembayaran', '!=', 'request_stok');
                         });
                 })->sum('jumlah');
+
+                // Monitoring konsistensi cabang untuk hari ini
+                $counts = $penjualan->groupBy('cabang_id')->map->count();
+                $expectedCabangId = $counts->sortDesc()->keys()->first();
+                $wrongNos = [];
+                foreach ($penjualan as $idx => $row) {
+                    if ((string) $row->cabang_id !== (string) $expectedCabangId) {
+                        $wrongNos[] = $idx + 1;
+                    }
+                }
+                if (!empty($wrongNos)) {
+                    $monitorWarningCabang = 'Ada kesalahan cabang anda ada yang berbeda, silahkan cek dan sesuaikan cabang anda. Salah di No: ' . implode(', ', $wrongNos);
+                } elseif ($penjualan->count() > 0) {
+                    $monitorOkCabang = 'Mantap transaksi anda berhasil';
+                }
             }
 
             // Rekap harian per cabang (admin & owner)
@@ -96,7 +113,9 @@ class PenjualanController extends Controller
                 'cabangList',
                 'selectedCabangId',
                 'rekapCabangHariIni',
-                'grandTotalHariIni'
+                'grandTotalHariIni',
+                'monitorWarningCabang',
+                'monitorOkCabang'
             ));
     }
 
@@ -187,13 +206,10 @@ class PenjualanController extends Controller
                 }
             }
 
-            if (!empty($wrongNos)) {
-                $msg = 'Ada kesalahan cabang anda ada yang berbeda, silahkan cek dan sesuaikan cabang anda. Salah di No: ' . implode(', ', $wrongNos);
-                return redirect()->route('penjualan.index')->with('warning_cabang', $msg);
-            }
+            // Monitoring handled in index; jangan buat pesan per transaksi
         }
 
-        return redirect()->route('penjualan.index')->with('success', 'Mantap transaksi anda berhasil');
+        return redirect()->route('penjualan.index');
     }
 
     public function show(string $id)

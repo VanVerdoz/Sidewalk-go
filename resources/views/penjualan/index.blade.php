@@ -343,15 +343,15 @@
             Rekap Laporan Penjualan / Hari Ini
         </button>
         @endif
-        @if(session()->has('warning_cabang'))
+        @if(!empty($monitorWarningCabang))
         <div style="flex-basis: 100%; margin-top: 8px; background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 12px;">
             <i class="fas fa-exclamation-triangle"></i>
-            <span style="margin-left:6px;">{{ session('warning_cabang') }}</span>
+            <span style="margin-left:6px;">{{ $monitorWarningCabang }}</span>
         </div>
-        @elseif(session()->has('success'))
+        @elseif(!empty($monitorOkCabang))
         <div style="flex-basis: 100%; margin-top: 8px; background: #dcfce7; color: #14532d; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 12px;">
             <i class="fas fa-check-circle"></i>
-            <span style="margin-left:6px;">{{ session('success') }}</span>
+            <span style="margin-left:6px;">{{ $monitorOkCabang }}</span>
         </div>
         @endif
         @endif
