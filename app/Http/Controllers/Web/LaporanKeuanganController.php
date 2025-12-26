@@ -54,7 +54,7 @@ class LaporanKeuanganController extends Controller
 
     public function buat()
     {
-        $cabang = Cabang::all();
+        $cabang = Cabang::orderBy('id', 'asc')->get();
         return view('laporan-keuangan.create', compact('cabang'));
     }
 
@@ -87,7 +87,7 @@ class LaporanKeuanganController extends Controller
     public function ubah(string $id)
     {
         $laporan = LaporanKeuangan::findOrFail($id);
-        $cabang = Cabang::all();
+        $cabang = Cabang::orderBy('id', 'asc')->get();
         return view('laporan-keuangan.edit', compact('laporan', 'cabang'));
     }
 

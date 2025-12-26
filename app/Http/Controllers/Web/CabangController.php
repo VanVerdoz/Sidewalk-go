@@ -45,7 +45,7 @@ class CabangController extends Controller
 
     public function daftar()
     {
-        $cabang = Cabang::all();
+        $cabang = Cabang::orderBy('id', 'asc')->get();
         return view('cabang.index', compact('cabang'));
     }
 

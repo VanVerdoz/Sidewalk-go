@@ -59,7 +59,7 @@ class ProdukController extends Controller
         if (!in_array(session('user.role'), ['kepala_gudang', 'owner'])) {
             abort(403);
         }
-        $cabang = Cabang::all();
+        $cabang = Cabang::orderBy('id', 'asc')->get();
         return view('produk.create', compact('cabang'));
     }
 

@@ -23,7 +23,7 @@ class ProdukRaiderController extends Controller
         }
 
         // List all Cabang (Branches)
-        $cabangs = Cabang::all();
+        $cabangs = Cabang::orderBy('id', 'asc')->get();
         
         return view('kepala-gudang.produk-raider.index', compact('cabangs'));
     }

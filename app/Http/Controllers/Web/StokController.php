@@ -80,7 +80,7 @@ class StokController extends Controller
 
     public function buat()
     {
-        $cabang = Cabang::all();
+        $cabang = Cabang::orderBy('id', 'asc')->get();
         $produk = Produk::all();
         return view('stok.create', compact('cabang', 'produk'));
     }

@@ -42,7 +42,7 @@ class CabangController extends Controller
     {
         return response()->json([
             'message' => 'Daftar cabang',
-            'data' => Cabang::all()
+            'data' => Cabang::orderBy('id', 'asc')->get()
         ]);
     }
 
