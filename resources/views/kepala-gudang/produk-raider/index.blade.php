@@ -57,6 +57,9 @@
                     <option value="{{ $cabang->id }}">{{ $cabang->nama_cabang }}</option>
                 @endforeach
             </select>
+            <div class="form-text" style="font-size: 12px; color: var(--muted); margin-top: 6px;">
+                Silakan pilih cabang sesuai alamat anda saat ini.
+            </div>
         </div>
     </div>
 </div>

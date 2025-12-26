@@ -91,16 +91,19 @@
 </div>
 
 <div class="card">
-    <form action="{{ route('kepala.rekap-sisa-hari-ini') }}" method="GET" class="form-filter">
+    <form action="{{ route('kepala.rekap-sisa-hari-ini') }}"" method="GET" class="form-filter">
         <label for="cabang_id" style="font-size:13px; color: var(--muted); display:none;">Pilih Cabang</label>
         <select name="cabang_id" id="cabang_id" onchange="this.form.submit()">
             <option value="">-- Pilih Cabang --</option>
             @foreach($cabangs as $cb)
                 <option value="{{ $cb->id }}" {{ $selectedCabangId == $cb->id ? 'selected' : '' }}>
-                    {{ $cb->nama_cabang ?? 'Cabang '.$cb->id }}
+                    {{ $cb->nama_cabang ?? 'Cabang '.$cb->id }} — {{ $cb->alamat ?? '-' }}
                 </option>
             @endforeach
         </select>
+        <div class="form-text" style="font-size: 12px; color: var(--muted);">
+            Silakan pilih cabang sesuai alamat anda saat ini.
+        </div>
     </form>
 </div>
 
