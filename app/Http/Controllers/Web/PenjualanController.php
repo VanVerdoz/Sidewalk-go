@@ -151,6 +151,7 @@ class PenjualanController extends Controller
             'metode_pembayaran' => 'required|string',
             'keterangan' => 'nullable|string',
             'produk_id' => 'nullable|exists:produk,id',
+            'jumlah' => 'nullable|integer|min:1',
         ]);
 
         if (session('user.role') === 'raider' && session('user.id')) {

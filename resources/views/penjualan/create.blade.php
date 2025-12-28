@@ -153,6 +153,11 @@
         </div>
 
         <div class="form-group">
+            <label class="form-label">Jumlah</label>
+            <input type="number" name="jumlah" id="jumlahInput" class="form-control" value="1" min="1" required>
+        </div>
+
+        <div class="form-group">
             <label class="form-label">Total Pembayaran (Rp)</label>
             <input id="totalInput" type="number" name="total" class="form-control" value="{{ old('total') }}" min="0" step="100" required readonly>
             <div class="form-text">Otomatis dihitung: Harga x Jumlah.</div>
