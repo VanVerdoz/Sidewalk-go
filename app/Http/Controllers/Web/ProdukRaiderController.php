@@ -56,9 +56,9 @@ class ProdukRaiderController extends Controller
             ->pluck('total', 'produk_id');
 
         // Attach remaining today to each stock item
-        $stokCabang->each(function ($item) use ($soldToday) {
-            $sold = (int) ($soldToday[$item->produk_id] ?? 0);
-            $item->sisa_hari_ini = max((int)$item->jumlah - $sold, 0);
+        $stokCabang->each(function ($item) {
+            // Karena stok sudah dikurangi saat penjualan, maka sisa hari ini = stok saat ini
+            $item->sisa_hari_ini = $item->jumlah;
         });
 
         $unsoldProducts = collect();
@@ -132,9 +132,9 @@ class ProdukRaiderController extends Controller
                     ->pluck('total', 'produk_id');
 
                 // Map stok ke items dengan perhitungan sisa
-                $items = $stokCabang->map(function ($item) use ($soldToday) {
-                    $sold = (int) ($soldToday[$item->produk_id] ?? 0);
-                    $sisa = max((int)$item->jumlah - $sold, 0);
+                $items = $stokCabang->map(function ($item) {
+                    // Karena stok sudah dikurangi saat penjualan, maka sisa = stok saat ini
+                    $sisa = (int)$item->jumlah;
                     
                     return [
                         'produk' => $item->produk,

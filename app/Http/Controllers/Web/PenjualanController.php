@@ -194,6 +194,16 @@ class PenjualanController extends Controller
                 'jumlah' => $jumlah,
                 'harga' => $produk->harga,
             ]);
+
+            // Kurangi stok cabang secara real-time
+            $stok = Stok::where('cabang_id', $request->cabang_id)
+                ->where('produk_id', $produk->id)
+                ->first();
+            
+            if ($stok) {
+                // Pastikan stok tidak negatif (opsional, tapi user minta berkurang)
+                $stok->decrement('jumlah', $jumlah);
+            }
         }
 
         return redirect()->route('penjualan.index');
@@ -242,6 +252,16 @@ class PenjualanController extends Controller
         $penjualan = Penjualan::with('detail_penjualan')->findOrFail($id);
 
         if (in_array($role, ['admin', 'owner'])) {
+            // Kembalikan stok sebelum hapus (opsional jika admin hapus, biasanya return stock)
+            foreach ($penjualan->detail_penjualan as $detail) {
+                $stok = Stok::where('cabang_id', $penjualan->cabang_id)
+                    ->where('produk_id', $detail->produk_id)
+                    ->first();
+                if ($stok) {
+                    $stok->increment('jumlah', $detail->jumlah);
+                }
+            }
+
             $penjualan->detail_penjualan()->delete();
             $penjualan->delete();
             return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dihapus');
@@ -254,6 +274,16 @@ class PenjualanController extends Controller
 
             if (!$isOwner || !$isToday || !$isAllowedType) {
                 abort(403);
+            }
+
+            // Kembalikan stok sebelum hapus
+            foreach ($penjualan->detail_penjualan as $detail) {
+                $stok = Stok::where('cabang_id', $penjualan->cabang_id)
+                    ->where('produk_id', $detail->produk_id)
+                    ->first();
+                if ($stok) {
+                    $stok->increment('jumlah', $detail->jumlah);
+                }
             }
 
             $penjualan->detail_penjualan()->delete();
