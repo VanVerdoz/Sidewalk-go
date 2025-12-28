@@ -148,14 +148,14 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Harga (otomatis)</label>
+            <label class="form-label">Harga Satuan (otomatis)</label>
             <input id="hargaAuto" type="text" class="form-control" placeholder="-" readonly>
         </div>
 
         <div class="form-group">
             <label class="form-label">Total Pembayaran (Rp)</label>
-            <input id="totalInput" type="number" name="total" class="form-control" value="{{ old('total') }}" min="0" step="100" required>
-            <div class="form-text">Otomatis dari harga produk, bisa diedit manual jika perlu.</div>
+            <input id="totalInput" type="number" name="total" class="form-control" value="{{ old('total') }}" min="0" step="100" required readonly>
+            <div class="form-text">Otomatis dihitung: Harga x Jumlah.</div>
             @error('total')
                 <div class="form-text" style="color:red;">{{ $message }}</div>
             @enderror
