@@ -156,7 +156,14 @@ class StokController extends Controller
         }
         $stok = Stok::findOrFail($id);
         try {
+            $cabangId = $stok->cabang_id;
             $stok->delete();
+            
+            // Redirect kembali ke halaman produk raider per cabang jika user adalah kepala_gudang
+            if (session('user.role') === 'kepala_gudang') {
+                return redirect()->route('kepala.produk-raider.show', $cabangId)->with('success', 'Stok berhasil dihapus');
+            }
+            
             return redirect()->route('stok.index')->with('success', 'Stok berhasil dihapus');
         } catch (QueryException $e) {
             return redirect()->back()->with('error', 'Stok tidak dapat dihapus karena sedang digunakan dalam transaksi.');
