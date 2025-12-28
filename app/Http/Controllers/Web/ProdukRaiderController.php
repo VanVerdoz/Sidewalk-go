@@ -36,11 +36,11 @@ class ProdukRaiderController extends Controller
 
         $cabang = Cabang::findOrFail($cabangId);
 
-        // Show CURRENT STOCK for this branch (Only visible if updated TODAY)
+        // Show CURRENT STOCK for this branch (Visible even if not updated today)
         $stokCabang = Stok::with('produk')
             ->where('cabang_id', $cabangId)
             ->where('jumlah', '>', 0)
-            ->whereDate('updated_at', now('Asia/Jakarta')->toDateString()) // Filter stok hari ini
+            // ->whereDate('updated_at', now('Asia/Jakarta')->toDateString()) // REMOVED: Agar stok tidak hilang ganti hari
             ->get();
 
         // REMOVED: Cache filter
@@ -114,10 +114,13 @@ class ProdukRaiderController extends Controller
                     ->get();
 
                 // Filter visibility by 1 day (if set)
+                // REMOVED: Cache filter agar data tampil
+                /*
                 $stokCabang = $stokCabang->filter(function($s) {
                     $key = "cabang:{$s->cabang_id}:stok_visible:{$s->produk_id}";
                     return Cache::get($key, false);
                 });
+                */
 
                 // Hitung penjualan hari ini per produk
                 $soldToday = DetailPenjualan::whereHas('penjualan', function ($q) use ($selectedCabangId, $tanggal) {
@@ -202,12 +205,15 @@ class ProdukRaiderController extends Controller
                 ]);
 
                 // Reset stok jika data yang ada bukan dari hari ini (sudah lewat sehari)
+                // REMOVED: Agar stok bisa akumulasi dan tidak hilang saat tambah stok baru di hari berikutnya
+                /*
                 if ($stok->exists) {
                     $lastUpdate = $stok->updated_at; // Menggunakan casting datetime di Model
                     if (!$lastUpdate || !$lastUpdate->isToday()) {
                         $stok->jumlah = 0;
                     }
                 }
+                */
 
                 $stok->jumlah = ($stok->jumlah ?? 0) + $jumlah;
                 $stok->updated_at = now(); // Set updated_at ke sekarang
