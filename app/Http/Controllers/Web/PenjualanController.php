@@ -20,7 +20,15 @@ class PenjualanController extends Controller
     {
             $userId = session('user.id');
             $role = session('user.role');
+            
+            // Handle Persistent Cabang Selection
             $selectedCabangId = request('cabang_id');
+            if ($selectedCabangId) {
+                session(['selected_cabang_id' => $selectedCabangId]);
+            } elseif (session()->has('selected_cabang_id')) {
+                $selectedCabangId = session('selected_cabang_id');
+            }
+
             $cabangList = Cabang::orderBy('id', 'asc')->get();
 
             $query = Penjualan::with(['cabang', 'pengguna', 'detail_penjualan.produk'])
@@ -134,12 +142,17 @@ class PenjualanController extends Controller
         $produk = Produk::where('status', 'aktif')->get();
         $cabang = Cabang::all();
         $currentCabangId = null;
+
         if (session('user.role') === 'raider' && session('user.id')) {
             $currentCabangId = RequestStok::where('raider_id', (int) session('user.id'))
                 ->whereDate('tanggal', now('Asia/Jakarta')->toDateString())
                 ->orderBy('tanggal', 'desc')
                 ->value('cabang_id');
+        } else {
+            // For other roles, use session if available
+            $currentCabangId = request('cabang_id') ?? session('selected_cabang_id');
         }
+        
         return view('penjualan.create', compact('produk', 'cabang', 'currentCabangId'));
     }
 
@@ -186,6 +199,9 @@ class PenjualanController extends Controller
             'keterangan' => $keterangan,
             'dibuat_oleh' => session('user.id'),
         ]);
+
+        // Update session selected cabang
+        session(['selected_cabang_id' => $request->cabang_id]);
 
         if ($produk) {
             $jumlah = (int) $request->input('jumlah', 1);

@@ -34,6 +34,9 @@ class ProdukRaiderController extends Controller
             abort(403);
         }
 
+        // Persist cabang selection
+        session(['selected_cabang_id' => $cabangId]);
+
         $cabang = Cabang::findOrFail($cabangId);
 
         // Show CURRENT STOCK for this branch (Visible even if not updated today)
@@ -98,7 +101,15 @@ class ProdukRaiderController extends Controller
         }
         $cabangs = Cabang::orderBy('id', 'asc')->get();
         $tanggal = now('Asia/Jakarta')->toDateString();
+        
+        // Handle Persistent Cabang Selection
         $selectedCabangId = $request->query('cabang_id');
+        if ($selectedCabangId) {
+            session(['selected_cabang_id' => $selectedCabangId]);
+        } elseif (session()->has('selected_cabang_id')) {
+            $selectedCabangId = session('selected_cabang_id');
+        }
+
         $selectedCabang = null;
         $items = collect();
         $totalProduk = 0;

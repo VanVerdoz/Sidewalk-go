@@ -76,10 +76,22 @@
         const cabangSelect = document.getElementById('cabang-select');
         const stokContainer = document.getElementById('stok-container');
         const baseUrl = "{{ route('kepala.produk-raider.show', ':id') }}";
+        
+        // Check if there is a session-selected branch (passed from controller or inferred)
+        // Since this is a JS block, we can use Blade to inject the session value
+        const savedCabangId = "{{ session('selected_cabang_id') }}";
+
+        if (savedCabangId && cabangSelect.querySelector(`option[value="${savedCabangId}"]`)) {
+            cabangSelect.value = savedCabangId;
+            // Trigger change event to load data
+            loadData(savedCabangId);
+        }
 
         cabangSelect.addEventListener('change', function() {
-            const cabangId = this.value;
-            
+            loadData(this.value);
+        });
+
+        function loadData(cabangId) {
             if (!cabangId) {
                 stokContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: var(--muted);">
@@ -117,7 +129,7 @@
                     </div>
                 `;
             });
-        });
+        }
     });
 </script>
 @endsection

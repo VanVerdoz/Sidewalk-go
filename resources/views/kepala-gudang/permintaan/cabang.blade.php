@@ -42,7 +42,7 @@
 
 <div class="table-card">
     <div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-        <a href="{{ route('kepala.permintaan-stok.index') }}" class="btn btn-secondary btn-xs"><i class="fas fa-arrow-left"></i> Kembali</a>
+        <a href="{{ route('kepala.permintaan-stok.index', ['reset' => 1]) }}" class="btn btn-secondary btn-xs"><i class="fas fa-arrow-left"></i> Kembali (Ganti Cabang)</a>
     </div>
     <table class="req-table">
         <thead>

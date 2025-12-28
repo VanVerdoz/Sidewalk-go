@@ -12,11 +12,21 @@ use App\Models\RequestStokDetail;
 
 class RequestStokController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
             if (session('user.role') !== 'kepala_gudang') {
                 abort(403);
+            }
+
+            // Auto-redirect if persistent branch is selected and not requesting reset
+            if (session()->has('selected_cabang_id') && !$request->has('reset')) {
+                return redirect()->route('kepala.permintaan-stok.cabang', session('selected_cabang_id'));
+            }
+
+            // If reset requested, clear session
+            if ($request->has('reset')) {
+                session()->forget('selected_cabang_id');
             }
 
             $cabangList = RequestStok::select('cabang_id')
@@ -49,6 +59,9 @@ class RequestStokController extends Controller
             if (session('user.role') !== 'kepala_gudang') {
                 abort(403);
             }
+
+            // Persist cabang selection
+            session(['selected_cabang_id' => $cabangId]);
 
             $cabang = \App\Models\Cabang::findOrFail($cabangId);
             $permintaan = RequestStok::with(['raider', 'details.produk'])
