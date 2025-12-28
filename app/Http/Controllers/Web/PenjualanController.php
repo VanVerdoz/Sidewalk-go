@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Penjualan;
 use App\Models\DetailPenjualan;
 use App\Models\Produk;
@@ -201,8 +202,11 @@ class PenjualanController extends Controller
                 ->first();
             
             if ($stok) {
-                // Pastikan stok tidak negatif (opsional, tapi user minta berkurang)
-                $stok->decrement('jumlah', $jumlah);
+                // Pastikan stok tidak negatif
+                $stok->jumlah = max(0, (int)$stok->jumlah - $jumlah);
+                $stok->save();
+            } else {
+                Log::warning("Stok not found for decrease: Cabang {$request->cabang_id}, Produk {$produk->id}");
             }
         }
 
