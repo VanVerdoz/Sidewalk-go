@@ -186,10 +186,11 @@ class PenjualanController extends Controller
         ]);
 
         if ($produk) {
+            $jumlah = (int) $request->input('jumlah', 1);
             DetailPenjualan::create([
                 'penjualan_id' => $penjualan->id,
                 'produk_id' => $produk->id,
-                'jumlah' => 1,
+                'jumlah' => $jumlah,
                 'harga' => $produk->harga,
             ]);
         }

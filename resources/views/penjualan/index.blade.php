@@ -446,7 +446,8 @@
                 $produkHargaList = $item->detail_penjualan->map(function($detail) {
                     $nama = $detail->produk->nama_produk ?? null;
                     if (!$nama) return null;
-                    return $nama.' (Rp. '.number_format($detail->harga ?? 0, 0, ',', '.').')';
+                    $jumlah = $detail->jumlah ?? 1;
+                    return $nama.' ('.$jumlah.' pcs)';
                 })->filter()->values();
             @endphp
             <tr>

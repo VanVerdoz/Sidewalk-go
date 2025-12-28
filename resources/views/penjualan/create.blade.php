@@ -185,8 +185,12 @@
 <script>
     (function() {
         const sel = document.getElementById('produkSelect');
+        const jumlahInput = document.getElementById('jumlahInput');
         const kategoriEl = document.getElementById('kategoriAuto');
         const hargaEl = document.getElementById('hargaAuto');
+        const totalEl = document.getElementById('totalInput');
+        const hid = document.getElementById('produkIdHidden');
+        const ket = document.getElementById('keteranganField');
 
         function formatRupiah(n) {
             if (n == null || n === '') return '-';
@@ -196,24 +200,38 @@
             } catch(e) { return String(n); }
         }
 
+        function calculateTotal() {
+            const opt = sel.options[sel.selectedIndex];
+            const harga = opt && opt.value ? Number(opt.dataset.harga) : 0;
+            const jumlah = Number(jumlahInput.value) || 0;
+            const total = harga * jumlah;
+            
+            if (totalEl) {
+                totalEl.value = total > 0 ? total : '';
+            }
+        }
+
         sel && sel.addEventListener('change', function() {
             const opt = this.options[this.selectedIndex];
             const kategori = opt ? opt.dataset.kategori : '';
             const harga = opt ? opt.dataset.harga : '';
             const deskripsi = opt ? opt.dataset.deskripsi : '';
+
             kategoriEl.value = kategori ? kategori : '-';
             hargaEl.value = harga ? formatRupiah(harga) : '-';
-            const totalEl = document.getElementById('totalInput');
-            if (totalEl) {
-                totalEl.value = harga ? Number(harga) : '';
-            }
-            const hid = document.getElementById('produkIdHidden');
+            
             if (hid) hid.value = opt ? opt.value : '';
-            const ket = document.getElementById('keteranganField');
+            
             if (ket && (!ket.value || ket.value.trim() === '')) {
                 ket.value = deskripsi || '';
             }
+
+            calculateTotal();
         });
+
+        jumlahInput && jumlahInput.addEventListener('input', calculateTotal);
+        jumlahInput && jumlahInput.addEventListener('change', calculateTotal);
+
     })();
 </script>
 @endpush
