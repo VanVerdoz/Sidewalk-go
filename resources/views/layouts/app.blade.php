@@ -6,6 +6,27 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') - Sidewalk.Go</title>
     <link rel="icon" href="{{ asset('images/sw3.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('images/sw3.png') }}" type="image/png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/sw3.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/sw3.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/sw3.png') }}">
+    <meta property="og:title" content="@yield('title', 'Dashboard') - Sidewalk.Go">
+    <meta property="og:site_name" content="Sidewalk.Go">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ asset('images/sw3.png') }}">
+    <meta property="og:url" content="{{ config('app.url') ?? url('/') }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="@yield('title', 'Dashboard') - Sidewalk.Go">
+    <meta name="twitter:image" content="{{ asset('images/sw3.png') }}">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "url": "{{ config('app.url') ?? url('/') }}",
+        "name": "Sidewalk.Go",
+        "logo": "{{ asset('images/sw3.png') }}"
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
